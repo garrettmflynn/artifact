@@ -1,20 +1,21 @@
 {
-  "name": "hed-standard",
-  "description": "A Web API for the Hierarchical Event Descriptor (HED) Specification",
+  "name": "neurowidgets",
   "version": "0.0.0",
+  "description": "Simple web-based tools for interacting with neurophysiology data",
   "main": "./dist/index.js",
   "module": "dist/index.esm.js",
-  "types": "./dist/hed/index.d.ts",
+  "types": "./dist/neurowidgets/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c && tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c && tsc"
   },
   "author": "Garrett Flynn <garrettmflynn@gmail.com>",
   "license": "AGPL-3.0-or-later",
+  "private": false,
   "devDependencies": {
+    "typescript": "^4.6.3",
     "@babel/core": "^7.17.2",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/preset-env": "^7.16.11",

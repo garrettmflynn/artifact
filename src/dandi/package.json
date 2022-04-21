@@ -1,10 +1,10 @@
 {
-  "name": "hed-standard",
-  "description": "A Web API for the Hierarchical Event Descriptor (HED) Specification",
+  "name": "dandi",
+  "description": "A Web API for the Distributed Archives for Neurophysiology Data Integration (DANDI)",
   "version": "0.0.0",
   "main": "./dist/index.js",
   "module": "dist/index.esm.js",
-  "types": "./dist/hed/index.d.ts",
+  "types": "./dist/dandi/index.d.ts",
   "files": [
     "dist"
   ],
