@@ -1,0 +1,37 @@
+{
+  "name": "artifact",
+  "private": true,
+  "workspaces": [
+    "src/**"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "start": "cd docs && yarn && yarn run start",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --coverage",
+    "typecheck": "tsc --watch --preserveWatchOutput --noEmit",
+    "build": "cd docs && yarn && yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/garrettmflynn/artifact.git"
+  },
+  "keywords": [],
+  "author": "Garrett Flynn <garrettmflynn@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/garrettmflynn/artifact/issues"
+  },
+  "homepage": "https://github.com/garrettmflynn/artifact#readme",
+  "devDependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@types/node": "^17.0.10",
+    "babel-loader": "^8.2.3",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.7.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.4"
+  }
+}
