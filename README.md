@@ -21,14 +21,14 @@ This software validates the effectiveness of modern web technologies to drastica
 ### Checklist
 - [ ] `bids-standard`: An NPM library for reading/writing/exporting BIDS files on the browser
 - [ ] `hed-standard`: An ontology for EEG artifacts that is interoperable with the HED schema
-- [ ] A Web Component library for loading, visualizing and annotating EEG data 
+- [ ] `neurowidgets`: A Web Component library for loading, visualizing and annotating EEG data 
 - [ ] A Progressive Web App for loading, annotating and exporting EEG data
 - [ ] Documentation website
 - [ ] Interrater agreement results from usability testing
 - [ ] Automatic detection of common artifacts (optional)
 - [ ] Additional features based on end-user requests (optional)
 - [ ] `neuroconvert`: An NPM library for importing other standardized EEG data formats (optional)
-
+- [ ] `dandi`: An NPM library to publish to DANDI (optional)
 
 ## Acknowledgments
 This software was originally developed for the Global Brain Initiative by **Garrett Flynn** for Google Summer of Code 2022 with the guidance of Pedro Valdes-Sosa and Jorge Bosch-Bayard.
