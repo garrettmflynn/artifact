@@ -1,18 +1,20 @@
-export default async (object, mimeType, zipped) => {
+import * as encoders from './encoders'
+
+export default async (o, mimeType) => {
 
     // if (zipped) buffer = await decoders.gzip(buffer)
 
-    // switch(mimeType){
-    //     case "text/tab-separated-values":
-    //         return decoders.tsv(buffer)
-    //     case "application/json": 
-    //         return decoders.json(buffer)
-    //     case "application/x-nii": 
-    //         return decoders.nifti(buffer)
-    //     default: 
-    //         return false
-    // }
+    if (mimeType && (mimeType.includes('image/') || mimeType.includes('video/'))) return encoders.datauri(o)
 
-    console.warn('Encode is not implemented yet...')
-    return object
+
+    switch(mimeType){
+        case "text/tab-separated-values":
+            return encoders.tsv(o)
+        case "application/json": 
+            return encoders.json(o)
+        case "application/x-nii": 
+            return encoders.nii(o)
+        default: 
+            return encoders.text(o)
+    }
 }

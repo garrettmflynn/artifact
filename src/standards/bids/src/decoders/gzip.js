@@ -9,7 +9,6 @@ export default (buffer, mimeType) => {
           
           // Special nifti decompression
           else {
-
             const isCompressed = nifti.isCompressed(buffer)
             if (isCompressed) resolve(nifti.decompress(buffer))
           

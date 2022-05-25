@@ -1,13 +1,7 @@
 
 import decode from './decode'
 import * as utils from './utils/index.js'
-
-
-const extensionToMimeType = {
-    'tsv': "text/tab-separated-values",
-    'json': "application/json",
-    'nii': "application/x-nii",
-}
+import { extensionToMimeType } from '.'
 
 
 export default async (files) => {
@@ -17,6 +11,7 @@ export default async (files) => {
         
     // ---------------------- Load Files ----------------------
     const dataPromises = Array.from(Object.values(files)).map(async file => {
+
         let name = file.name.split('.')
         const originalLength = name.length
 
@@ -42,37 +37,37 @@ export default async (files) => {
         // Separate Derivatives
         const path = file.webkitRelativePath || file.relativePath || ''
 
-        const toDrill = name.split('_').map(str => str.split('-'))
+        let firstDrill = path.split('/').slice(1)
+        firstDrill = firstDrill.slice(0, firstDrill.length - 1)
 
-        if (path.includes('derivatives')) {
-           const derivName = path.match(/derivatives\/(.+?)\//)[1]
-           if (!o.derivatives[derivName]) o.derivatives[derivName] = {}
-           target = o.derivatives[derivName]
-        }
+        const toDrill = Array.from(new Set([
+            ...firstDrill, 
+            // ...name.split('_')
+        ])).map(str => str.split('-'))
 
-        let suffix = ''
         toDrill.forEach(([key, value]) => {
-            if (!value) suffix = key
-            else {
-                if (!target[key]) target[key] = {}
-                if (!target[key][value]) target[key][value] = {}
-                target = target[key][value] // replace target
+            if (!target[key]) target[key] = {}
+            target = target[key]
+
+            if (value) {
+                if (!target[value]) target[value] = {}
+                target = target[value] // replace target
             }
         })
+        
 
         // Decode File Contents
         const data = await utils.files.getFileData(file, extension)
         const content = await decode(data, mimeType, isZipped)
-        if (content) {
-            target[file.name] = content
-        } else {
+
+        if (content) target[file.name] = content
+        else {
             if (!target[file.name]) target[file.name] = null
             const msg = `No decoder for ${file.name} - ${file.type || 'No file type recognized'}`
             console.warn(msg)
-            reject(msg)
         }
 
-        resolve(target[lastKey])
+       return target[file.name]
     })
 
     await Promise.allSettled(dataPromises)

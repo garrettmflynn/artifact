@@ -33,6 +33,8 @@
   },
   "dependencies": {
     "bids-validator": "^1.9.3",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.0",
     "nifti-js": "^1.0.1",
     "nifti-reader-js": "^0.5.4",
     "pako": "^2.0.4"
