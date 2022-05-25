@@ -3,7 +3,7 @@ import load from './load.js'
 import download from './download.js'
 import validate from 'bids-validator'
 
-class BIDSFile {
+class BIDSDataset {
 
     constructor(options={}) {
         this.data = {}
@@ -49,7 +49,7 @@ class BIDSFile {
 
 
 export {
-    BIDSFile,
+    bidsDataset,
     load,
     download
 }

@@ -12,15 +12,15 @@ editorDiv.appendChild(editor)
 const file = document.getElementById('file')
 file.onchange = async (ev) => {
   const files = ev.target.files
-    const bidsFile = new bids.BIDSFile({
+    const bidsDataset = new bids.BIDSDataset({
       ignoreWarnings: false,
       ignoreNiftiHeaders: false,
       ignoreSubjectConsistency: false,
     })
 
-    const info = await bidsFile.validate(files)
-    const data = await bidsFile.load(files)
-    console.log(bidsFile, bidsFile.data, info)
+    const info = await bidsDataset.validate(files)
+    const data = await bidsDataset.load(files)
+    console.log(bidsDataset, bidsDataset.data, info)
     editor.target = data
 
     errorDiv.innerHTML = ''
