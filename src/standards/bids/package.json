@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "bids-validator": "^1.9.3",
+    "nifti-reader-js": "^0.5.4",
     "pako": "^2.0.4"
   }
 }
