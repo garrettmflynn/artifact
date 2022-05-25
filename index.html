@@ -44,14 +44,14 @@
 	<link rel="stylesheet" href="./style.css">
 
 	<!-- Javascript -->
-	<script>
+	<!-- <script>
 		if ("serviceWorker" in navigator) {
 			window.addEventListener("load", () => {
 				navigator.serviceWorker && navigator.serviceWorker.register("./sw.js");
 			});
 		}
-	</script>
-	<script defer src="./main.js"></script>
+	</script> -->
+	<script defer src="./dist/main.js" type="module"></script>
  </head>
 
  <body>
@@ -69,6 +69,18 @@
 		<div class="container">
 			<h2 id="what">What is this?</h2>
 			<p><strong>Artifact</strong> is a Progressive Web Application (PWA) for EEG artifact annotation on the browser.</p>
+		</div>
+
+		<div id="editor" class="container">	
+		</div>
+
+		<div class="container">
+			<h3>Load a BIDS Dataset</h3>
+			<input type="file"id=file  webkitdirectory="" directory="">
+		</div>
+		<div id="errors" class="container">	
+		</div>
+		<div id="warnings" class="container">	
 		</div>
 	</section>
 
