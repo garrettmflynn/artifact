@@ -5,12 +5,6 @@ import JSZip from 'jszip';
 import validate from 'bids-validator'
 import { saveAs } from 'file-saver';
 
-export const extensionToMimeType = {
-  'tsv': "text/tab-separated-values",
-  'json': "application/json",
-  'nii': "application/x-nii",
-}
-
 class BIDSDataset {
 
     constructor(options={}) {

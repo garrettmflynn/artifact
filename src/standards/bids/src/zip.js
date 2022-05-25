@@ -1,7 +1,6 @@
 
-import encode from './encode'
+import * as files from '../../../files/src/index.js'
 import JSZip from 'jszip';
-import { extensionToMimeType } from './index.js';
 
 export default (name, object) => {
 
@@ -18,7 +17,7 @@ export default (name, object) => {
             if (!notKeyword) return await drill(subObj[key], file, key) // Special files
             else if (splitKey.length === 1 && (typeof subObj[key] === 'object')) return await drill(subObj[key], file.folder(prefixKey ? `${prefixKey}-${key}` : key))
             else {
-                const returned = await encode(subObj[key], extensionToMimeType[splitKey[1]])
+                const returned = await files.encode(key, subObj[key])
                 file.file(key, returned) // Encoded file
             }
         }))

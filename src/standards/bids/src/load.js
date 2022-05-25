@@ -1,40 +1,14 @@
 
-import decode from './decode'
-import * as utils from './utils/index.js'
-import { extensionToMimeType } from '.'
+import * as files from '../../../files/src/index.js'
 
-
-export default async (files) => {
-    const o = {
-        derivatives: {}
-    }
+export default async (fileList) => {
+    const o = {}
         
     // ---------------------- Load Files ----------------------
-    const dataPromises = Array.from(Object.values(files)).map(async file => {
-
-        let name = file.name.split('.')
-        const originalLength = name.length
-
-        // Swap file mimeType if zipped
-        let mimeType = file.type        
-        const isZipped = (mimeType === "application/x-gzip")
-        if (isZipped) name.pop()
- 
-        // Check Rogue Extensions
-        let extension;
-        if (originalLength === 1) {
-            extension = '' // no extension provided
-        } else if (name[0] === '') {
-            name = [`.${name[1]}`] // e.g. .bidsignore
-            extension = ''
-        } else extension = name.pop() // Default extension syntax
-
-        if (isZipped || !mimeType) mimeType = extensionToMimeType[extension]
-        name = name.join('.')
-
+    const dataPromises = Array.from(Object.values(fileList)).map(async file => {
         let target = o
 
-        // Separate Derivatives
+        // Drill into File Path
         const path = file.webkitRelativePath || file.relativePath || ''
 
         let firstDrill = path.split('/').slice(1)
@@ -57,8 +31,7 @@ export default async (files) => {
         
 
         // Decode File Contents
-        const data = await utils.files.getFileData(file, extension)
-        const content = await decode(data, mimeType, isZipped)
+        const content = await files.get(file)
 
         if (content) target[file.name] = content
         else {

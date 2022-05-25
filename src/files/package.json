@@ -1,0 +1,11 @@
+{
+  "name": "@brainsatplay/files",
+  "version": "0.0.0",
+  "description": "File import and export utilities",
+  "main": "src/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "nifti-reader-js": "^0.5.4",
+    "pako": "^2.0.4"
+  }
+}
