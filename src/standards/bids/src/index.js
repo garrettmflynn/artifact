@@ -49,7 +49,7 @@ class BIDSDataset {
 
 
 export {
-    bidsDataset,
+    BIDSDataset,
     load,
     download
 }
