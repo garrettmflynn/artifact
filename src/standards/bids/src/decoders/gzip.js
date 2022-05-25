@@ -8,12 +8,17 @@ export default (buffer, mimeType) => {
           if (mimeType !== "application/x-nii") resolve(pako.inflate(buffer))
           
           // Special nifti decompression
-          else if (nifti.isCompressed(data)) resolve(nifti.decompress(data))
+          else {
+
+            const isCompressed = nifti.isCompressed(buffer)
+            if (isCompressed) resolve(nifti.decompress(buffer))
           
-          // Catch decompressed nifti files
-          else resolve(data)
+            // Catch decompressed nifti files
+            else resolve(buffer)
+          }
 
         } catch (e) {
+          console.error(e)
           return reject(false)
         }
       })

@@ -11,12 +11,13 @@ class BIDSDataset {
         Object.assign(this.options, options)
     }
 
-    _getConfig = (files) => {
-       if (files && files[0]) this.options.config = files[0].webkitRelativePath.split('/')[0]
+    _setConfig = (options={}) => {
+      if (options.config) this.options.config = options
+      else this.options.config = `${this.name}/.bids-validator-config.json`
     }
 
     validate = (files, options={}) => {
-        if (!this.options.config) this._getConfig(files)
+        if (!this.options.config) this._setConfig(options)
         return new Promise(resolve => {
         validate.BIDS(
             files,
@@ -38,7 +39,8 @@ class BIDSDataset {
     }
 
     load = async (files) => {
-        this._getConfig(files)
+        this.name = files?.[0]?.webkitRelativePath?.split('/')?.[0] // directory name
+        this._setConfig()
         this.data = await load(files)
         return this.data
     }

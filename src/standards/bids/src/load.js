@@ -19,13 +19,20 @@ export default async (files) => {
     const dataPromises = Array.from(Object.values(files)).map(async file => {
         let name = file.name.split('.')
         const originalLength = name.length
-        const data = await utils.files.getFileData(file)
 
         // Swap file mimeType if zipped
         let mimeType = file.type        
         const isZipped = (mimeType === "application/x-gzip")
         if (isZipped) name.pop()
-        const extension = (originalLength === 1) ?  '' : name.pop() // No extension
+ 
+        // Check Rogue Extensions
+        let extension;
+        if (originalLength === 1) {
+            extension = '' // no extension provided
+        } else if (name[0] === '') {
+            name = [`.${name[1]}`] // e.g. .bidsignore
+            extension = ''
+        } else extension = name.pop() // Default extension syntax
 
         if (isZipped || !mimeType) mimeType = extensionToMimeType[extension]
         name = name.join('.')
@@ -36,7 +43,6 @@ export default async (files) => {
         const path = file.webkitRelativePath || file.relativePath || ''
 
         const toDrill = name.split('_').map(str => str.split('-'))
-        // console.log('toDrill', name, mimeType, extension)
 
         if (path.includes('derivatives')) {
            const derivName = path.match(/derivatives\/(.+?)\//)[1]
@@ -44,9 +50,9 @@ export default async (files) => {
            target = o.derivatives[derivName]
         }
 
-        let lastKey = null
+        let suffix = ''
         toDrill.forEach(([key, value]) => {
-            if (!value) lastKey = key
+            if (!value) suffix = key
             else {
                 if (!target[key]) target[key] = {}
                 if (!target[key][value]) target[key][value] = {}
@@ -55,18 +61,13 @@ export default async (files) => {
         })
 
         // Decode File Contents
-        const content = await decode(data, mimeType, isZipped) 
+        const data = await utils.files.getFileData(file, extension)
+        const content = await decode(data, mimeType, isZipped)
         if (content) {
-            if (!target[lastKey]) target[lastKey] = content
-            else {
-                console.log('FOUND METADATA', name, extension,  target[name], content)
-                target[lastKey] = {
-                    data: target[lastKey],
-                    metadata: content
-                }
-            }
+            target[file.name] = content
         } else {
-            const msg = `No decoder for ${name}.${extension} - ${file.type || 'No file type recognized'}`
+            if (!target[file.name]) target[file.name] = null
+            const msg = `No decoder for ${file.name} - ${file.type || 'No file type recognized'}`
             console.warn(msg)
             reject(msg)
         }

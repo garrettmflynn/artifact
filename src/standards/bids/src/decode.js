@@ -12,6 +12,6 @@ export default async (data, mimeType, zipped) => {
         case "application/x-nii": 
             return decoders.nii(data)
         default: 
-            return false
+            return decoders.text(data)
     }
 }

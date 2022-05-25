@@ -1,6 +1,6 @@
 const defaultMethod = 'readAsArrayBuffer'
 
-export const getFileData = (file) => {
+export const getFileData = (file, extension='') => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
 
@@ -11,14 +11,11 @@ export const getFileData = (file) => {
             if (e.target.readyState == FileReader.DONE) {
                 if (!e.target.result) return reject(false)
 
-                let data;
-                if (method === defaultMethod) {
-                    const data = new Uint8Array(e.target.result)
-                    if (data.length === 0) {
-                        console.warn(`${file.name} appears to be empty`)
-                        reject(false)
-                    }
-                } else data = e.target.result
+                let data = e.target.result
+                if (data.length === 0) {
+                    console.warn(`${file.name} appears to be empty`)
+                    reject(false)
+                } else if (method === defaultMethod && extension !== 'nii') data = new Uint8Array(e.target.result) // Keep .nii files as raw ArrayBuffer
                 resolve(data)
             }
         }
