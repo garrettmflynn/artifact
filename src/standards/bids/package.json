@@ -33,7 +33,9 @@
   },
   "dependencies": {
     "bids-validator": "^1.9.3",
+    "buffer": "^6.0.3",
     "file-saver": "^2.0.5",
-    "jszip": "^3.10.0"
+    "jszip": "^3.10.0",
+    "timers": "^0.1.1"
   }
 }

@@ -3,6 +3,7 @@ import load from './load.js'
 import zip from './zip.js'
 import JSZip from 'jszip';
 import validate from 'bids-validator'
+import hedValidator from 'hed-validator'
 import { saveAs } from 'file-saver';
 
 class BIDSDataset {
@@ -49,6 +50,29 @@ class BIDSDataset {
           return this.data
         }
     }
+    
+    // checkHED = () => {
+    //   const dataset = new hedValidator.validator.BidsDataset(eventData, sidecarData)
+    //     const [schemaDefinition, schemaDefinitionIssues] = parseHedVersion(
+    //       jsonContents,
+    //       dir,
+    //     )
+    //     try {
+    //       return hedValidator.validator
+    //         .validateBidsDataset(dataset, schemaDefinition)
+    //         .then(hedValidationIssues => {
+    //           return schemaDefinitionIssues.concat(
+    //             convertHedIssuesToBidsIssues(hedValidationIssues),
+    //           )
+    //         })
+    //     } catch (error) {
+    //       const issues = schemaDefinitionIssues.concat(
+    //         internalHedValidatorIssue(error),
+    //       )
+    //       return Promise.resolve(issues)
+    //     }
+    //   }
+    // }
 
     check = async (options={}, override=false) => {
       const zippedBlob = await zip(this.name, this.data)

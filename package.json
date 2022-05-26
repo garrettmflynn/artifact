@@ -9,7 +9,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "start": "cd docs && yarn && yarn run start",
+    "start": "tinybuild",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --coverage",
     "typecheck": "tsc --watch --preserveWatchOutput --noEmit",
     "build": "cd docs && yarn && yarn build"

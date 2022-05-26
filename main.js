@@ -25,7 +25,7 @@ file.onchange = async (ev) => {
 
     // Register Actual Directories
     if (data){
-      console.log(bidsDataset, bidsDataset.data, info)
+      console.log(bidsDataset)
       editor.target = data
     }
 

@@ -24,9 +24,7 @@ const types = {
 
 const get = async (file) => {
     const {mimeType, zipped} = getInfo(file)
-    console.log(file.name)
     const data = await getFileData(file)
-    console.log(file.name, data)
     return await decode(data, mimeType, zipped)
 }
 
