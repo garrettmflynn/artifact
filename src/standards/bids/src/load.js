@@ -35,7 +35,7 @@ export default async (fileList) => {
 
         if (content) target[file.name] = content
         else {
-            if (!target[file.name]) target[file.name] = null
+            // if (!target[file.name]) target[file.name] = null
             const msg = `No decoder for ${file.name} - ${file.type || 'No file type recognized'}`
             console.warn(msg)
         }

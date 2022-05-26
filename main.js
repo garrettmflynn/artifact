@@ -6,13 +6,15 @@ const errorDiv = document.getElementById('errors')
 const warningDiv = document.getElementById('warnings')
 const downloadButton = document.getElementById('download')
 
-const editor = new visualscript.ObjectEditor({header: 'BIDS File'})
+const editor = new visualscript.ObjectEditor({header: 'BIDS Dataset'})
 editor.style.color = 'black'
 editorDiv.appendChild(editor)
 
 let bidsDataset = null
-const file = document.getElementById('file')
-file.onchange = async (ev) => {
+const dataset = document.getElementById('dataset')
+
+// --------------- BIDS Dataset ---------------
+dataset.onchange = async (ev) => {
   const files = ev.target.files
     bidsDataset = new bids.BIDSDataset({
       ignoreWarnings: false,
@@ -26,7 +28,9 @@ file.onchange = async (ev) => {
     // Register Actual Directories
     if (data){
       console.log(bidsDataset)
-      editor.target = data
+      const display = Object.keys(data).reduce((a,b) => a + b.includes('.edf'), 0) === 0 // Do now show top-level EDF
+      console.log('toDisplay', display)
+      if (display) editor.target = data
     }
 
     showValidation(info)

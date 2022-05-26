@@ -1,5 +1,5 @@
 import text from './text'
-export default (buffer) => {
-    const textContent = text(buffer)
+export default (o) => {
+    const textContent = text(o)
     return JSON.parse(textContent)
 }

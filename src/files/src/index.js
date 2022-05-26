@@ -7,6 +7,8 @@ const types = {
     'tsv': "text/tab-separated-values",
     'json': "application/json",
     'nii': "application/x-nii",
+    'edf': "application/x-edf",
+    'nwb': "application/x-nwb",
   }
 
 
@@ -24,8 +26,9 @@ const types = {
 
 const get = async (file) => {
     const {mimeType, zipped} = getInfo(file)
-    const data = await getFileData(file)
-    return await decode(data, mimeType, zipped)
+    const data = await getFileData(file).catch(e => console.error(e))
+    if (data) return await decode(data, mimeType, zipped).catch(e => console.error(e))
+    else return null
 }
 
 

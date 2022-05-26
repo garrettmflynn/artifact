@@ -4,8 +4,8 @@ const normalizeEOL = str => str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 const isContentfulRow = row => row && !/^\s*$/.test(row)
 import text from './text'
 
-export default (buffer) => {
-    let contents = text(buffer)
+export default (o) => {
+    let contents = text(o)
     const collection = []
     contents = stripBOM(contents)
     const rows = normalizeEOL(contents).split('\n').filter(isContentfulRow).map(str => str.split('\t'))

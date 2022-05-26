@@ -1,3 +1,3 @@
-export default (buffer) => {
-    return new TextDecoder().decode(buffer)
+export default (o) => {
+    return new TextDecoder().decode(o.buffer)
 }

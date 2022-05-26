@@ -1,19 +1,24 @@
 import * as decoders from './decoders/index.js'
-export default async (data, mimeType, zipped) => {
+export default async (o, mimeType, zipped) => {
 
-    if (zipped) data = await decoders.gzip(data, mimeType)
-    if (mimeType && (mimeType.includes('image/') || mimeType.includes('video/'))) return data
+    if (zipped) o = await decoders.gzip(o, mimeType)
+    if (mimeType && (mimeType.includes('image/') || mimeType.includes('video/'))) return o.dataurl
+
 
     switch(mimeType){
         // case "text/comma-separated-values":
         //     return decoders.csv(data)
         case "text/tab-separated-values":
-            return decoders.tsv(data)
+            return decoders.tsv(o)
         case "application/json": 
-            return decoders.json(data)
+            return decoders.json(o)
         case "application/x-nii": 
-            return decoders.nii(data)
+            return decoders.nii(o)
+        case "application/x-nwb": 
+            return decoders.nwb(o)
+        case "application/x-edf": 
+            return decoders.edf(o)
         default: 
-            return decoders.text(data)
+            return decoders.text(o)
     }
 }

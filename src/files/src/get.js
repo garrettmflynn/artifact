@@ -1,28 +1,43 @@
 import { getInfo } from './index.js'
-const defaultMethod = 'readAsArrayBuffer'
+const defaultMethod = 'buffer'
+
+const fileIgnore = ['.DS_Store']
+const useRawArrayBuffer = ['nii', 'nwb']
 
 export default (file) => {
 
     const { extension } = getInfo(file)
+
     return new Promise((resolve, reject) => {
-        const reader = new FileReader()
 
-        let method = defaultMethod
-        if (file.type && (file.type.includes('image/') || file.type.includes('video/'))) method = 'readAsDataURL'
-        
-        reader.onloadend = e => {
-            if (e.target.readyState == FileReader.DONE) {
-                if (!e.target.result) return reject(false)
+        // ----------------- Ignore Arbitrary Files -----------------
+        if (fileIgnore.includes(file.name)) reject(`Ignoring ${file.name} files`)
 
-                let data = e.target.result
-                if (data.length === 0) {
-                    console.warn(`${file.name} appears to be empty`)
-                    reject(false)
-                } else if (method === defaultMethod && extension !== 'nii') data = new Uint8Array(e.target.result) // Keep .nii files as raw ArrayBuffer
-                resolve(data)
+        // ----------------- Use Decoders -----------------
+        else {
+            const reader = new FileReader()
+            const methods = {
+                'dataurl': 'readAsDataURL',
+                'buffer': 'readAsArrayBuffer'
             }
-        }
 
-        reader[method](file)
+            let method = defaultMethod
+            if (file.type && (file.type.includes('image/') || file.type.includes('video/'))) method = 'dataurl'
+            
+            reader.onloadend = e => {
+                if (e.target.readyState == FileReader.DONE) {
+                    if (!e.target.result) return reject(`No result returned using the ${method} method on ${file.name}`)
+
+                    let data = e.target.result
+                    if (data.length === 0) {
+                        console.warn(`${file.name} appears to be empty`)
+                        reject(false)
+                    } else if (method === 'buffer' && !useRawArrayBuffer.includes(extension)) data = new Uint8Array(data) // Keep .nii files as raw ArrayBuffer
+                    resolve({file, [method]: data})
+                }
+            }
+
+            reader[methods[method]](file)
+        }
     })
 }
