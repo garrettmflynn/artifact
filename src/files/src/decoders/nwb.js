@@ -1,16 +1,10 @@
+// import reader from '../../external/h5wasm/dist/esm/hdf5_hl.js'
 import reader from 'h5wasm'
-import nwb from 'webnwb'
+import nwb from '../../../standards/nwb/src/index'
 
 export default async (o) => {
-      const io = new nwb.NWBHDF5IO(reader, true)
-      console.log('Writing NWB file')
-      await io._write(o.file.name, o.buffer).then(res => {
-          console.log('res', res)
-          return res
-      }).catch(e => {
-          console.log(e)
-      })
+      const io = new nwb.NWBHDF5IO(reader)
+      await io._write(o.file.name, o.buffer)
       let file = io.read(o.file.name)
-      console.log('File', file)
       return file
 }

@@ -35,9 +35,7 @@
     "bids-validator": "^1.9.3",
     "buffer": "^6.0.3",
     "file-saver": "^2.0.5",
-    "h5wasm": "0.4.4",
     "jszip": "^3.10.0",
-    "timers": "^0.1.1",
-    "webnwb": "0.0.12"
+    "timers": "^0.1.1"
   }
 }

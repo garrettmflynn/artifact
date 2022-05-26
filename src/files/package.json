@@ -5,7 +5,10 @@
   "main": "src/index.js",
   "license": "MIT",
   "dependencies": {
+    "h5wasm": "^0.4.4",
     "nifti-reader-js": "^0.5.4",
-    "pako": "^2.0.4"
+    "pako": "^2.0.4",
+    "webnwb": "0.0.12",
+    "yaml": "^2.1.0"
   }
 }

@@ -1,19 +1,21 @@
 import * as visualscript from 'https://cdn.jsdelivr.net/npm/visualscript'
 import * as bids from './src/standards/bids/src/index.js'
+import nwb from 'src/standards/nwb/src/index'
+import reader from 'h5wasm'
 
 const editorDiv = document.getElementById('editor')
 const errorDiv = document.getElementById('errors')
 const warningDiv = document.getElementById('warnings')
 const downloadButton = document.getElementById('download')
 
-const editor = new visualscript.ObjectEditor({header: 'BIDS Dataset'})
+const editor = new visualscript.ObjectEditor({header: 'Dataset'})
 editor.style.color = 'black'
 editorDiv.appendChild(editor)
 
 let bidsDataset = null
 const dataset = document.getElementById('dataset')
 
-// --------------- BIDS Dataset ---------------
+// --------------- Create a BIDS Dataset ---------------
 dataset.onchange = async (ev) => {
   const files = ev.target.files
     bidsDataset = new bids.BIDSDataset({
@@ -27,10 +29,15 @@ dataset.onchange = async (ev) => {
 
     // Register Actual Directories
     if (data){
-      console.log(bidsDataset)
-      const display = Object.keys(data).reduce((a,b) => a + b.includes('.edf'), 0) === 0 // Do now show top-level EDF
-      console.log('toDisplay', display)
-      if (display) editor.target = data
+
+      const toDisplay = true
+      Object.keys(data).reduce((a,b) => a + (
+        b.includes('.edf') //|| b.includes('.nwb')
+      ), 0) === 0 
+      // TODO: Fix the object editor so it doesn't access objects until it uses them.
+      // Do now show top-level EDF because the stringification takes SO long
+
+      if (toDisplay) editor.target = data
     }
 
     showValidation(info)
