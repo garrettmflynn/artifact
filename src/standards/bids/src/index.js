@@ -5,11 +5,15 @@ import JSZip from 'jszip';
 import validate from 'bids-validator'
 import hedValidator from 'hed-validator'
 import { saveAs } from 'file-saver';
+import convert from './convert.js';
 
 class BIDSDataset {
 
     constructor(options={}) {
-        this.data = {}
+        this.files = {
+          system: {},
+          types: {}
+        }
         this.options = { verbose: true }
         Object.assign(this.options, options)
     }
@@ -46,8 +50,9 @@ class BIDSDataset {
         if (files.length){
           this.name = files[0].webkitRelativePath?.split('/')?.[0] // directory name
           this._setConfig()
-          this.data = await load(files)
-          return this.data
+          const dataStructure = await load(files)
+          this.files = convert(dataStructure, `${dataStructure.format}2bids`)
+          return this.files
         }
     }
     
@@ -75,7 +80,7 @@ class BIDSDataset {
     // }
 
     check = async (options={}, override=false) => {
-      const zippedBlob = await zip(this.name, this.data)
+      const zippedBlob = await zip(this.name, this.filesystem)
 
       // Spoof Files for Pre-Export Validation
       const unzipped = await JSZip.loadAsync(zippedBlob)

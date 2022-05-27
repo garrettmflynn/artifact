@@ -44,56 +44,93 @@
 	<link rel="stylesheet" href="./style.css">
 
 	<!-- Javascript -->
-	<!-- <script>
+	<script>
 		if ("serviceWorker" in navigator) {
 			window.addEventListener("load", () => {
 				navigator.serviceWorker && navigator.serviceWorker.register("./sw.js");
 			});
 		}
-	</script> -->
-	<script defer src="./dist/main.js" type="module"></script>
+	</script>
+	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
  </head>
 
  <body>
 
-	<header>
-		<div class="container">
-			<!-- <a href="./" class="logo" aria-label="Logo">
-				<img src="./share.jpg" alt="Logo">
-			</a> -->
-			<h1>Artifact</h1>
-		</div>
-	</header>
+	<visualscript-app id="app" name="Artifact">
+		<visualscript-nav>
+			<!-- <div class="container"> -->
+				<!-- <a href="./" class="logo" aria-label="Logo"><img src="./share.jpg" alt="Logo"></a> -->
+				<h1>Artifact</h1>
+				<!-- <small>BIDS, NWB, EDF</small> -->
+			<!-- </div> -->
+		</visualscript-nav>
+		<visualscript-dashboard>
+		<visualscript-sidebar>
+			<div>
+			  <visualscript-control id=dataset type="file" label="Load a Dataset" webkitdirectory directory multiple></visualscript-control>
+			  <visualscript-control id=download type="button" label="Download BIDS Dataset">Download</visualscript-control>
+			  <visualscript-control id=tag type="select" label="Select Artifact"></visualscript-control>
 
-	<section>
-		<div class="container">
-			<h2 id="what">What is this?</h2>
-			<p><strong>Artifact</strong> is a Progressive Web Application (PWA) for EEG artifact annotation on the browser.</p>
-		</div>
+			</div>
+			<h4 class="header">Errors</h4>
+			<div id="errors" class="container">	
+				N/A
+			</div>
+			<h4 class="header">Warnings</h4>
+			<div id="warnings" class="container">	
+				N/A
+			</div>
 
-		<div id="editor" class="container">	
-		</div>
 
-		<div class="container">
-			<h3 style="margin-bottom: 0;">Load a Dataset</h3>
-			<small>Supported: BIDS, NWB, EDF</small><br><br>
-			<input type="file"id=dataset webkitdirectory directory multiple>
+		</visualscript-sidebar>
+	  
+		<visualscript-main style="display: flex; align-items: center; justify-content: center;">
 
-			<h3>Download BIDS Dataset</h3>
-			<button id="download">Download</button>
-		</div>
-		<div id="errors" class="container">	
-		</div>
-		<div id="warnings" class="container">	
-		</div>
-	</section>
+			<section>
+				<h2>Graph</h2>
+				<div id="graph">	
+				</div>
+		
+				<h2>Inspector</h2>
+				<div id="editor">
+				</div>
 
-	<footer>
-		<div class="container">
+			</section>
+
+		</visualscript-main>
+		</visualscript-dashboard>
+		<visualscript-footer>
 			<p>Developed with the <a href="https://globalbrainconsortium.org">Global Brain Consortium (GBC)</a> for Google Summer of Code 2022.</p>
-		</div>
-	</footer>
-
+		</visualscript-footer>
+	  </visualscript-app>
+	
+	
+	  <visualscript-dashboard>
+		<visualscript-nav>Visualscript</visualscript-nav>
+	  <visualscript-sidebar></visualscript-sidebar>
+	  <visualscript-main id="main">
+		<visualscript-overlay></visualscript-overlay>
+	
+		<visualscript-tab id="realtime" name="Stream Analysis">
+		  <!-- <section id="data">
+			<div id="videos"></div>
+			<div id="analyses"></div>
+		  </section> -->
+		</visualscript-tab>
+	
+		<visualscript-tab id="design" name="Model Design">
+		  <!-- <visualscript-control id="files" type="file"  accept="audio/*, video/*" label="Load a File"></visualscript-control>
+		  <visualscript-control id="dataSelect" type="select" label="Data" persist></visualscript-control>
+		  <visualscript-control id=threshold type="range" label="Threshold" persist></visualscript-control>
+		  <visualscript-control id="transformation" type="select" label="Transformation" persist></visualscript-control>
+		  <visualscript-control id="colorscale" type="select" label="Color Scale" persist></visualscript-control>
+		  <visualscript-control type="input" label="Model File Name" persist></visualscript-control>
+		  <visualscript-control type="button" label="Download Model" persist>Download</visualscript-control> -->
+		</visualscript-tab>
+	
+	  </visualscript-main>
+	  <visualscript-footer>Garrett Flynn and Lisa Müller-Trede | 2022</visualscript-footer>
+	</visualscript-dashboard>
  </body>
-
+ <script src="./dist/main.js" type="module"></script>
  </html>

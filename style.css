@@ -6,15 +6,32 @@ html, body {
 	line-height: 1.5;
 	margin: 0;
 	padding: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+}
+
+body * {
+	box-sizing: border-box;
 }
 
 .container {
 	margin: 0 auto;
-	max-width: 768px;
-	padding: 20px 5%;
+	/* max-width: 768px; */
+	/* padding: 20px 5%;  */
 }
 
-section {
+
+visualscript-sidebar h4 {
+	padding: 5px 15px;
+}
+visualscript-sidebar .container {
+	padding: 5px 15px;
+	max-width: 400px;
+
+}
+
+visualscript-main {
 	background-color: #171717;
 }
 
@@ -38,6 +55,15 @@ h2:first-of-type {
 img {
 	height: auto;
 	max-width: 100%;
+}
+
+/* NEED TO BOUND THE SECTION TO 100% */
+section {
+	padding: 25px;
+	box-sizing: border-box;
+	overflow: scroll;
+	width: 100%;
+	height: 100%;
 }
 
 .logo img {

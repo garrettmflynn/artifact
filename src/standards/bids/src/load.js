@@ -1,12 +1,22 @@
-
 import * as files from '../../../files/src/index.js'
 
+
+const checkTopLevel = (filesystem, extension) => {
+    return Object.keys(filesystem).reduce((a,b) => a + (
+        b.includes(`.${extension}`)
+    ), 0) !== 0 
+}
+
 export default async (fileList) => {
-    const o = {}
-        
+    const bidsFiles = {
+        format: 'bids',
+        system: {},
+        types: {}
+    }
+
     // ---------------------- Load Files ----------------------
     const dataPromises = Array.from(Object.values(fileList)).map(async file => {
-        let target = o
+        let target = bidsFiles.system
 
         // Drill into File Path
         const path = file.webkitRelativePath || file.relativePath || ''
@@ -31,9 +41,14 @@ export default async (fileList) => {
         
 
         // Decode File Contents
+        const {extension} = files.getInfo(file)
         const content = await files.get(file)
 
-        if (content) target[file.name] = content
+        if (content) {
+            target[file.name] = content // filesystem target
+            if (!bidsFiles.types[extension]) bidsFiles.types[extension] = {}
+            bidsFiles.types[extension][file.name.replace(`.${extension}`, '')] = content // filetypes extension
+        }
         else {
             // if (!target[file.name]) target[file.name] = null
             const msg = `No decoder for ${file.name} - ${file.type || 'No file type recognized'}`
@@ -45,5 +60,8 @@ export default async (fileList) => {
 
     await Promise.allSettled(dataPromises)
 
-    return o
+    if (checkTopLevel(bidsFiles.system, 'edf')) bidsFiles.format = 'edf' // replace bids with edf
+    if (checkTopLevel(bidsFiles.system, 'nwb')) bidsFiles.format = 'nwb' // replace bids with nwb
+
+    return bidsFiles
 }
