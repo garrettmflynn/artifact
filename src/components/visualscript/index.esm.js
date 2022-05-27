@@ -8771,6 +8771,7 @@ class Sidebar extends s {
       background: var(--light-color);
       position: relative;
       display: flex;
+      overflow: hidden;
     }
 
 
