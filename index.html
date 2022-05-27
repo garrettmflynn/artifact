@@ -44,13 +44,7 @@
 	<link rel="stylesheet" href="./style.css">
 
 	<!-- Javascript -->
-	<script>
-		if ("serviceWorker" in navigator) {
-			window.addEventListener("load", () => {
-				navigator.serviceWorker && navigator.serviceWorker.register("./sw.js");
-			});
-		}
-	</script>
+	<script src="./service-worker.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
  </head>
 

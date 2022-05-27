@@ -17,6 +17,7 @@ self.addEventListener("install", event => {
 				"favicon-32x32.png", // Favicon, Safari on Mac OS
 				"index.html", // Main HTML file
 				"main.js", // Main Javascript file
+				"sw-manager.js", // Service worker manager file
 				"manifest.json", // Manifest file
 				"maskable_icon.png", // Favicon, maskable https://web.dev/maskable-icon
 				"mstile-150x150.png", // Favicon, Windows 8 / IE11
