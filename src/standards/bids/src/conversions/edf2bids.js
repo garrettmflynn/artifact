@@ -24,8 +24,9 @@ export default (files) => {
             target = target[fileModality]
         }
 
+        const isDifferent = !(target[fileName] === fileData)
         target[fileName] = fileData
-        delete files.system[fileName] // remove top-level file
+        if (isDifferent) delete files.system[fileName] // remove top-level file
     }
 
     return files

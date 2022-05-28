@@ -22,6 +22,10 @@ export class InteractiveTimeSeries extends LitElement {
     static get styles() {
       return css`
 
+      :host {
+        overflow: hidden;
+      }
+      
       `;
     }
 
@@ -122,11 +126,6 @@ export class InteractiveTimeSeries extends LitElement {
   }
 
   willUpdate(changedProps:any) {
-
-    if (changedProps.has('colorscale')) {
-      if (!Array.isArray(this.colorscale) && !this.colorscales.includes(this.colorscale)) this.colorscale = 'Electric'
-      this.Plotly.restyle(this.div, 'colorscale', this.colorscale);
-    }
     
     if (changedProps.has('data')) {
       this.Plotly.newPlot(this.div, this.getTraces(), this.getLayout());
