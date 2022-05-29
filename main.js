@@ -2,7 +2,8 @@
 import * as bids from './src/standards/bids/src/index.js'
 import * as components from './src/components/index.js'
 import * as files from './src/files/src/index.js'
-import xmlHEDScore from './HED_score_0.0.1.xml'
+import xmlHEDScore from './HED_score_1.0.0.xml'
+console.log('xmlHEDScore', xmlHEDScore)
 
 const editorDiv = document.getElementById('editor')
 const errorDiv = document.getElementById('errors')
@@ -12,18 +13,20 @@ const tagControl = document.getElementById('tag')
 // tagControl.style.display = 'none'
 
 const handleXML = ({HED}) => {
-    const options = []
+    const options = new Set()
     const o = HED.schema[0]
 
     const drillNodes = (o, base) => {
+      if (o.name) base += `/${o.name[0]['_']}`
       if (o.node) {
-        if (o.name) base += `/${o.name[0]['_']}`
         o.node.forEach(o => drillNodes(o,base))
-      } else options.push(base)
+      } else {
+        options.add(base)
+      }
     }
 
     drillNodes(o,'')
-    tagControl.options = options
+    tagControl.options = Array.from(options)
 }
 
 files.decode({text: xmlHEDScore}, 'application/xml').then(handleXML)
