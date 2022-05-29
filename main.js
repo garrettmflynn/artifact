@@ -1,17 +1,35 @@
 // import * as components from 'https://cdn.jsdelivr.net/npm/visualscript'
 import * as bids from './src/standards/bids/src/index.js'
-import * as components from './src/components/index'
-
+import * as components from './src/components/index.js'
+import * as files from './src/files/src/index.js'
+import xmlHEDScore from './HED_score_0.0.1.xml'
 
 const editorDiv = document.getElementById('editor')
 const errorDiv = document.getElementById('errors')
 const warningDiv = document.getElementById('warnings')
 const downloadButton = document.getElementById('download')
 const tagControl = document.getElementById('tag')
-tagControl.options = ['Event/Something', 'Event/Other']
+// tagControl.style.display = 'none'
+
+const handleXML = ({HED}) => {
+    const options = []
+    const o = HED.schema[0]
+
+    const drillNodes = (o, base) => {
+      if (o.node) {
+        if (o.name) base += `/${o.name[0]['_']}`
+        o.node.forEach(o => drillNodes(o,base))
+      } else options.push(base)
+    }
+
+    drillNodes(o,'')
+    tagControl.options = options
+}
+
+files.decode({text: xmlHEDScore}, 'application/xml').then(handleXML)
+
 
 const editor = new components.ObjectEditor({ header: 'Dataset', plot: ['data'] })
-editor.style.color = 'black'
 editor.onPlot = () => {
 
   const maxNum = 1000000
@@ -20,6 +38,7 @@ editor.onPlot = () => {
   console.log('Original Data Length', channelInfo.data.length)
   const y = (channelInfo.data.length < maxNum) ? channelInfo.data : channelInfo.data.slice(0, maxNum)
   console.log('New Data Length', y.length)
+
 
   editor.timeseries.data = [
     {
@@ -107,6 +126,15 @@ editorDiv.appendChild(editor)
 
 let bidsDataset = null
 const dataset = document.getElementById('dataset')
+
+const xmlSelector = document.getElementById('xml')
+xmlSelector.onChange = async (ev) => {
+
+  tagControl.style.display = 'block'
+
+  const file = ev.target.files[0]
+  files.get(file).then(handleXML)
+}
 
 // --------------- Create a BIDS Dataset ---------------
 dataset.onChange = async (ev) => {

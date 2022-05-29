@@ -18,6 +18,10 @@ export default async (o, mimeType, zipped) => {
             return decoders.nwb(o)
         case "application/x-edf": 
             return decoders.edf(o)
+        case "application/xml": 
+            return await decoders.xml(o)
+        case "text/xml": // Alt. xml mimeType
+            return await decoders.xml(o)
         default: 
             return decoders.text(o)
     }

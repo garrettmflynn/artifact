@@ -591,12 +591,12 @@ class N {
     t = P(this, t, i), r(t) ? t === w || null == t || "" === t ? (this._$AH !== w && this._$AR(), this._$AH = w) : t !== this._$AH && t !== b && this.$(t) : void 0 !== t._$litType$ ? this.T(t) : void 0 !== t.nodeType ? this.k(t) : u(t) ? this.S(t) : this.$(t);
   }
 
-  M(t, i = this._$AB) {
+  A(t, i = this._$AB) {
     return this._$AA.parentNode.insertBefore(t, i);
   }
 
   k(t) {
-    this._$AH !== t && (this._$AR(), this._$AH = this.M(t));
+    this._$AH !== t && (this._$AR(), this._$AH = this.A(t));
   }
 
   $(t) {
@@ -628,7 +628,7 @@ class N {
     let s,
         e = 0;
 
-    for (const o of t) e === i.length ? i.push(s = new N(this.M(h()), this.M(h()), this, this.options)) : s = i[e], s._$AI(o), e++;
+    for (const o of t) e === i.length ? i.push(s = new N(this.A(h()), this.A(h()), this, this.options)) : s = i[e], s._$AI(o), e++;
 
     e < i.length && (this._$AR(s && s._$AB.nextSibling, e), i.length = e);
   }
@@ -741,7 +741,7 @@ class L {
 }
 
 const z = window.litHtmlPolyfillSupport;
-null == z || z(E, N), (null !== (t$1 = globalThis.litHtmlVersions) && void 0 !== t$1 ? t$1 : globalThis.litHtmlVersions = []).push("2.2.2");
+null == z || z(E, N), (null !== (t$1 = globalThis.litHtmlVersions) && void 0 !== t$1 ? t$1 : globalThis.litHtmlVersions = []).push("2.2.1");
 
 /**
  * @license
@@ -796,10 +796,11 @@ null == n$1 || n$1({
 
 class Volume extends s {
     constructor(props = {}) {
+        var _a, _b, _c;
         super();
-        this.volume = props.volume ?? 0;
-        this.backgroundColor = props.backgroundColor ?? '#69ce2b';
-        this.count = props.count ?? 10;
+        this.volume = (_a = props.volume) !== null && _a !== void 0 ? _a : 0;
+        this.backgroundColor = (_b = props.backgroundColor) !== null && _b !== void 0 ? _b : '#69ce2b';
+        this.count = (_c = props.count) !== null && _c !== void 0 ? _c : 10;
     }
     static get styles() {
         return r$2 `
@@ -839,7 +840,8 @@ class Volume extends s {
         }
     }
     render() {
-        const numToColor = Math.round(this.count * (this.volume ?? 0));
+        var _a;
+        const numToColor = Math.round(this.count * ((_a = this.volume) !== null && _a !== void 0 ? _a : 0));
         return $ `
       <style>
         .target{
@@ -2016,8 +2018,9 @@ var WebglLinePlotUtils = /*#__PURE__*/function () {
   return WebglLinePlotUtils;
 }();
 
-class TimeSeries extends s {
+class TimeSeries$1 extends s {
     constructor(props = { seconds: 5, sps: 512 }) {
+        var _a, _b, _c;
         super();
         this.data = [];
         this.spss = [];
@@ -2057,9 +2060,9 @@ class TimeSeries extends s {
         };
         this.canvas = document.createElement('canvas');
         this.util = new WebglLinePlotUtils(this.canvas, false);
-        this.sps = props.sps ?? 512;
-        this.seconds = props.seconds ?? 5;
-        this.backgroundColor = props.backgroundColor ?? '#69ce2b';
+        this.sps = (_a = props.sps) !== null && _a !== void 0 ? _a : 512;
+        this.seconds = (_b = props.seconds) !== null && _b !== void 0 ? _b : 5;
+        this.backgroundColor = (_c = props.backgroundColor) !== null && _c !== void 0 ? _c : '#69ce2b';
         let newFrame = () => {
             if (this.buffers.length > 0) {
                 this.util.updateAllLines(this.buffers, this.spss, true);
@@ -2112,10 +2115,11 @@ class TimeSeries extends s {
         return this.canvas;
     }
 }
-customElements.define('visualscript-timeseries', TimeSeries);
+customElements.define('visualscript-timeseries-stream', TimeSeries$1);
 
-class Spectrogram extends s {
+class Spectrogram$1 extends s {
     constructor(props = {}) {
+        var _a, _b, _c;
         super();
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext("2d");
@@ -2141,14 +2145,15 @@ class Spectrogram extends s {
             this.data = data;
         };
         this.onresize = () => {
-            const width = this.canvas.parentNode?.clientWidth;
-            const height = this.canvas.parentNode?.clientHeight;
+            var _a, _b, _c, _d;
+            const width = (_a = this.canvas.parentNode) === null || _a === void 0 ? void 0 : _a.clientWidth;
+            const height = (_b = this.canvas.parentNode) === null || _b === void 0 ? void 0 : _b.clientHeight;
             if (width) {
-                this.canvas.width = this.canvas.parentNode?.clientWidth;
+                this.canvas.width = (_c = this.canvas.parentNode) === null || _c === void 0 ? void 0 : _c.clientWidth;
                 this.canvas.style.width = width.toString();
             }
             if (height) {
-                this.canvas.height = this.canvas.parentNode?.clientHeight;
+                this.canvas.height = (_d = this.canvas.parentNode) === null || _d === void 0 ? void 0 : _d.clientHeight;
                 this.canvas.style.height = height.toString();
             }
         };
@@ -2193,16 +2198,16 @@ class Spectrogram extends s {
                 this.reset = false;
             }
         };
-        this.max = props.max ?? 1;
+        this.max = (_a = props.max) !== null && _a !== void 0 ? _a : 1;
         this.normalizeFactor = (props.max) ? 1 / props.max : 1;
-        this.backgroundColor = props.backgroundColor ?? '#69ce2b';
+        this.backgroundColor = (_b = props.backgroundColor) !== null && _b !== void 0 ? _b : '#69ce2b';
         window.addEventListener('resize', () => {
             this.onresize();
         });
         this.offscreen = new OffscreenCanvas(this.canvas.width, this.canvas.height);
         this.offscreenctx = this.offscreen.getContext("2d");
         this.init();
-        this.data = props.data ?? new Array(this.canvas.height).fill(0);
+        this.data = (_c = props.data) !== null && _c !== void 0 ? _c : new Array(this.canvas.height).fill(0);
         // this.test()
         this.onresize();
     }
@@ -2260,7 +2265,1916 @@ class Spectrogram extends s {
         return this.canvas;
     }
 }
-customElements.define('visualscript-spectrogram', Spectrogram);
+customElements.define('visualscript-spectrogram-stream', Spectrogram$1);
+
+var index$2 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  TimeSeries: TimeSeries$1,
+  Spectrogram: Spectrogram$1
+});
+
+var index$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  audio: index$4,
+  video: index$3,
+  data: index$2
+});
+
+// Note: Inspired by the Red Hat website https://www.redhat.com/en
+class Nav extends s {
+    constructor(props = { brand: {}, primary: { menu: [], options: [] }, secondary: [] }) {
+        var _a, _b, _c, _d;
+        super();
+        this.getElement = (o) => {
+            switch (o.type) {
+                case 'button':
+                    return $ `<a href="${o.link}" target=${(o.external) ? "_blank" : "_self"}><button>${o.content}</button></a>`;
+                default:
+                    return $ `<a href="${o.link}" target=${(o.external) ? "_blank" : "_self"} class="decorate">${o.content}</a>`;
+            }
+        };
+        this.primary = (_a = props.primary) !== null && _a !== void 0 ? _a : { menu: [], options: [] };
+        this.secondary = (_b = props.secondary) !== null && _b !== void 0 ? _b : [];
+        this.color = (_c = props.color) !== null && _c !== void 0 ? _c : 'blue';
+        this.brand = (_d = props.brand) !== null && _d !== void 0 ? _d : { content: 'My Brand' };
+    }
+    static get styles() {
+        return r$2 `
+
+    
+    :host {
+      z-index: 2;
+      border-bottom: 1px solid rgb(180,180,180);
+      background: white;
+      color: black;
+      display:flex;
+      align-items: center;
+      width: 100%;
+      grid-area: nav;
+      z-index: 100;
+    }
+
+    header {
+      width: 100%;
+    }
+
+    :host * {
+      box-sizing: border-box;
+    }
+    
+    h1 {
+      margin: 0;
+    }
+
+    nav {
+      width: 100%;
+      padding:  0px 25px;
+      display: flex;
+      align-items: center;
+    }
+
+    #primary {
+      position: sticky; 
+      top: 0;
+      left: 0;
+      height: 70px;
+      max-height: 100px;
+      justify-content: space-between;
+      font-size: 80%;
+    }
+
+    #primary > * {
+      flex-grow: 1;
+      display: flex;
+    }
+
+    #primary > div:lastchild {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: row-reverse;
+    }
+
+    #menu, #options {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #secondary {
+      height: 50px;
+      justify-content: flex-end;
+      border-bottom: 1px solid #3d3d3d;
+      font-size: 75%;
+    }
+
+    a{
+      color: black;
+      text-decoration: none;
+    }
+
+    .brand {
+      padding-right: 15px;
+    }
+
+    a:not(.brand) {
+      height: 100%;
+      display: flex;
+      align-items: center; 
+      justify-content: center;
+      text-align: center;
+    }
+
+    .decorate {
+      padding: 10px 15px;
+    }
+
+    #primary .decorate:hover {
+      box-shadow: 0 4px 0 #0fb3ff inset;
+    }
+
+    #secondary .decorate:hover {
+      box-shadow: 0 3px 0 #c4c4c4 inset;
+    }
+
+    button {
+      border: 1px solid white;
+      border-radius: 3px;
+      background: transparent;
+      padding: 5px 10px;
+      margin-left: 10px;
+      font-size: 95%;
+    }
+    
+    nav button:last-child {
+      margin-right: 0px;
+    }
+
+    button:hover {
+      outline: 1.1px solid white;
+      cursor: pointer;
+    }
+
+    @media only screen and (max-width: 800px) {
+      #primary #menu {
+        display: none;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :host {
+        background: #060606;
+        color: white;
+      }
+
+      a {
+        color: white;
+      }
+    }
+
+    `;
+    }
+    static get properties() {
+        return {
+            primary: {
+                type: Object,
+                // reflect: true,
+            },
+            secondary: {
+                type: Array,
+                reflect: true,
+            },
+            brand: {
+                type: Object,
+            },
+            color: {
+                type: String,
+                reflect: true,
+            },
+        };
+    }
+    willUpdate(changedProps) {
+        // console.log(changedProps)
+        if (changedProps.has('primary')) ;
+    }
+    render() {
+        // console.log('Primary', this.primary)
+        // console.log('secondary', this.secondary)
+        // console.log('brand', this.brand)
+        var _a, _b, _c;
+        return $ `
+      <header>
+      ${(this.secondary.length > 0) ? $ `<nav id="secondary">${(_a = this.secondary) === null || _a === void 0 ? void 0 : _a.map(o => this.getElement(o))}</nav>` : ``}
+      <nav id="primary">
+      ${$ `<div><a class="brand" target=${(this.brand.external) ? "_blank" : "_self"} href=${this.brand.link}>${(this.brand.content) ? ((/(jpg|gif|png|JPG|GIF|PNG|JPEG|jpeg)$/.test(this.brand.content)) ? $ `<img src="${this.brand.content}"></img>` : $ `<h1>${this.brand.content}</h1><slot></slot>`) : $ `<h1><slot></slot></h1>`}</a></div>`}
+        <div>
+          <div id="options">
+          ${(_b = this.primary.options) === null || _b === void 0 ? void 0 : _b.map(o => this.getElement(o))}
+          </div>
+          <div id="menu">
+            ${(_c = this.primary.menu) === null || _c === void 0 ? void 0 : _c.map(o => this.getElement(o))}
+          </div>
+        </div>
+
+      </nav>
+      </header>
+    `;
+    }
+}
+customElements.define('visualscript-nav', Nav);
+
+// Note: Inspired by the Red Hat website https://www.redhat.com/en
+class Loader extends s {
+    constructor(props = {}) {
+        var _a, _b, _c, _d;
+        super();
+        this.progress = props.progress;
+        this.color = props.color;
+        this.background = (_a = props.background) !== null && _a !== void 0 ? _a : '#f3f3f3';
+        this.type = (_b = props.type) !== null && _b !== void 0 ? _b : 'default';
+        this.showPercent = (_c = props.showPercent) !== null && _c !== void 0 ? _c : true;
+        this.text = props.text;
+        this.textBackground = props.textBackground;
+        this.textColor = props.textColor;
+        this.size = (_d = props.size) !== null && _d !== void 0 ? _d : '13px';
+        // Conditionally change default color
+        if (!this.color) {
+            if (this.type === 'default')
+                this.color = 'blue';
+            else
+                this.color = '#7aff80';
+        }
+    }
+    static get styles() {
+        return r$2 `
+    
+    :host {
+      
+    }
+
+    #container {  
+      width: 100%;
+    }
+
+    #indicator { 
+      width: 100%;
+      overflow: hidden;
+      animate: 0.5s;
+      opacity: 0.7;
+    }
+
+    #indicator > div {
+      width: 100%;
+      height: 100%;
+    }
+
+    #linear-text {  
+      padding: 10px 15px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      font-size: 75%;
+      background: white;
+    }
+
+    .loader-container {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      color: #5b5b5b;
+    }
+
+    .loader {
+      width: 100%;
+      height: 100%;
+      border: 4px solid;
+      background: white;
+      border-right: none;
+      border-top: none;
+      border-left: none;
+      z-index: 2000;
+      background-color: transparent;
+      border-radius: 100%;
+      transform: rotateZ(0);
+    }
+
+    .loader-container > span{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      font-size: 80%;
+      transform: translate(-50%, -50%);
+      user-select: none;
+    }
+
+    .loader.active {
+      opacity: 0.45;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+    }
+
+    /* @-moz-keyframes spin {  . . . } */
+    
+    
+    /* @-ms-keyframes spin {  . . . } */
+    
+    
+    /* @-o-keyframes spin { . . . } */
+    
+    @-webkit-keyframes spin {
+      from {
+        transform: rotateZ(0deg) scale(1);
+      }
+      50% {
+        transform: rotateZ(540deg) scale(0.9);
+        filter: brightness(50%);        
+      }
+      to {
+        transform: rotateZ(1080deg) scale(1);
+      }
+    }
+    
+    @keyframes spin {
+      from {
+        transform: rotateZ(0deg) scale(1);
+      }
+      50% {
+        transform: rotateZ(540deg) scale(0.9);
+        filter: brightness(50%);
+      }
+      to {
+        transform: rotateZ(1080deg) scale(1);
+      }
+    }
+    `;
+    }
+    static get properties() {
+        return {
+            progress: {
+                type: Number,
+                reflect: true,
+            },
+            text: {
+                type: String,
+                reflect: true,
+            },
+            type: {
+                type: String,
+                reflect: true,
+            },
+            color: {
+                type: String,
+                reflect: true,
+            },
+            background: {
+                type: String,
+                reflect: true,
+            },
+            textBackground: {
+                type: String,
+                reflect: true,
+            },
+            textColor: {
+                type: String,
+                reflect: true,
+            },
+            size: {
+                type: String,
+                reflect: true,
+            },
+        };
+    }
+    willUpdate(_) {
+        // console.log(changedProps)
+        // if (changedProps.has('type')) {
+        // }
+    }
+    render() {
+        var _a;
+        const progress = (_a = this.progress) !== null && _a !== void 0 ? _a : 0;
+        const text = (this.text != undefined) ? this.text : (this.showPercent) ? `${(progress * 100).toFixed(1)}%` : '';
+        switch (this.type) {
+            case 'linear':
+                return $ `
+            ${(text) ? $ `<div id="linear-text" style="background: ${this.textBackground}; color: ${this.textColor};">${text}</div>` : ''}
+            <div id="indicator" style="height:${this.size}; background:${this.background}; opacity:${(progress === 1) ? 1 : ''};">
+                <div style="width:${progress * 100}%; background: ${this.color}"></div>
+              </div>
+            `;
+            default:
+                // if (progress < 1) 
+                return $ `
+            <div class="loader-container" style="height:${this.size}; width:${this.size}; background: ${this.textBackground};">
+              ${(text) ? $ `<span style="color: ${this.textColor};">${text}</span>` : ''}
+              <div class="loader active" style="border-color: ${this.color};"></div>
+            </div>
+            `;
+        }
+    }
+}
+customElements.define('visualscript-loader', Loader);
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const t = {
+  ATTRIBUTE: 1,
+  CHILD: 2,
+  PROPERTY: 3,
+  BOOLEAN_ATTRIBUTE: 4,
+  EVENT: 5,
+  ELEMENT: 6
+},
+      e = t => (...e) => ({
+  _$litDirective$: t,
+  values: e
+});
+
+class i$1 {
+  constructor(t) {}
+
+  get _$AU() {
+    return this._$AM._$AU;
+  }
+
+  _$AT(t, e, i) {
+    this._$Ct = t, this._$AM = e, this._$Ci = i;
+  }
+
+  _$AS(t, e) {
+    return this.update(t, e);
+  }
+
+  update(t, e) {
+    return this.render(...e);
+  }
+
+}
+
+/**
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+const i = e(class extends i$1 {
+  constructor(t$1) {
+    var e;
+    if (super(t$1), t$1.type !== t.ATTRIBUTE || "style" !== t$1.name || (null === (e = t$1.strings) || void 0 === e ? void 0 : e.length) > 2) throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.");
+  }
+
+  render(t) {
+    return Object.keys(t).reduce((e, r) => {
+      const s = t[r];
+      return null == s ? e : e + `${r = r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g, "-$&").toLowerCase()}:${s};`;
+    }, "");
+  }
+
+  update(e, [r]) {
+    const {
+      style: s
+    } = e.element;
+
+    if (void 0 === this.ct) {
+      this.ct = new Set();
+
+      for (const t in r) this.ct.add(t);
+
+      return this.render(r);
+    }
+
+    this.ct.forEach(t => {
+      null == r[t] && (this.ct.delete(t), t.includes("-") ? s.removeProperty(t) : s[t] = "");
+    });
+
+    for (const t in r) {
+      const e = r[t];
+      null != e && (this.ct.add(t), t.includes("-") ? s.setProperty(t, e) : s[t] = e);
+    }
+
+    return b;
+  }
+
+});
+
+class Button extends s {
+    constructor(props = {}) {
+        super();
+        this.primary = props.primary;
+        this.backgroundColor = props.backgroundColor;
+        this.size = props.size;
+        this.onClick = props.onClick;
+    }
+    static get styles() {
+        return r$2 `
+
+    .storybook-button {
+      
+      font-weight: 700;
+      border: 0;
+      border-radius: 1em;
+      cursor: pointer;
+      display: inline-block;
+      line-height: 1;
+    }
+    .storybook-button--primary {
+      color: white;
+      background-color: #1ea7fd;
+    }
+    .storybook-button--secondary {
+      color: #333;
+      background-color: transparent;
+      box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+    }
+    .storybook-button--extra-small {
+      font-size: 10px;
+      padding: 7px 12px;
+    }
+
+    .storybook-button--small {
+      font-size: 12px;
+      padding: 10px 16px;
+    }
+    .storybook-button--medium {
+      font-size: 14px;
+      padding: 11px 20px;
+    }
+    .storybook-button--large {
+      font-size: 16px;
+      padding: 12px 24px;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+      .storybook-button--secondary {
+        color: #cccccc;
+        background-color: transparent;
+        box-shadow: rgba(255, 255, 255, 0.50) 0px 0px 0px 1px inset;
+      }
+    }
+
+    `;
+    }
+    static get properties() {
+        return {
+            primary: {
+                type: Boolean,
+                reflect: true
+            },
+            backgroundColor: {
+                type: String,
+                reflect: true
+            },
+            size: {
+                type: String,
+                reflect: true
+            },
+            onClick: {
+                type: Function,
+                reflect: true
+            }
+        };
+    }
+    willUpdate(_) {
+        // console.log(changedProps)
+        // if (changedProps.has('type')) {
+        // }
+    }
+    render() {
+        const mode = (this.primary) ? 'storybook-button--primary' : 'storybook-button--secondary';
+        return $ `
+      <button
+           type="button"
+            class=${['storybook-button', `storybook-button--${this.size || 'medium'}`, mode].join(' ')}
+            style=${i({ backgroundColor: this.backgroundColor })}
+            @click=${this.onClick}
+      >
+        <slot>Button</slot>
+      </button>
+    `;
+    }
+}
+customElements.define('visualscript-button', Button);
+
+class Modal extends s {
+    constructor(props = {}) {
+        super();
+        this.toggle = () => this.open = !this.open;
+        this.open = props.open;
+        this.header = props.header;
+        this.footer = props.footer;
+    }
+    static get styles() {
+        return r$2 `
+/* Modal Header */
+
+  :host {
+    
+    z-index: 101;
+  }
+  
+  :host * {
+    box-sizing: border-box;
+    
+  }
+
+.modal-header {
+  padding: 12px 16px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 1px solid #e3e3e3;
+}
+
+.modal-header span {
+  font-weight: 800;
+  font-size: 120%;
+}
+
+
+/* Modal Body */
+.modal-body {
+  padding: 16px;
+  overflow: scroll;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Modal Footer */
+.modal-footer {
+  border-top: 1px solid #e3e3e3;
+  padding: 12px 16px;
+  width: 100%;
+}
+
+.modal-footer span {
+  font-size: 80%;
+}
+
+/* Modal Content */
+.modal-content {
+  
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+
+  background-color: #fefefe;
+  margin: auto;
+  border-radius: 4px;
+  padding: 0;
+  width: 80vw;
+  height: 80vh;
+  box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+  transition: opacity 0.5s;
+  display: flex; 
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  pointer-events: none;
+  z-index: 102;
+  opacity: 0;
+}
+
+.modal-content.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+    `;
+    }
+    static get properties() {
+        return {
+            open: {
+                type: Boolean,
+                reflect: true
+            },
+            header: {
+                type: Object,
+                reflect: true
+            },
+            footer: {
+                type: String,
+                reflect: true
+            },
+        };
+    }
+    willUpdate(_) {
+        // console.log(changedProps)
+        // if (changedProps.has('type')) {
+        // }
+    }
+    render() {
+        return $ `
+      <div class="modal-content ${this.open ? 'open' : ''}">
+        ${(this.header) ? $ `<div class="modal-header">
+          <span>${this.header}</span>
+          <visualscript-button secondary size="extra-small" @click="${this.toggle}">Close</visualscript-button>
+        </div>` : ''}
+        <div class="modal-body">
+          <slot>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dolor vitae hendrerit feugiat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Integer ultricies arcu nec nibh commodo aliquam at in felis. Mauris lorem dui, porttitor et lectus vel, ornare sodales risus. Sed eu rhoncus ex. Donec tristique nibh lacus, sed dictum lacus lacinia eu. Nunc imperdiet a ante et feugiat. Praesent euismod tortor lacus, et euismod turpis mollis vitae. Etiam sagittis vehicula pulvinar. Aliquam id tincidunt tortor, sed feugiat nulla. Donec sollicitudin tincidunt viverra. Nunc condimentum molestie massa a feugiat. Nam mattis bibendum sodales. Nulla at maximus arcu, quis tempus lacus.
+
+Vestibulum pharetra pretium neque eu faucibus. Morbi aliquam urna non lacinia congue. Donec sed odio interdum, imperdiet tellus in, porttitor erat. Mauris erat velit, facilisis ut luctus sit amet, laoreet vitae ligula. Morbi a mi ultrices, feugiat ante in, convallis enim. Etiam sollicitudin leo purus, ut commodo ex placerat et. Proin ut nulla non risus luctus eleifend eu id orci.
+
+Ut aliquam tristique massa. Nullam a ipsum tincidunt, malesuada ipsum non, suscipit lectus. Suspendisse sit amet risus ut lectus efficitur feugiat in ut urna. Suspendisse odio felis, efficitur eu molestie eu, malesuada nec nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque fermentum sit amet odio id convallis. Donec luctus risus ac pretium ultrices. Quisque congue velit sed hendrerit posuere. Integer dictum felis eu tortor mattis scelerisque. Fusce facilisis justo nec velit vehicula gravida sit amet at erat. Suspendisse sit amet nibh metus. Aenean euismod, tortor a venenatis laoreet, sapien arcu semper turpis, non molestie risus ligula nec velit.
+
+Nulla eget ultrices justo, non posuere dui. Praesent ultrices dui eget erat accumsan varius. Ut ut mi arcu. Integer porttitor, neque vitae fermentum dictum, tellus quam tincidunt mauris, eget tristique turpis mauris nec magna. Phasellus ut tortor eros. Ut vehicula non purus in efficitur. Quisque justo elit, varius id luctus et, pulvinar eget ipsum. Sed tristique et odio eu facilisis.
+
+Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi at maximus nunc. In porttitor rutrum rhoncus. Ut dignissim viverra erat in aliquet. Suspendisse potenti. Donec lorem sem, vulputate non diam a, facilisis luctus tortor. In pellentesque ut eros id vulputate. Proin rutrum tincidunt libero, vel dictum libero ullamcorper in. Nam nec ultricies tortor, sit amet pellentesque ante. Sed tellus purus, pharetra vitae purus quis, accumsan vestibulum tellus. Vivamus porttitor urna a odio tincidunt tristique. Integer ut metus finibus, ultricies magna sed, congue eros. Duis velit velit, consectetur at faucibus ac, scelerisque nec diam.
+</slot>
+        </div>
+        ${(this.footer) ? $ `<div class="modal-footer">
+          <span>${this.footer}</span>
+        </div>` : ''}
+      </div>
+      <visualscript-overlay .open=${this.open}></visualscript-overlay>
+    `;
+    }
+}
+customElements.define('visualscript-modal', Modal);
+
+class Footer extends s {
+    static get styles() {
+        return r$2 `
+
+    :host {
+      padding: 25px;
+      border-top: 1px solid rgb(180,180,180);
+      background: white;
+      color: black;
+      display:flex;
+      align-items: center;
+      width: 100%;
+      font-size: 70%;
+      box-sizing: border-box;
+      z-index: 100;
+      grid-area: foot;
+    }
+
+    :host * {
+      box-sizing: border-box;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :host {
+        background: #060606;
+        color: white;
+      }
+
+      a {
+        color: white;
+      }
+    }
+    `;
+    }
+    static get properties() {
+        return {};
+    }
+    constructor(props = {}) {
+        super();
+    }
+    render() {
+        return $ `
+
+      <slot></slot>
+    `;
+    }
+}
+customElements.define('visualscript-footer', Footer);
+
+class Overlay extends s {
+    constructor(props = {}) {
+        var _a;
+        super();
+        this.open = false;
+        this.open = (_a = props.open) !== null && _a !== void 0 ? _a : false;
+    }
+    static get styles() {
+        return r$2 `
+
+    div {
+      opacity: 0;
+      width: 100vw;
+      height: 100vh;
+      transition: 0.5s;
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 50;
+      color: black;
+      background: rgb(255,255, 255, 0.7);
+    }
+    
+
+    div[open] {
+      opacity: 1;
+      pointer-events: all;
+      backdrop-filter: blur(3px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      div {
+        color: white;
+        background: rgb(0,0,0, 0.5);
+      }
+    }
+
+    `;
+    }
+    static get properties() {
+        return {
+            open: {
+                type: Boolean,
+                reflect: true,
+            }
+        };
+    }
+    render() {
+        return $ `
+      <div ?open=${this.open ? true : false}>
+        <slot></slot>
+      </div>
+    `;
+    }
+}
+customElements.define('visualscript-overlay', Overlay);
+
+/**
+ * @license
+ * Copyright 2021 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+var n;
+null != (null === (n = window.HTMLSlotElement) || void 0 === n ? void 0 : n.prototype.assignedElements) ? (o, n) => o.assignedElements(n) : (o, n) => o.assignedNodes(n).filter(o => o.nodeType === Node.ELEMENT_NODE);
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+console.warn("The main 'lit-element' module entrypoint is deprecated. Please update your imports to use the 'lit' package: 'lit' and 'lit/decorators.ts' or import from 'lit-element/lit-element.ts'. See https://lit.dev/msg/deprecated-import-path for more information.");
+
+/**
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+const o = e(class extends i$1 {
+  constructor(t$1) {
+    var i;
+    if (super(t$1), t$1.type !== t.ATTRIBUTE || "class" !== t$1.name || (null === (i = t$1.strings) || void 0 === i ? void 0 : i.length) > 2) throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
+  }
+
+  render(t) {
+    return " " + Object.keys(t).filter(i => t[i]).join(" ") + " ";
+  }
+
+  update(i, [s]) {
+    var r, o;
+
+    if (void 0 === this.et) {
+      this.et = new Set(), void 0 !== i.strings && (this.st = new Set(i.strings.join(" ").split(/\s/).filter(t => "" !== t)));
+
+      for (const t in s) s[t] && !(null === (r = this.st) || void 0 === r ? void 0 : r.has(t)) && this.et.add(t);
+
+      return this.render(s);
+    }
+
+    const e = i.element.classList;
+    this.et.forEach(t => {
+      t in s || (e.remove(t), this.et.delete(t));
+    });
+
+    for (const t in s) {
+      const i = !!s[t];
+      i === this.et.has(t) || (null === (o = this.st) || void 0 === o ? void 0 : o.has(t)) || (i ? (e.add(t), this.et.add(t)) : (e.remove(t), this.et.delete(t)));
+    }
+
+    return b;
+  }
+
+});
+
+const PersistableProps = {
+    label: {
+        type: String,
+        reflect: true
+    },
+    persist: {
+        type: Boolean,
+        reflect: true
+    },
+    value: {
+        type: String,
+        reflect: true
+    },
+    onChange: {
+        type: Function,
+        reflect: true
+    }
+};
+const setPersistent = (o) => {
+    if (o.persist && o.label)
+        localStorage.setItem(o.label, String(o.value));
+};
+const getPersistent = (props) => {
+    if (props.value)
+        return props.value;
+    else if (props.persist && props.label) {
+        const val = localStorage.getItem(props.label);
+        if (val === 'null')
+            return null;
+        else if (val === 'undefined')
+            return undefined;
+        else
+            return val;
+    }
+};
+
+class Input extends s {
+    constructor(props = {}) {
+        var _a, _b, _c;
+        super();
+        this.value = (_a = props.value) !== null && _a !== void 0 ? _a : "";
+        this.outline = (_b = props.outline) !== null && _b !== void 0 ? _b : false;
+        this.disabled = (_c = props.disabled) !== null && _c !== void 0 ? _c : false;
+        this.label = props.label;
+        this.persist = props.persist;
+        const val = getPersistent(props);
+        if (val)
+            this.value = val;
+    }
+    // properties getter
+    static get properties() {
+        return Object.assign(PersistableProps, {
+            disabled: { type: Boolean, reflect: true },
+            outline: { type: Boolean, reflect: true }
+        });
+    }
+    willUpdate(changedProps) {
+        if (changedProps.has('value'))
+            setPersistent(this);
+    }
+    static get styles() {
+        return r$2 `
+
+        :host {
+            width: 100%;
+        }
+*{
+box-sizing: border-box;
+}
+.form-group {
+position: relative;
+margin: 1rem 0;
+}
+input.outline {
+border: 1px solid  #333333;
+border-radius: 5px;
+}
+label {
+position: absolute;
+font-size: 1rem;
+left: 0;
+top: 50%;
+transform: translateY(-50%);
+color: gray;
+padding: 0 0.3rem;
+margin: 0 0.5rem;
+transition: 0.1s ease-out;
+transform-origin: left top;
+pointer-events: none;
+}
+input {
+font-size: 1rem;
+outline: none;
+border: none;
+border-radius: 0px;
+padding: 1rem 0.6rem;
+transition: 0.1s ease-out;
+border-bottom: 1px solid  #333333;
+background: transparent;
+cursor: text;
+margin-left: auto;
+width: 95%;
+margin-right: auto;
+}
+input::placeholder {
+    color: transparent;
+}
+input:focus{
+border-color:  #b949d5;
+}
+input:focus + label{
+color:  #b949d5;
+top: 0;
+transform: translateY(-50%) scale(0.9);
+}
+input:not(:placeholder-shown) + label{
+top: 0;
+transform: translateY(-50%) scale(0.9);
+}
+input:focus:not(.outline) ~ label,
+input:not(:placeholder-shown):not(.outline) ~ label
+{
+padding-left: 0px;
+}
+input:disabled,  input:disabled ~ .label {
+opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+    label {
+      color: rgb(120,120,120);
+    }
+  }
+`;
+    }
+    render() {
+        return $ `
+            <div class="form-group">
+                <input
+                class=${o({
+            outline: this.outline
+        })}
+                type="${this.type}"
+                placeholder="${this.label}"
+                .value=${(this.value != 'null' && this.value != 'undefined') ? this.value : ''}
+                ?disabled="${this.disabled}"
+
+                @change=${(ev) => {
+            this.value = ev.target.value;
+        }}
+                />
+                <label>${this.label}</label>
+            </div>
+        `;
+    }
+}
+customElements.define("visualscript-input", Input);
+
+class Search extends s {
+    constructor(props = {}) {
+        super();
+        this.getModal = () => {
+            return this.shadowRoot.querySelector('visualscript-modal');
+        };
+        if (props.items)
+            this.items = props.items;
+        window.onkeydown = (ev) => {
+            switch (ev.code) {
+                case 'Enter':
+                    this.modal.open = false;
+                    break;
+                case 'ArrowUp':
+                    console.log('Up!');
+                    break;
+                case 'ArrowDown':
+                    console.log('Down!');
+                    break;
+                case 'Escape':
+                    this.modal.open = false;
+                    break;
+            }
+        };
+    }
+    static get styles() {
+        return r$2 `
+
+    :host {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+    }
+
+    :host * {
+      
+      box-sizing: border-box;
+      
+    }
+
+    button {
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    `;
+    }
+    static get properties() {
+        return {
+            placeholder: {
+                type: String
+            },
+            items: {
+                type: Object,
+                // reflect: true
+            },
+            value: {
+                type: String,
+                reflect: true
+            }
+        };
+    }
+    render() {
+        const regex = new RegExp(this.value, 'i');
+        return $ `
+        <visualscript-button @click=${() => {
+            this.modal = this.getModal();
+            this.modal.toggle();
+        }}>Search</visualscript-button>
+        <visualscript-modal 
+          .header=${$ `<visualscript-input label="Search" @input=${(ev) => {
+            this.value = ev.composedPath()[0].value;
+        }}></visualscript-input>`}
+          .footer=${$ `<div id=commands>Enter to select. Up and Down Arrows to navigate. Esc to close.</div>`}
+        >
+        <div>${this.items.map(i => {
+            var _a;
+            let matched = false;
+            if (this.value) {
+                if (i.tags)
+                    i.tags.forEach((v) => { if (v.match(regex))
+                        matched = true; });
+                if (i.name.match(regex))
+                    matched = true;
+            }
+            else
+                matched = true;
+            if (matched)
+                return $ `<div><h3>${i.name}</h3><small>${(_a = i.tags) !== null && _a !== void 0 ? _a : 'No Tags'}</small></div>`;
+        })}</div>
+        </visualscript-modal>
+      `;
+    }
+}
+customElements.define('visualscript-search', Search);
+
+/*
+Largely from https://css-tricks.com/striking-a-balance-between-native-and-custom-select-elements/
+
+Features to make the selectCustom work for mouse users.
+
+- Toggle custom select visibility when clicking the "box"
+- Update custom select value when clicking in a option
+- Navigate through options when using keyboard up/down
+- Pressing Enter or Space selects the current hovered option
+- Close the select when clicking outside of it
+- Sync both selects values when selecting a option. (native or custom)
+
+*/
+class Select extends s {
+    constructor(props = {}) {
+        var _a;
+        super();
+        this.persist = false;
+        this.optionChecked = "";
+        this.optionHoveredIndex = -1;
+        this.options = [];
+        this.onChange = () => { };
+        this.add = (option) => {
+            this.options = [...this.options, option];
+        };
+        this.openSelectCustom = () => {
+            this.elements.elSelectCustom.classList.add("isActive");
+            // Remove aria-hidden in case this was opened by a user
+            // who uses AT (e.g. Screen Reader) and a mouse at the same time.
+            this.elements.elSelectCustom.setAttribute("aria-hidden", 'false');
+            if (this.optionChecked) {
+                const optionCheckedIndex = this.elements.customOptsList.findIndex((el) => el.getAttribute("data-value") === this.optionChecked);
+                this.updateCustomSelectHovered(optionCheckedIndex);
+            }
+            // Add related event listeners
+            // document.addEventListener("click", this.watchClickOutside);
+            document.addEventListener("keydown", this.supportKeyboardNavigation);
+        };
+        this.closeSelectCustom = () => {
+            this.elements.elSelectCustom.classList.remove("isActive");
+            this.elements.elSelectCustom.setAttribute("aria-hidden", 'true');
+            this.updateCustomSelectHovered(-1);
+            // Remove related event listeners
+            // document.removeEventListener("click", this.watchClickOutside);
+            document.removeEventListener("keydown", this.supportKeyboardNavigation);
+        };
+        this.updateCustomSelectHovered = (newIndex) => {
+            const prevOption = this.elements.elSelectCustomOpts.children[this.optionHoveredIndex];
+            const option = this.elements.elSelectCustomOpts.children[newIndex];
+            if (prevOption) {
+                prevOption.classList.remove("isHover");
+            }
+            if (option) {
+                option.classList.add("isHover");
+            }
+            this.optionHoveredIndex = newIndex;
+        };
+        this.updateCustomSelectChecked = (value, text) => {
+            var _a;
+            if (this.elements) {
+                if (!text)
+                    text = (_a = this.elements.elSelectCustomOpts.querySelectorAll(`[data-value="${value}"]`)[0]) === null || _a === void 0 ? void 0 : _a.textContent;
+                const prevValue = this.optionChecked;
+                const elPrevOption = this.elements.elSelectCustomOpts.querySelector(`[data-value="${prevValue}"`);
+                const elOption = this.elements.elSelectCustomOpts.querySelector(`[data-value="${value}"`);
+                if (elPrevOption) {
+                    elPrevOption.classList.remove("isActive");
+                }
+                if (elOption) {
+                    elOption.classList.add("isActive");
+                }
+                const elSelectCustomBox = this.elements.elSelectCustom.children[0].children[0];
+                elSelectCustomBox.textContent = text;
+                this.optionChecked = value;
+            }
+        };
+        this.watchClickOutside = (e) => {
+            const didClickedOutside = !this.contains(e.target);
+            if (didClickedOutside) {
+                this.closeSelectCustom();
+            }
+        };
+        this.supportKeyboardNavigation = (e) => {
+            // TODO: Move these to globals and check existence
+            // press down -> go next
+            if (e.keyCode === 40 && this.optionHoveredIndex < this.optionsCount - 1) {
+                this.optionHoveredIndex;
+                e.preventDefault(); // prevent page scrolling
+                this.updateCustomSelectHovered(this.optionHoveredIndex + 1);
+            }
+            // press up -> go previous
+            if (e.keyCode === 38 && this.optionHoveredIndex > 0) {
+                e.preventDefault(); // prevent page scrolling
+                this.updateCustomSelectHovered(this.optionHoveredIndex - 1);
+            }
+            // press Enter or space -> select the option
+            if (e.keyCode === 13 || e.keyCode === 32) {
+                e.preventDefault();
+                const option = this.elements.elSelectCustomOpts.children[this.optionHoveredIndex];
+                const value = option && option.getAttribute("data-value");
+                if (value) {
+                    this.elements.elSelectNative.value = value;
+                    this.updateCustomSelectChecked(value, option.textContent);
+                }
+                this.closeSelectCustom();
+            }
+            // press ESC -> close selectCustom
+            if (e.keyCode === 27) {
+                this.closeSelectCustom();
+            }
+        };
+        this.options = (_a = props.options) !== null && _a !== void 0 ? _a : [];
+        if (props.onChange)
+            this.onChange = props.onChange;
+        if (props.label)
+            this.label = props.label;
+        if (props.persist)
+            this.persist = props.persist;
+        const val = getPersistent(props);
+        if (val)
+            this.value = val;
+    }
+    static get styles() {
+        return r$2 `
+
+    #container { 
+      position: relative;
+    }
+
+    :host * {
+      box-sizing: border-box;
+    }
+
+    .selectNative, .selectCustom {
+      position: relative;
+      width: 100%;
+      height: 50px;
+      font-size: 15px;
+    }
+
+    
+    .selectCustom {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none;
+      background: white;
+    }
+    
+    .selectNative:focus,
+    .selectCustom.isActive .selectCustom-trigger {
+      outline: none;
+      box-shadow: white 0 0 5px 2px;
+    }
+    
+
+    .select {
+      position: relative;
+    }
+    
+    .selectLabel {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+    }
+    
+    .selectNative, .selectCustom-trigger {
+      border: 1px solid #6f6f6f;
+      border-radius: 0.4rem;
+    }
+    
+    .selectNative {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+      background-repeat: no-repeat;
+      background-position-x: 100%;
+      background-position-y: 0.8rem;
+      padding: 0rem 0.8rem;
+    }
+    
+    .selectCustom-trigger  > div {
+      overflow: scroll;
+      white-space: nowrap;
+    }
+
+    .selectCustom-trigger {
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 0rem 0.8rem;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .selectCustom-trigger::after {
+      content: "▾";
+      position: absolute;
+      top: 0;
+      line-height: 3.2rem;
+      right: 0.5rem;
+    }
+    
+    .selectCustom-trigger:hover {
+      border-color: #028ee6;
+    }
+    
+    .selectCustom-options {
+      position: absolute;
+      top: calc(2.8rem + 0.8rem);
+      left: 0;
+      width: 100%;
+      border: 1px solid #6f6f6f;
+      border-radius: 0.4rem;
+      background-color: whitesmoke;
+      box-shadow: 0 0 4px #e9e1f8;
+      z-index: 1;
+      padding: 0.8rem 0;
+      display: none;
+    }
+    
+    .selectCustom.isActive .selectCustom-options {
+      display: block;
+    }
+    
+    .selectCustom-option {
+      position: relative;
+      padding: 0.8rem;
+      padding-left: 2.5rem;
+      font-size: 80%;
+    }
+
+    .selectCustom-option.isHover,
+    .selectCustom-option:hover {
+      background-color: #1ea7fd; // contrast AA
+      color: white;
+      cursor: default;
+    }
+    
+    .selectCustom-option:not(:last-of-type)::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      border-bottom: 1px solid #d3d3d3;
+    }
+    
+    .selectCustom-option.isActive::before {
+      content: "✓";
+      position: absolute;
+      left: 0.8rem;
+    }
+
+
+    /* This makes the Custom Select work... 
+      Issues: Doesn't work inside of another component (e.g. Control), it clicks on that instead
+    @media (hover: hover) {
+      
+      .selectCustom {
+        display: block;
+      }
+    
+      .selectNative:focus + .selectCustom {
+        display: none;
+      }
+    }
+    */
+
+    @media (prefers-color-scheme: dark) {
+      .selectCustom {
+        background: rgb(59, 59, 59);
+      }
+
+      .selectCustom-options {
+        background: rgb(45, 45, 45);
+      }
+    }
+    `;
+    }
+    static get properties() {
+        return Object.assign({
+            options: {
+                type: Array,
+                reflect: true
+            }
+        }, PersistableProps);
+    }
+    willUpdate(changedProps) {
+        var _a, _b, _c;
+        if (changedProps.has('value'))
+            setPersistent(this);
+        if (changedProps.has('options')) {
+            const firstOption = ((_b = (_a = this.options[0]) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : this.options[0]);
+            this.value = (_c = this.value) !== null && _c !== void 0 ? _c : firstOption;
+        }
+    }
+    updated(changedProperties) {
+        const elSelectNative = this.shadowRoot.querySelectorAll(".js-selectNative")[0];
+        const elSelectCustom = this.shadowRoot.querySelectorAll(".js-selectCustom")[0];
+        const elSelectCustomOpts = elSelectCustom.children[1];
+        const customOptsList = Array.from(elSelectCustomOpts.children);
+        this.optionsCount = customOptsList.length;
+        this.elements = {
+            elSelectNative,
+            elSelectCustom,
+            elSelectCustomOpts,
+            customOptsList,
+        };
+        if (this.value)
+            this.updateCustomSelectChecked(this.value);
+    }
+    render() {
+        return $ `
+      <div id=container>
+      <select class="selectNative js-selectNative" aria-labelledby="${this.label}Label" 
+      @change=${(e) => {
+            // Update selectCustom value when selectNative is changed.
+            const value = e.target.value;
+            const elRespectiveCustomOption = this.elements.elSelectCustomOpts.querySelectorAll(`[data-value="${value}"]`)[0];
+            this.updateCustomSelectChecked(value, elRespectiveCustomOption.textContent);
+            // Original
+            this.value = e.target.value;
+            this.onChange(e); // forward change
+        }}>
+      ${(this.options.length === 0) ? $ `<slot></slot>` : this.options.map((o, i) => {
+            if (typeof o != 'object')
+                o = { value: o, text: o };
+            return $ `<option 
+          value=${o.value} 
+          ?selected=${(o.value === this.value)} 
+          >
+            ${o.text}
+          </option>`;
+        })}
+    </select>
+
+    <div class="selectCustom js-selectCustom" aria-hidden="true"}>
+      <div class="selectCustom-trigger" @click=${(e) => {
+            const isClosed = !e.target.parentNode.classList.contains("isActive");
+            if (isClosed) {
+                this.openSelectCustom();
+            }
+            else {
+                this.closeSelectCustom();
+            }
+        }}>
+        <div></div>
+      </div>
+        <div class="selectCustom-options">
+        ${this.options.map((o, i) => {
+            if (typeof o != 'object')
+                o = { value: o, text: o };
+            return $ ` <div 
+          class="selectCustom-option" 
+          data-value=${o.value}
+          @mouseenter=${(e) => {
+                this.updateCustomSelectHovered(i);
+            }}
+          @click=${(e) => {
+                const value = e.target.getAttribute("data-value");
+                // Sync native select to have the same value
+                this.elements.elSelectNative.value = value;
+                this.updateCustomSelectChecked(value, e.target.textContent);
+                this.closeSelectCustom();
+            }}
+          >
+            ${o.text}
+          </div>`;
+        })}
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
+    }
+}
+customElements.define('visualscript-select', Select);
+
+class File extends s {
+    constructor(props = {}) {
+        super();
+        this.onChange = () => { };
+        if (props.accept)
+            this.accept = props.accept;
+        if (props.onChange)
+            this.onChange = props.onChange;
+        if (props.webkitdirectory)
+            this.webkitdirectory = props.webkitdirectory;
+        if (props.directory)
+            this.directory = props.directory;
+        if (props.multiple)
+            this.multiple = props.multiple;
+    }
+    static get styles() {
+        return r$2 `
+
+    :host {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    
+    input[type=file] {
+      display: none;
+    }
+
+    :host * {
+      box-sizing: border-box;
+    }
+    
+    button {
+      flex: auto;
+      padding: 8px 12px;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+      border: none;  
+      color: #ffffff;
+      background-color: #1ea7fd;
+      width: 100%;
+      cursor: pointer;    
+      /* white-space: nowrap; */
+      font-weight: bold;
+    }
+
+    .hide {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+
+    input[type=text] {
+      flex-grow: 1;
+      padding: 8px 8px;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      border: none;
+    }
+
+    input[type=text] {
+      flex-grow: 1;
+      padding: 8px 8px;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      border: none;
+      color: black;
+      background-color: white;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      input[type=text] {
+        color: white;
+        background-color: rgb(59, 59, 59);
+      }
+    }
+    
+    `;
+    }
+    static get properties() {
+        return {
+            accept: {
+                type: String,
+                reflect: true
+            },
+            onChange: {
+                type: Function,
+                reflect: true
+            },
+            webkitdirectory: {
+                type: Boolean,
+                reflect: true
+            },
+            directory: {
+                type: Boolean,
+                reflect: true
+            },
+            multiple: {
+                type: Boolean,
+                reflect: true
+            },
+        };
+    }
+    render() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.id = 'fileupload';
+        input.accept = this.accept;
+        input.webkitdirectory = this.webkitdirectory;
+        input.directory = this.directory;
+        input.multiple = this.multiple;
+        input.onchange = (ev) => {
+            const lenFiles = ev.target.files.length;
+            const fileUploaded = ev.target.files[0];
+            const input = this.shadowRoot.querySelector('input[type=text]');
+            var filename = (lenFiles === 1) ? fileUploaded.name : `${lenFiles} files`;
+            input.value = filename;
+            input.placeholder = filename;
+            input.focus();
+            this.onChange(ev);
+        };
+        return $ `
+      <label for="fileupload" id="buttonlabel">
+        <button aria-controls="filename" tabindex="0" @click=${() => {
+            if (input)
+                input.click();
+        }}>Choose File</button>
+      </label>
+      ${input}
+      <label for="filename" class="hide">
+        uploaded file
+      </label>
+      <input type="text" id="filename" autocomplete="off" readonly placeholder="no file chosen">  
+    `;
+    }
+}
+customElements.define('visualscript-file', File);
+
+class Switch extends s {
+    constructor(props = {}) {
+        super();
+        this.persist = false;
+        this.onChange = () => { };
+        if (props.onChange)
+            this.onChange = props.onChange;
+        if (props.label)
+            this.label = props.label;
+        if (props.persist)
+            this.persist = props.persist;
+        // Inside Control
+        const val = getPersistent(props);
+        if (val)
+            this.value = val;
+    }
+    static get styles() {
+        return r$2 `
+
+    :host * {
+      box-sizing: border-box;
+    }
+
+    [role="switch"] {  
+      position: relative;
+      border-radius: 0.5rem;
+      padding: 1em 2em;
+      cursor: pointer;
+      background-color: white;
+      border: none;
+      border-radius: 14px;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    [role="switch"] * {
+      pointer-events: none;
+    }
+
+
+    [role="switch"][aria-pressed="true"] {
+      background-color: #1ea7fd;
+    }
+
+    [role="switch"][aria-pressed="true"] > .slider{
+      -webkit-transform: translateY(-50%) translateX(100%);
+      -ms-transform: translateY(-50%) translateX(100%);
+      transform: translateY(-50%) translateX(100%);
+    }
+
+    /* Remove the default outline and 
+    add the outset shadow */  
+    [aria-pressed]:focus {
+      outline: none;
+      box-shadow: white 0 0 5px 2px;
+    }
+
+    /* The slider */
+    .slider {
+      padding: 3px;
+      position: absolute;
+      cursor: pointer;
+      top: 50%;
+      left: 0;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+      -webkit-transition: .4s;
+      transition: .4s;
+      height: 100%;
+      aspect-ratio: 1/1;
+    }
+    .slider > * {
+      background-color: #ccc;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Rounded sliders */
+    .slider.round > * {
+      border-radius: 34px;
+    }
+
+    `;
+    }
+    static get properties() {
+        return PersistableProps;
+    }
+    willUpdate(changedProps) {
+        if (changedProps.has('value'))
+            setPersistent(this);
+    }
+    render() {
+        return $ `
+      <button class="switch" role="switch" aria-pressed="${String(this.value)}" aria-labelledby=${this.label} @click=${(e) => {
+            let pressed = e.target.getAttribute('aria-pressed') === 'true';
+            this.value = !pressed;
+            e.target.setAttribute('aria-pressed', String(this.value));
+            this.onChange(e);
+        }}>
+        <div class="slider round"><div></div></div>
+    </button>
+    `;
+    }
+}
+customElements.define('visualscript-switch', Switch);
+
+class Range extends s {
+    constructor(props = {}) {
+        super();
+        this.persist = false;
+        this.value = 0;
+        this.min = 0;
+        this.max = 100;
+        this.onChange = () => { };
+        this.onInput = () => { };
+        if (props.onChange)
+            this.onChange = props.onChange;
+        if (props.label)
+            this.label = props.label;
+        if (props.persist)
+            this.persist = props.persist;
+        if (props.min)
+            this.min = props.min;
+        if (props.max)
+            this.max = props.max;
+        const val = getPersistent(props);
+        if (val)
+            this.value = val;
+    }
+    static get styles() {
+        return r$2 `
+
+    :host {
+      width: 100%;
+      height: 100%;
+    }
+
+    :host * {
+      box-sizing: border-box;
+    }
+
+    .wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      position: relative;
+      overflow: hidden;
+      height: 30%;
+      width: 100%;
+      cursor: pointer;
+      border: none;
+      margin: 0;
+  }
+  
+  output {
+      position: absolute; 
+      user-select: none; 
+      pointer-events: none; 
+      z-index: 1;
+      top: 50%;
+      left: 10px;
+      transform: translate(0%, calc(-50% - 0.12rem));
+      font-size: 80%;
+  }
+  
+  input[type="range"]::-webkit-slider-runnable-track {
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 0; /* 1 */
+      height: 20px;
+      box-shadow: -100vw 0 0 100vw #1ea7fd;
+      opacity: 0.9;
+      transition: opacity 0.5s;
+  }
+  
+  input[type="range"]:hover::-webkit-slider-thumb{
+      opacity: 1;
+  }
+  
+  input[type="range"]::-moz-range-track {
+
+  }
+  
+    .visually-hidden { 
+        position: absolute !important;
+        height: 1px; 
+        width: 1px;
+        overflow: hidden;
+        clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+        clip: rect(1px, 1px, 1px, 1px);
+        white-space: nowrap; /* added line */
+    }
+
+    `;
+    }
+    static get properties() {
+        return Object.assign(PersistableProps, {
+            min: {
+                type: Number,
+                reflect: true
+            },
+            max: {
+                type: Number,
+                reflect: true
+            }
+        });
+    }
+    willUpdate(changedProps) {
+        if (changedProps.has('value'))
+            setPersistent(this);
+    }
+    render() {
+        return $ `
+      <div class="wrapper">
+        <input type="range" min="${this.min}" max="${this.max}" id="${this.label}" @change=${(ev) => {
+            this.value = ev.target.value;
+            this.onChange(ev);
+        }} @input=${(ev) => {
+            this.onInput(ev);
+        }}/>
+        <output for="${this.label}">${this.value}</output>
+        <label class="visually-hidden" for="${this.label}">${this.label}</label>
+      </div>
+    `;
+    }
+}
+customElements.define('visualscript-range', Range);
 
 /**
  * A collection of shims that provide minimal functionality of the ES6 collections.
@@ -3364,7 +5278,7 @@ function () {
   };
 });
 
-var index$2 = function () {
+var index = function () {
   // Export existing implementation if available.
   if (typeof global$1.ResizeObserver !== 'undefined') {
     return global$1.ResizeObserver;
@@ -3373,9 +5287,154 @@ var index$2 = function () {
   return ResizeObserver;
 }();
 
-const colorscales = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
-class InteractiveSpectrogram extends s {
+const colorscales$1 = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
+class TimeSeries extends s {
     constructor(props = {}) {
+        var _a;
+        super();
+        this.colorscale = 'Electric';
+        this.div = document.createElement('div');
+        this.data = [];
+        this.plotData = [];
+        this.layout = {};
+        this.windowSize = 300;
+        this.binWidth = 256;
+        this.colorscales = colorscales$1;
+        this.getTraces = () => {
+            return this.data.map(o => Object.assign({
+                type: "scatter",
+                mode: "lines",
+                // line: {color: '#000000'}
+                // name: 'Voltage',
+            }, o));
+        };
+        this.getLayout = () => {
+            return Object.assign({
+                // title: 'Basic Time Series',
+                responsive: true,
+                autosize: true
+            }, this.layout);
+        };
+        this.resize = () => {
+            this.Plotly.relayout(this.div, {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true
+            });
+        };
+        this.data = (_a = props.data) !== null && _a !== void 0 ? _a : [];
+        if (props.layout)
+            this.layout = props.layout;
+        if (window.Plotly)
+            props.Plotly = window.Plotly;
+        if (props.colorscale)
+            this.colorscale = props.colorscale;
+        if (props.onClick)
+            this.onClick = props.onClick;
+        if (props.Plotly) {
+            this.Plotly = props.Plotly;
+            this.Plotly.newPlot(this.div, this.getTraces(), this.getLayout());
+        }
+        else
+            console.warn('<visualscript-timeseries->: Plotly instance not provided...');
+        // window.addEventListener('resize', this.resize)
+        let observer = new index(() => this.resize());
+        observer.observe(this.div);
+    }
+    static get styles() {
+        return r$2 `
+
+      :host {
+        overflow: hidden;
+      }
+      
+      `;
+    }
+    createRenderRoot() {
+        return this;
+    }
+    static get properties() {
+        return {
+            max: {
+                type: Number,
+                reflect: true
+            },
+            data: {
+                type: Array,
+                reflect: true
+            },
+            layout: {
+                type: Object,
+                reflect: true,
+            },
+            colorscale: {
+                type: Object,
+                reflect: true
+            },
+            backgroundColor: {
+                type: String,
+                reflect: true,
+            },
+            onClick: {
+                type: Function,
+                reflect: true,
+            },
+        };
+    }
+    transpose(a) {
+        return Object.keys(a[0]).map(function (c) {
+            return a.map(function (r) { return r[c]; });
+        });
+    }
+    willUpdate(changedProps) {
+        if (changedProps.has('data')) {
+            this.Plotly.newPlot(this.div, this.getTraces(), this.getLayout());
+        }
+        if (changedProps.has('onClick')) {
+            this.div.on('plotly_click', this.onClick);
+        }
+    }
+    //   updateData = (newData) => {
+    //     // For a fixed window size,
+    //     // Push the latest data and remove the first element
+    //     if (!Array.isArray(newData[0])) newData = [newData]
+    //     newData.forEach(d => {
+    //       if(this.data.length > this.windowSize) {
+    //         this.data.push(d)
+    //         this.data.splice(0, 1)
+    //       } else {
+    //         this.data.push(d);
+    //       }
+    //     })
+    //   this.plotData[0].z[0] = transpose(this.data)
+    //     const ticRes = performance.now()
+    //     Plotly.restyle(this.div, 'z', this.plotData[0].z);
+    //     const tocRes = performance.now()
+    //     console.log('Restyle', tocRes - ticRes)
+    //     // const ticUp = performance.now()
+    //     // Plotly.update(this.div, this.plotData[0])
+    //     // const tocUp = performance.now()
+    //     // console.log('Update', tocUp - ticUp)
+    // //     const ticAn = performance.now()
+    // //     Plotly.animate(this.div, {
+    // //       data: [{z: this.plotData[0].z, type: 'heatmap'}],
+    // //   }, {
+    // //       transition: {duration: 0},
+    // //       frame: {duration: 0, redraw: true}
+    // //   });
+    // //   const tocAn = performance.now()
+    //   // console.log('Animate', tocAn - ticAn)
+    //   }
+    render() {
+        return this.div;
+    }
+}
+TimeSeries.colorscales = colorscales$1;
+customElements.define('visualscript-timeseries', TimeSeries);
+
+const colorscales = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
+class Spectrogram extends s {
+    constructor(props = {}) {
+        var _a;
         super();
         this.colorscale = 'Electric';
         this.div = document.createElement('div');
@@ -3391,9 +5450,11 @@ class InteractiveSpectrogram extends s {
                 'yaxis.autorange': true
             });
         };
-        this.data = props.data ?? [[]];
+        this.data = (_a = props.data) !== null && _a !== void 0 ? _a : [[]];
         if (props.colorscale)
             this.colorscale = props.colorscale;
+        if (window.Plotly)
+            props.Plotly = window.Plotly;
         this.plotData = [
             {
                 x: [1, 2],
@@ -3412,9 +5473,9 @@ class InteractiveSpectrogram extends s {
             this.Plotly.newPlot(this.div, this.plotData, this.config);
         }
         else
-            console.warn('<interactive-spectrogram>: Plotly instance not provided...');
+            console.warn('<-spectrogram>: Plotly instance not provided...');
         // window.addEventListener('resize', this.resize)
-        let observer = new index$2(() => this.resize());
+        let observer = new index(() => this.resize());
         observer.observe(this.div);
     }
     static get styles() {
@@ -3496,1923 +5557,31 @@ class InteractiveSpectrogram extends s {
         return this.div;
     }
 }
-InteractiveSpectrogram.colorscales = colorscales;
-customElements.define('visualscript-spectrogram-interactive', InteractiveSpectrogram);
-
-var index$1 = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  TimeSeries: TimeSeries,
-  Spectrogram: Spectrogram,
-  InteractiveSpectrogram: InteractiveSpectrogram
-});
-
-var index = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  audio: index$4,
-  video: index$3,
-  data: index$1
-});
-
-// Note: Inspired by the Red Hat website https://www.redhat.com/en
-class Nav extends s {
-    constructor(props = { brand: {}, primary: { menu: [], options: [] }, secondary: [] }) {
-        super();
-        this.getElement = (o) => {
-            switch (o.type) {
-                case 'button':
-                    return $ `<a href="${o.link}" target=${(o.external) ? "_blank" : "_self"}><button>${o.content}</button></a>`;
-                default:
-                    return $ `<a href="${o.link}" target=${(o.external) ? "_blank" : "_self"} class="decorate">${o.content}</a>`;
-            }
-        };
-        this.primary = props.primary ?? { menu: [], options: [] };
-        this.secondary = props.secondary ?? [];
-        this.color = props.color ?? 'blue';
-        this.brand = props.brand ?? { content: 'My Brand' };
-    }
-    static get styles() {
-        return r$2 `
-
-    
-    :host {
-      z-index: 2;
-      border-bottom: 1px solid rgb(180,180,180);
-      background: white;
-      color: black;
-      display:flex;
-      align-items: center;
-      width: 100%;
-      grid-area: nav;
-      z-index: 100;
-    }
-
-    header {
-      width: 100%;
-    }
-
-    :host * {
-      box-sizing: border-box;
-    }
-    
-    h1 {
-      margin: 0;
-    }
-
-    nav {
-      width: 100%;
-      padding:  0px 25px;
-      display: flex;
-      align-items: center;
-    }
-
-    #primary {
-      position: sticky; 
-      top: 0;
-      left: 0;
-      height: 70px;
-      max-height: 100px;
-      justify-content: space-between;
-      font-size: 80%;
-    }
-
-    #primary > * {
-      flex-grow: 1;
-      display: flex;
-    }
-
-    #primary > div:lastchild {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-direction: row-reverse;
-    }
-
-    #menu, #options {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #secondary {
-      height: 50px;
-      justify-content: flex-end;
-      border-bottom: 1px solid #3d3d3d;
-      font-size: 75%;
-    }
-
-    a{
-      color: black;
-      text-decoration: none;
-    }
-
-    .brand {
-      padding-right: 15px;
-    }
-
-    a:not(.brand) {
-      height: 100%;
-      display: flex;
-      align-items: center; 
-      justify-content: center;
-      text-align: center;
-    }
-
-    .decorate {
-      padding: 10px 15px;
-    }
-
-    #primary .decorate:hover {
-      box-shadow: 0 4px 0 #0fb3ff inset;
-    }
-
-    #secondary .decorate:hover {
-      box-shadow: 0 3px 0 #c4c4c4 inset;
-    }
-
-    button {
-      border: 1px solid white;
-      border-radius: 3px;
-      background: transparent;
-      padding: 5px 10px;
-      margin-left: 10px;
-      font-size: 95%;
-    }
-    
-    nav button:last-child {
-      margin-right: 0px;
-    }
-
-    button:hover {
-      outline: 1.1px solid white;
-      cursor: pointer;
-    }
-
-    @media only screen and (max-width: 800px) {
-      #primary #menu {
-        display: none;
-      }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :host {
-        background: #060606;
-        color: white;
-      }
-
-      a {
-        color: white;
-      }
-    }
-
-    `;
-    }
-    static get properties() {
-        return {
-            primary: {
-                type: Object,
-                // reflect: true,
-            },
-            secondary: {
-                type: Array,
-                reflect: true,
-            },
-            brand: {
-                type: Object,
-            },
-            color: {
-                type: String,
-                reflect: true,
-            },
-        };
-    }
-    willUpdate(changedProps) {
-        // console.log(changedProps)
-        if (changedProps.has('primary')) ;
-    }
-    render() {
-        // console.log('Primary', this.primary)
-        // console.log('secondary', this.secondary)
-        // console.log('brand', this.brand)
-        return $ `
-      <header>
-      ${(this.secondary.length > 0) ? $ `<nav id="secondary">${this.secondary?.map(o => this.getElement(o))}</nav>` : ``}
-      <nav id="primary">
-      ${$ `<div><a class="brand" target=${(this.brand.external) ? "_blank" : "_self"} href=${this.brand.link}>${(this.brand.content) ? ((/(jpg|gif|png|JPG|GIF|PNG|JPEG|jpeg)$/.test(this.brand.content)) ? $ `<img src="${this.brand.content}"></img>` : $ `<h1>${this.brand.content}</h1><slot></slot>`) : $ `<h1><slot></slot></h1>`}</a></div>`}
-        <div>
-          <div id="options">
-          ${this.primary.options?.map(o => this.getElement(o))}
-          </div>
-          <div id="menu">
-            ${this.primary.menu?.map(o => this.getElement(o))}
-          </div>
-        </div>
-
-      </nav>
-      </header>
-    `;
-    }
-}
-customElements.define('visualscript-nav', Nav);
-
-// Note: Inspired by the Red Hat website https://www.redhat.com/en
-class Loader extends s {
-    constructor(props = {}) {
-        super();
-        this.progress = props.progress;
-        this.color = props.color;
-        this.background = props.background ?? '#f3f3f3';
-        this.type = props.type ?? 'default';
-        this.showPercent = props.showPercent ?? true;
-        this.text = props.text;
-        this.textBackground = props.textBackground;
-        this.textColor = props.textColor;
-        this.size = props.size ?? '13px';
-        // Conditionally change default color
-        if (!this.color) {
-            if (this.type === 'default')
-                this.color = 'blue';
-            else
-                this.color = '#7aff80';
-        }
-    }
-    static get styles() {
-        return r$2 `
-    
-    :host {
-      
-    }
-
-    #container {  
-      width: 100%;
-    }
-
-    #indicator { 
-      width: 100%;
-      overflow: hidden;
-      animate: 0.5s;
-      opacity: 0.7;
-    }
-
-    #indicator > div {
-      width: 100%;
-      height: 100%;
-    }
-
-    #linear-text {  
-      padding: 10px 15px;
-      border-top-left-radius: 5px;
-      border-top-right-radius: 5px;
-      font-size: 75%;
-      background: white;
-    }
-
-    .loader-container {
-      width: 80px;
-      height: 80px;
-      position: relative;
-      color: #5b5b5b;
-    }
-
-    .loader {
-      width: 100%;
-      height: 100%;
-      border: 4px solid;
-      background: white;
-      border-right: none;
-      border-top: none;
-      border-left: none;
-      z-index: 2000;
-      background-color: transparent;
-      border-radius: 100%;
-      transform: rotateZ(0);
-    }
-
-    .loader-container > span{
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      font-size: 80%;
-      transform: translate(-50%, -50%);
-      user-select: none;
-    }
-
-    .loader.active {
-      opacity: 0.45;
-      -webkit-animation: spin 2s linear infinite;
-      animation: spin 2s linear infinite;
-    }
-
-    /* @-moz-keyframes spin {  . . . } */
-    
-    
-    /* @-ms-keyframes spin {  . . . } */
-    
-    
-    /* @-o-keyframes spin { . . . } */
-    
-    @-webkit-keyframes spin {
-      from {
-        transform: rotateZ(0deg) scale(1);
-      }
-      50% {
-        transform: rotateZ(540deg) scale(0.9);
-        filter: brightness(50%);        
-      }
-      to {
-        transform: rotateZ(1080deg) scale(1);
-      }
-    }
-    
-    @keyframes spin {
-      from {
-        transform: rotateZ(0deg) scale(1);
-      }
-      50% {
-        transform: rotateZ(540deg) scale(0.9);
-        filter: brightness(50%);
-      }
-      to {
-        transform: rotateZ(1080deg) scale(1);
-      }
-    }
-    `;
-    }
-    static get properties() {
-        return {
-            progress: {
-                type: Number,
-                reflect: true,
-            },
-            text: {
-                type: String,
-                reflect: true,
-            },
-            type: {
-                type: String,
-                reflect: true,
-            },
-            color: {
-                type: String,
-                reflect: true,
-            },
-            background: {
-                type: String,
-                reflect: true,
-            },
-            textBackground: {
-                type: String,
-                reflect: true,
-            },
-            textColor: {
-                type: String,
-                reflect: true,
-            },
-            size: {
-                type: String,
-                reflect: true,
-            },
-        };
-    }
-    willUpdate(_) {
-        // console.log(changedProps)
-        // if (changedProps.has('type')) {
-        // }
-    }
-    render() {
-        const progress = this.progress ?? 0;
-        const text = (this.text != undefined) ? this.text : (this.showPercent) ? `${(progress * 100).toFixed(1)}%` : '';
-        switch (this.type) {
-            case 'linear':
-                return $ `
-            ${(text) ? $ `<div id="linear-text" style="background: ${this.textBackground}; color: ${this.textColor};">${text}</div>` : ''}
-            <div id="indicator" style="height:${this.size}; background:${this.background}; opacity:${(progress === 1) ? 1 : ''};">
-                <div style="width:${progress * 100}%; background: ${this.color}"></div>
-              </div>
-            `;
-            default:
-                // if (progress < 1) 
-                return $ `
-            <div class="loader-container" style="height:${this.size}; width:${this.size}; background: ${this.textBackground};">
-              ${(text) ? $ `<span style="color: ${this.textColor};">${text}</span>` : ''}
-              <div class="loader active" style="border-color: ${this.color};"></div>
-            </div>
-            `;
-        }
-    }
-}
-customElements.define('visualscript-loader', Loader);
-
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-const t = {
-  ATTRIBUTE: 1,
-  CHILD: 2,
-  PROPERTY: 3,
-  BOOLEAN_ATTRIBUTE: 4,
-  EVENT: 5,
-  ELEMENT: 6
-},
-      e = t => (...e) => ({
-  _$litDirective$: t,
-  values: e
-});
-
-class i$1 {
-  constructor(t) {}
-
-  get _$AU() {
-    return this._$AM._$AU;
-  }
-
-  _$AT(t, e, i) {
-    this._$Ct = t, this._$AM = e, this._$Ci = i;
-  }
-
-  _$AS(t, e) {
-    return this.update(t, e);
-  }
-
-  update(t, e) {
-    return this.render(...e);
-  }
-
-}
-
-/**
- * @license
- * Copyright 2018 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-const i = e(class extends i$1 {
-  constructor(t$1) {
-    var e;
-    if (super(t$1), t$1.type !== t.ATTRIBUTE || "style" !== t$1.name || (null === (e = t$1.strings) || void 0 === e ? void 0 : e.length) > 2) throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.");
-  }
-
-  render(t) {
-    return Object.keys(t).reduce((e, r) => {
-      const s = t[r];
-      return null == s ? e : e + `${r = r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g, "-$&").toLowerCase()}:${s};`;
-    }, "");
-  }
-
-  update(e, [r]) {
-    const {
-      style: s
-    } = e.element;
-
-    if (void 0 === this.ct) {
-      this.ct = new Set();
-
-      for (const t in r) this.ct.add(t);
-
-      return this.render(r);
-    }
-
-    this.ct.forEach(t => {
-      null == r[t] && (this.ct.delete(t), t.includes("-") ? s.removeProperty(t) : s[t] = "");
-    });
-
-    for (const t in r) {
-      const e = r[t];
-      null != e && (this.ct.add(t), t.includes("-") ? s.setProperty(t, e) : s[t] = e);
-    }
-
-    return b;
-  }
-
-});
-
-class Button extends s {
-    constructor(props = {}) {
-        super();
-        this.primary = props.primary;
-        this.backgroundColor = props.backgroundColor;
-        this.size = props.size;
-        this.onClick = props.onClick;
-    }
-    static get styles() {
-        return r$2 `
-
-    .storybook-button {
-      
-      font-weight: 700;
-      border: 0;
-      border-radius: 1em;
-      cursor: pointer;
-      display: inline-block;
-      line-height: 1;
-    }
-    .storybook-button--primary {
-      color: white;
-      background-color: #1ea7fd;
-    }
-    .storybook-button--secondary {
-      color: #333;
-      background-color: transparent;
-      box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
-    }
-    .storybook-button--extra-small {
-      font-size: 10px;
-      padding: 7px 12px;
-    }
-
-    .storybook-button--small {
-      font-size: 12px;
-      padding: 10px 16px;
-    }
-    .storybook-button--medium {
-      font-size: 14px;
-      padding: 11px 20px;
-    }
-    .storybook-button--large {
-      font-size: 16px;
-      padding: 12px 24px;
-    }
-
-
-    @media (prefers-color-scheme: dark) {
-      .storybook-button--secondary {
-        color: #cccccc;
-        background-color: transparent;
-        box-shadow: rgba(255, 255, 255, 0.50) 0px 0px 0px 1px inset;
-      }
-    }
-
-    `;
-    }
-    static get properties() {
-        return {
-            primary: {
-                type: Boolean,
-                reflect: true
-            },
-            backgroundColor: {
-                type: String,
-                reflect: true
-            },
-            size: {
-                type: String,
-                reflect: true
-            },
-            onClick: {
-                type: Function,
-                reflect: true
-            }
-        };
-    }
-    willUpdate(_) {
-        // console.log(changedProps)
-        // if (changedProps.has('type')) {
-        // }
-    }
-    render() {
-        const mode = (this.primary) ? 'storybook-button--primary' : 'storybook-button--secondary';
-        return $ `
-      <button
-           type="button"
-            class=${['storybook-button', `storybook-button--${this.size || 'medium'}`, mode].join(' ')}
-            style=${i({ backgroundColor: this.backgroundColor })}
-            @click=${this.onClick}
-      >
-        <slot>Button</slot>
-      </button>
-    `;
-    }
-}
-customElements.define('visualscript-button', Button);
-
-class Modal extends s {
-    constructor(props = {}) {
-        super();
-        this.toggle = () => this.open = !this.open;
-        this.open = props.open;
-        this.header = props.header;
-        this.footer = props.footer;
-    }
-    static get styles() {
-        return r$2 `
-/* Modal Header */
-
-  :host {
-    
-    z-index: 101;
-  }
-  
-  :host * {
-    box-sizing: border-box;
-    
-  }
-
-.modal-header {
-  padding: 12px 16px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  border-bottom: 1px solid #e3e3e3;
-}
-
-.modal-header span {
-  font-weight: 800;
-  font-size: 120%;
-}
-
-
-/* Modal Body */
-.modal-body {
-  padding: 16px;
-  overflow: scroll;
-  width: 100%;
-  flex-grow: 1;
-}
-
-/* Modal Footer */
-.modal-footer {
-  border-top: 1px solid #e3e3e3;
-  padding: 12px 16px;
-  width: 100%;
-}
-
-.modal-footer span {
-  font-size: 80%;
-}
-
-/* Modal Content */
-.modal-content {
-  
-  position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform: translate(-50%, 50%);
-
-  background-color: #fefefe;
-  margin: auto;
-  border-radius: 4px;
-  padding: 0;
-  width: 80vw;
-  height: 80vh;
-  box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
-  transition: opacity 0.5s;
-  display: flex; 
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
-  pointer-events: none;
-  z-index: 102;
-  opacity: 0;
-}
-
-.modal-content.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-    `;
-    }
-    static get properties() {
-        return {
-            open: {
-                type: Boolean,
-                reflect: true
-            },
-            header: {
-                type: Object,
-                reflect: true
-            },
-            footer: {
-                type: String,
-                reflect: true
-            },
-        };
-    }
-    willUpdate(_) {
-        // console.log(changedProps)
-        // if (changedProps.has('type')) {
-        // }
-    }
-    render() {
-        return $ `
-      <div class="modal-content ${this.open ? 'open' : ''}">
-        ${(this.header) ? $ `<div class="modal-header">
-          <span>${this.header}</span>
-          <visualscript-button secondary size="extra-small" @click="${this.toggle}">Close</visualscript-button>
-        </div>` : ''}
-        <div class="modal-body">
-          <slot>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dolor vitae hendrerit feugiat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Integer ultricies arcu nec nibh commodo aliquam at in felis. Mauris lorem dui, porttitor et lectus vel, ornare sodales risus. Sed eu rhoncus ex. Donec tristique nibh lacus, sed dictum lacus lacinia eu. Nunc imperdiet a ante et feugiat. Praesent euismod tortor lacus, et euismod turpis mollis vitae. Etiam sagittis vehicula pulvinar. Aliquam id tincidunt tortor, sed feugiat nulla. Donec sollicitudin tincidunt viverra. Nunc condimentum molestie massa a feugiat. Nam mattis bibendum sodales. Nulla at maximus arcu, quis tempus lacus.
-
-Vestibulum pharetra pretium neque eu faucibus. Morbi aliquam urna non lacinia congue. Donec sed odio interdum, imperdiet tellus in, porttitor erat. Mauris erat velit, facilisis ut luctus sit amet, laoreet vitae ligula. Morbi a mi ultrices, feugiat ante in, convallis enim. Etiam sollicitudin leo purus, ut commodo ex placerat et. Proin ut nulla non risus luctus eleifend eu id orci.
-
-Ut aliquam tristique massa. Nullam a ipsum tincidunt, malesuada ipsum non, suscipit lectus. Suspendisse sit amet risus ut lectus efficitur feugiat in ut urna. Suspendisse odio felis, efficitur eu molestie eu, malesuada nec nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque fermentum sit amet odio id convallis. Donec luctus risus ac pretium ultrices. Quisque congue velit sed hendrerit posuere. Integer dictum felis eu tortor mattis scelerisque. Fusce facilisis justo nec velit vehicula gravida sit amet at erat. Suspendisse sit amet nibh metus. Aenean euismod, tortor a venenatis laoreet, sapien arcu semper turpis, non molestie risus ligula nec velit.
-
-Nulla eget ultrices justo, non posuere dui. Praesent ultrices dui eget erat accumsan varius. Ut ut mi arcu. Integer porttitor, neque vitae fermentum dictum, tellus quam tincidunt mauris, eget tristique turpis mauris nec magna. Phasellus ut tortor eros. Ut vehicula non purus in efficitur. Quisque justo elit, varius id luctus et, pulvinar eget ipsum. Sed tristique et odio eu facilisis.
-
-Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi at maximus nunc. In porttitor rutrum rhoncus. Ut dignissim viverra erat in aliquet. Suspendisse potenti. Donec lorem sem, vulputate non diam a, facilisis luctus tortor. In pellentesque ut eros id vulputate. Proin rutrum tincidunt libero, vel dictum libero ullamcorper in. Nam nec ultricies tortor, sit amet pellentesque ante. Sed tellus purus, pharetra vitae purus quis, accumsan vestibulum tellus. Vivamus porttitor urna a odio tincidunt tristique. Integer ut metus finibus, ultricies magna sed, congue eros. Duis velit velit, consectetur at faucibus ac, scelerisque nec diam.
-</slot>
-        </div>
-        ${(this.footer) ? $ `<div class="modal-footer">
-          <span>${this.footer}</span>
-        </div>` : ''}
-      </div>
-      <visualscript-overlay .open=${this.open}></visualscript-overlay>
-    `;
-    }
-}
-customElements.define('visualscript-modal', Modal);
-
-class Footer extends s {
-    static get styles() {
-        return r$2 `
-
-    :host {
-      padding: 25px;
-      border-top: 1px solid rgb(180,180,180);
-      background: white;
-      color: black;
-      display:flex;
-      align-items: center;
-      width: 100%;
-      font-size: 70%;
-      box-sizing: border-box;
-      z-index: 100;
-      grid-area: foot;
-    }
-
-    :host * {
-      box-sizing: border-box;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :host {
-        background: #060606;
-        color: white;
-      }
-
-      a {
-        color: white;
-      }
-    }
-    `;
-    }
-    static get properties() {
-        return {};
-    }
-    constructor(props = {}) {
-        super();
-    }
-    render() {
-        return $ `
-
-      <slot></slot>
-    `;
-    }
-}
-customElements.define('visualscript-footer', Footer);
-
-class Overlay extends s {
-    constructor(props = {}) {
-        super();
-        this.open = false;
-        this.open = props.open ?? false;
-    }
-    static get styles() {
-        return r$2 `
-
-    div {
-      opacity: 0;
-      width: 100vw;
-      height: 100vh;
-      transition: 0.5s;
-      position: fixed;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      z-index: 50;
-      color: black;
-      background: rgb(255,255, 255, 0.7);
-    }
-    
-
-    div[open] {
-      opacity: 1;
-      pointer-events: all;
-      backdrop-filter: blur(3px);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      div {
-        color: white;
-        background: rgb(0,0,0, 0.5);
-      }
-    }
-
-    `;
-    }
-    static get properties() {
-        return {
-            open: {
-                type: Boolean,
-                reflect: true,
-            }
-        };
-    }
-    render() {
-        return $ `
-      <div ?open=${this.open ? true : false}>
-        <slot></slot>
-      </div>
-    `;
-    }
-}
-customElements.define('visualscript-overlay', Overlay);
-
-/**
- * @license
- * Copyright 2021 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-var n;
-null != (null === (n = window.HTMLSlotElement) || void 0 === n ? void 0 : n.prototype.assignedElements) ? (o, n) => o.assignedElements(n) : (o, n) => o.assignedNodes(n).filter(o => o.nodeType === Node.ELEMENT_NODE);
-
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-console.warn("The main 'lit-element' module entrypoint is deprecated. Please update your imports to use the 'lit' package: 'lit' and 'lit/decorators.ts' or import from 'lit-element/lit-element.ts'. See https://lit.dev/msg/deprecated-import-path for more information.");
-
-/**
- * @license
- * Copyright 2018 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-const o = e(class extends i$1 {
-  constructor(t$1) {
-    var i;
-    if (super(t$1), t$1.type !== t.ATTRIBUTE || "class" !== t$1.name || (null === (i = t$1.strings) || void 0 === i ? void 0 : i.length) > 2) throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
-  }
-
-  render(t) {
-    return " " + Object.keys(t).filter(i => t[i]).join(" ") + " ";
-  }
-
-  update(i, [s]) {
-    var r, o;
-
-    if (void 0 === this.et) {
-      this.et = new Set(), void 0 !== i.strings && (this.st = new Set(i.strings.join(" ").split(/\s/).filter(t => "" !== t)));
-
-      for (const t in s) s[t] && !(null === (r = this.st) || void 0 === r ? void 0 : r.has(t)) && this.et.add(t);
-
-      return this.render(s);
-    }
-
-    const e = i.element.classList;
-    this.et.forEach(t => {
-      t in s || (e.remove(t), this.et.delete(t));
-    });
-
-    for (const t in s) {
-      const i = !!s[t];
-      i === this.et.has(t) || (null === (o = this.st) || void 0 === o ? void 0 : o.has(t)) || (i ? (e.add(t), this.et.add(t)) : (e.remove(t), this.et.delete(t)));
-    }
-
-    return b;
-  }
-
-});
-
-const PersistableProps = {
-    label: {
-        type: String,
-        reflect: true
-    },
-    persist: {
-        type: Boolean,
-        reflect: true
-    },
-    value: {
-        type: String,
-        reflect: true
-    },
-    onChange: {
-        type: Function,
-        reflect: true
-    }
-};
-const setPersistent = (o) => {
-    if (o.persist && o.label)
-        localStorage.setItem(o.label, String(o.value));
-};
-const getPersistent = (props) => {
-    if (props.value)
-        return props.value;
-    else if (props.persist && props.label) {
-        const val = localStorage.getItem(props.label);
-        if (val === 'null')
-            return null;
-        else if (val === 'undefined')
-            return undefined;
-        else
-            return val;
-    }
-};
-
-class Input extends s {
-    constructor(props = {}) {
-        super();
-        this.value = props.value ?? "";
-        this.outline = props.outline ?? false;
-        this.disabled = props.disabled ?? false;
-        this.label = props.label;
-        this.persist = props.persist;
-        const val = getPersistent(props);
-        if (val)
-            this.value = val;
-    }
-    // properties getter
-    static get properties() {
-        return Object.assign(PersistableProps, {
-            disabled: { type: Boolean, reflect: true },
-            outline: { type: Boolean, reflect: true }
-        });
-    }
-    willUpdate(changedProps) {
-        if (changedProps.has('value'))
-            setPersistent(this);
-    }
-    static get styles() {
-        return r$2 `
-
-        :host {
-            width: 100%;
-        }
-*{
-box-sizing: border-box;
-}
-.form-group {
-position: relative;
-margin: 1rem 0;
-}
-input.outline {
-border: 1px solid  #333333;
-border-radius: 5px;
-}
-label {
-position: absolute;
-font-size: 1rem;
-left: 0;
-top: 50%;
-transform: translateY(-50%);
-color: gray;
-padding: 0 0.3rem;
-margin: 0 0.5rem;
-transition: 0.1s ease-out;
-transform-origin: left top;
-pointer-events: none;
-}
-input {
-font-size: 1rem;
-outline: none;
-border: none;
-border-radius: 0px;
-padding: 1rem 0.6rem;
-transition: 0.1s ease-out;
-border-bottom: 1px solid  #333333;
-background: transparent;
-cursor: text;
-margin-left: auto;
-width: 95%;
-margin-right: auto;
-}
-input::placeholder {
-    color: transparent;
-}
-input:focus{
-border-color:  #b949d5;
-}
-input:focus + label{
-color:  #b949d5;
-top: 0;
-transform: translateY(-50%) scale(0.9);
-}
-input:not(:placeholder-shown) + label{
-top: 0;
-transform: translateY(-50%) scale(0.9);
-}
-input:focus:not(.outline) ~ label,
-input:not(:placeholder-shown):not(.outline) ~ label
-{
-padding-left: 0px;
-}
-input:disabled,  input:disabled ~ .label {
-opacity: 0.5;
-}
-
-@media (prefers-color-scheme: dark) {
-    label {
-      color: rgb(120,120,120);
-    }
-  }
-`;
-    }
-    render() {
-        return $ `
-            <div class="form-group">
-                <input
-                class=${o({
-            outline: this.outline
-        })}
-                type="${this.type}"
-                placeholder="${this.label}"
-                .value=${(this.value != 'null' && this.value != 'undefined') ? this.value : ''}
-                ?disabled="${this.disabled}"
-
-                @change=${(ev) => {
-            this.value = ev.target.value;
-        }}
-                />
-                <label>${this.label}</label>
-            </div>
-        `;
-    }
-}
-customElements.define("visualscript-input", Input);
-
-class Search extends s {
-    constructor(props = {}) {
-        super();
-        this.getModal = () => {
-            return this.shadowRoot.querySelector('visualscript-modal');
-        };
-        if (props.items)
-            this.items = props.items;
-        window.onkeydown = (ev) => {
-            switch (ev.code) {
-                case 'Enter':
-                    this.modal.open = false;
-                    break;
-                case 'ArrowUp':
-                    console.log('Up!');
-                    break;
-                case 'ArrowDown':
-                    console.log('Down!');
-                    break;
-                case 'Escape':
-                    this.modal.open = false;
-                    break;
-            }
-        };
-    }
-    static get styles() {
-        return r$2 `
-
-    :host {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-    }
-
-    :host * {
-      
-      box-sizing: border-box;
-      
-    }
-
-    button {
-      padding: 5px;
-      border-radius: 5px;
-    }
-
-    `;
-    }
-    static get properties() {
-        return {
-            placeholder: {
-                type: String
-            },
-            items: {
-                type: Object,
-                // reflect: true
-            },
-            value: {
-                type: String,
-                reflect: true
-            }
-        };
-    }
-    render() {
-        const regex = new RegExp(this.value, 'i');
-        return $ `
-        <visualscript-button @click=${() => {
-            this.modal = this.getModal();
-            this.modal.toggle();
-        }}>Search</visualscript-button>
-        <visualscript-modal 
-          .header=${$ `<visualscript-input label="Search" @input=${(ev) => {
-            this.value = ev.composedPath()[0].value;
-        }}></visualscript-input>`}
-          .footer=${$ `<div id=commands>Enter to select. Up and Down Arrows to navigate. Esc to close.</div>`}
-        >
-        <div>${this.items.map(i => {
-            let matched = false;
-            if (this.value) {
-                if (i.tags)
-                    i.tags.forEach((v) => { if (v.match(regex))
-                        matched = true; });
-                if (i.name.match(regex))
-                    matched = true;
-            }
-            else
-                matched = true;
-            if (matched)
-                return $ `<div><h3>${i.name}</h3><small>${i.tags ?? 'No Tags'}</small></div>`;
-        })}</div>
-        </visualscript-modal>
-      `;
-    }
-}
-customElements.define('visualscript-search', Search);
-
-/*
-Largely from https://css-tricks.com/striking-a-balance-between-native-and-custom-select-elements/
-
-Features to make the selectCustom work for mouse users.
-
-- Toggle custom select visibility when clicking the "box"
-- Update custom select value when clicking in a option
-- Navigate through options when using keyboard up/down
-- Pressing Enter or Space selects the current hovered option
-- Close the select when clicking outside of it
-- Sync both selects values when selecting a option. (native or custom)
-
-*/
-class Select extends s {
-    constructor(props = {}) {
-        super();
-        this.persist = false;
-        this.optionChecked = "";
-        this.optionHoveredIndex = -1;
-        this.options = [];
-        this.onChange = () => { };
-        this.add = (option) => {
-            this.options = [...this.options, option];
-        };
-        this.openSelectCustom = () => {
-            this.elements.elSelectCustom.classList.add("isActive");
-            // Remove aria-hidden in case this was opened by a user
-            // who uses AT (e.g. Screen Reader) and a mouse at the same time.
-            this.elements.elSelectCustom.setAttribute("aria-hidden", 'false');
-            if (this.optionChecked) {
-                const optionCheckedIndex = this.elements.customOptsList.findIndex((el) => el.getAttribute("data-value") === this.optionChecked);
-                this.updateCustomSelectHovered(optionCheckedIndex);
-            }
-            // Add related event listeners
-            // document.addEventListener("click", this.watchClickOutside);
-            document.addEventListener("keydown", this.supportKeyboardNavigation);
-        };
-        this.closeSelectCustom = () => {
-            this.elements.elSelectCustom.classList.remove("isActive");
-            this.elements.elSelectCustom.setAttribute("aria-hidden", 'true');
-            this.updateCustomSelectHovered(-1);
-            // Remove related event listeners
-            // document.removeEventListener("click", this.watchClickOutside);
-            document.removeEventListener("keydown", this.supportKeyboardNavigation);
-        };
-        this.updateCustomSelectHovered = (newIndex) => {
-            const prevOption = this.elements.elSelectCustomOpts.children[this.optionHoveredIndex];
-            const option = this.elements.elSelectCustomOpts.children[newIndex];
-            if (prevOption) {
-                prevOption.classList.remove("isHover");
-            }
-            if (option) {
-                option.classList.add("isHover");
-            }
-            this.optionHoveredIndex = newIndex;
-        };
-        this.updateCustomSelectChecked = (value, text) => {
-            if (this.elements) {
-                if (!text)
-                    text = this.elements.elSelectCustomOpts.querySelectorAll(`[data-value="${value}"]`)[0]?.textContent;
-                const prevValue = this.optionChecked;
-                const elPrevOption = this.elements.elSelectCustomOpts.querySelector(`[data-value="${prevValue}"`);
-                const elOption = this.elements.elSelectCustomOpts.querySelector(`[data-value="${value}"`);
-                if (elPrevOption) {
-                    elPrevOption.classList.remove("isActive");
-                }
-                if (elOption) {
-                    elOption.classList.add("isActive");
-                }
-                const elSelectCustomBox = this.elements.elSelectCustom.children[0].children[0];
-                elSelectCustomBox.textContent = text;
-                this.optionChecked = value;
-            }
-        };
-        this.watchClickOutside = (e) => {
-            const didClickedOutside = !this.contains(e.target);
-            if (didClickedOutside) {
-                this.closeSelectCustom();
-            }
-        };
-        this.supportKeyboardNavigation = (e) => {
-            // TODO: Move these to globals and check existence
-            // press down -> go next
-            if (e.keyCode === 40 && this.optionHoveredIndex < this.optionsCount - 1) {
-                this.optionHoveredIndex;
-                e.preventDefault(); // prevent page scrolling
-                this.updateCustomSelectHovered(this.optionHoveredIndex + 1);
-            }
-            // press up -> go previous
-            if (e.keyCode === 38 && this.optionHoveredIndex > 0) {
-                e.preventDefault(); // prevent page scrolling
-                this.updateCustomSelectHovered(this.optionHoveredIndex - 1);
-            }
-            // press Enter or space -> select the option
-            if (e.keyCode === 13 || e.keyCode === 32) {
-                e.preventDefault();
-                const option = this.elements.elSelectCustomOpts.children[this.optionHoveredIndex];
-                const value = option && option.getAttribute("data-value");
-                if (value) {
-                    this.elements.elSelectNative.value = value;
-                    this.updateCustomSelectChecked(value, option.textContent);
-                }
-                this.closeSelectCustom();
-            }
-            // press ESC -> close selectCustom
-            if (e.keyCode === 27) {
-                this.closeSelectCustom();
-            }
-        };
-        this.options = props.options ?? [];
-        if (props.onChange)
-            this.onChange = props.onChange;
-        if (props.label)
-            this.label = props.label;
-        if (props.persist)
-            this.persist = props.persist;
-        const val = getPersistent(props);
-        if (val)
-            this.value = val;
-    }
-    static get styles() {
-        return r$2 `
-
-    #container { 
-      position: relative;
-    }
-
-    :host * {
-      box-sizing: border-box;
-    }
-
-    .selectNative, .selectCustom {
-      position: relative;
-      width: 100%;
-      height: 50px;
-      font-size: 15px;
-    }
-
-    
-    .selectCustom {
-      position: absolute;
-      top: 0;
-      left: 0;
-      display: none;
-      background: white;
-    }
-    
-    .selectNative:focus,
-    .selectCustom.isActive .selectCustom-trigger {
-      outline: none;
-      box-shadow: white 0 0 5px 2px;
-    }
-    
-
-    .select {
-      position: relative;
-    }
-    
-    .selectLabel {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 0.4rem;
-    }
-    
-    .selectNative, .selectCustom-trigger {
-      border: 1px solid #6f6f6f;
-      border-radius: 0.4rem;
-    }
-    
-    .selectNative {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-      background-repeat: no-repeat;
-      background-position-x: 100%;
-      background-position-y: 0.8rem;
-      padding: 0rem 0.8rem;
-    }
-    
-    .selectCustom-trigger  > div {
-      overflow: scroll;
-      white-space: nowrap;
-    }
-
-    .selectCustom-trigger {
-      display: flex;
-      align-items: center;
-      position: relative;
-      padding: 0rem 0.8rem;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-    
-    .selectCustom-trigger::after {
-      content: "▾";
-      position: absolute;
-      top: 0;
-      line-height: 3.2rem;
-      right: 0.5rem;
-    }
-    
-    .selectCustom-trigger:hover {
-      border-color: #028ee6;
-    }
-    
-    .selectCustom-options {
-      position: absolute;
-      top: calc(2.8rem + 0.8rem);
-      left: 0;
-      width: 100%;
-      border: 1px solid #6f6f6f;
-      border-radius: 0.4rem;
-      background-color: whitesmoke;
-      box-shadow: 0 0 4px #e9e1f8;
-      z-index: 1;
-      padding: 0.8rem 0;
-      display: none;
-    }
-    
-    .selectCustom.isActive .selectCustom-options {
-      display: block;
-    }
-    
-    .selectCustom-option {
-      position: relative;
-      padding: 0.8rem;
-      padding-left: 2.5rem;
-      font-size: 80%;
-    }
-
-    .selectCustom-option.isHover,
-    .selectCustom-option:hover {
-      background-color: #1ea7fd; // contrast AA
-      color: white;
-      cursor: default;
-    }
-    
-    .selectCustom-option:not(:last-of-type)::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      border-bottom: 1px solid #d3d3d3;
-    }
-    
-    .selectCustom-option.isActive::before {
-      content: "✓";
-      position: absolute;
-      left: 0.8rem;
-    }
-
-
-    /* This makes the Custom Select work... 
-      Issues: Doesn't work inside of another component (e.g. Control), it clicks on that instead
-    @media (hover: hover) {
-      
-      .selectCustom {
-        display: block;
-      }
-    
-      .selectNative:focus + .selectCustom {
-        display: none;
-      }
-    }
-    */
-
-    @media (prefers-color-scheme: dark) {
-      .selectCustom {
-        background: rgb(59, 59, 59);
-      }
-
-      .selectCustom-options {
-        background: rgb(45, 45, 45);
-      }
-    }
-    `;
-    }
-    static get properties() {
-        return Object.assign({
-            options: {
-                type: Array,
-                reflect: true
-            }
-        }, PersistableProps);
-    }
-    willUpdate(changedProps) {
-        if (changedProps.has('value'))
-            setPersistent(this);
-        if (changedProps.has('options')) {
-            const firstOption = (this.options[0]?.value ?? this.options[0]);
-            this.value = this.value ?? firstOption;
-        }
-    }
-    updated(changedProperties) {
-        const elSelectNative = this.shadowRoot.querySelectorAll(".js-selectNative")[0];
-        const elSelectCustom = this.shadowRoot.querySelectorAll(".js-selectCustom")[0];
-        const elSelectCustomOpts = elSelectCustom.children[1];
-        const customOptsList = Array.from(elSelectCustomOpts.children);
-        this.optionsCount = customOptsList.length;
-        this.elements = {
-            elSelectNative,
-            elSelectCustom,
-            elSelectCustomOpts,
-            customOptsList,
-        };
-        if (this.value)
-            this.updateCustomSelectChecked(this.value);
-    }
-    render() {
-        return $ `
-      <div id=container>
-      <select class="selectNative js-selectNative" aria-labelledby="${this.label}Label" 
-      @change=${(e) => {
-            // Update selectCustom value when selectNative is changed.
-            const value = e.target.value;
-            const elRespectiveCustomOption = this.elements.elSelectCustomOpts.querySelectorAll(`[data-value="${value}"]`)[0];
-            this.updateCustomSelectChecked(value, elRespectiveCustomOption.textContent);
-            // Original
-            this.value = e.target.value;
-            this.onChange(e); // forward change
-        }}>
-      ${(this.options.length === 0) ? $ `<slot></slot>` : this.options.map((o, i) => {
-            if (typeof o != 'object')
-                o = { value: o, text: o };
-            return $ `<option 
-          value=${o.value} 
-          ?selected=${(o.value === this.value)} 
-          >
-            ${o.text}
-          </option>`;
-        })}
-    </select>
-
-    <div class="selectCustom js-selectCustom" aria-hidden="true"}>
-      <div class="selectCustom-trigger" @click=${(e) => {
-            const isClosed = !e.target.parentNode.classList.contains("isActive");
-            if (isClosed) {
-                this.openSelectCustom();
-            }
-            else {
-                this.closeSelectCustom();
-            }
-        }}>
-        <div></div>
-      </div>
-        <div class="selectCustom-options">
-        ${this.options.map((o, i) => {
-            if (typeof o != 'object')
-                o = { value: o, text: o };
-            return $ ` <div 
-          class="selectCustom-option" 
-          data-value=${o.value}
-          @mouseenter=${(e) => {
-                this.updateCustomSelectHovered(i);
-            }}
-          @click=${(e) => {
-                const value = e.target.getAttribute("data-value");
-                // Sync native select to have the same value
-                this.elements.elSelectNative.value = value;
-                this.updateCustomSelectChecked(value, e.target.textContent);
-                this.closeSelectCustom();
-            }}
-          >
-            ${o.text}
-          </div>`;
-        })}
-          </div>
-        </div>
-      </div>
-    </div>
-    `;
-    }
-}
-customElements.define('visualscript-select', Select);
-
-class File extends s {
-    constructor(props = {}) {
-        super();
-        this.onChange = () => { };
-        if (props.accept)
-            this.accept = props.accept;
-        if (props.onChange)
-            this.onChange = props.onChange;
-        if (props.webkitdirectory)
-            this.webkitdirectory = props.webkitdirectory;
-        if (props.directory)
-            this.directory = props.directory;
-        if (props.multiple)
-            this.multiple = props.multiple;
-    }
-    static get styles() {
-        return r$2 `
-
-    :host {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-    
-    input[type=file] {
-      display: none;
-    }
-
-    :host * {
-      box-sizing: border-box;
-    }
-    
-    button {
-      flex: auto;
-      padding: 8px 12px;
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-      border: none;  
-      color: #ffffff;
-      background-color: #1ea7fd;
-      width: 100%;
-      cursor: pointer;    
-      /* white-space: nowrap; */
-      font-weight: bold;
-    }
-
-    .hide {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      border: 0;
-    }
-
-    input[type=text] {
-      flex-grow: 1;
-      padding: 8px 8px;
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
-      border: none;
-    }
-
-    input[type=text] {
-      flex-grow: 1;
-      padding: 8px 8px;
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
-      border: none;
-      color: black;
-      background-color: white;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      input[type=text] {
-        color: white;
-        background-color: rgb(59, 59, 59);
-      }
-    }
-    
-    `;
-    }
-    static get properties() {
-        return {
-            accept: {
-                type: String,
-                reflect: true
-            },
-            onChange: {
-                type: Function,
-                reflect: true
-            },
-            webkitdirectory: {
-                type: Boolean,
-                reflect: true
-            },
-            directory: {
-                type: Boolean,
-                reflect: true
-            },
-            multiple: {
-                type: Boolean,
-                reflect: true
-            },
-        };
-    }
-    render() {
-        return $ `
-      <label for="fileupload" id="buttonlabel">
-        <button aria-controls="filename" tabindex="0" @click=${() => {
-            const input = this.shadowRoot.querySelector('input[type=file]');
-            if (input)
-                input.click();
-        }}>Choose File</button>
-      </label>
-      <input 
-        type="file" 
-        id="fileupload" 
-        accept="${this.accept ?? ''}" 
-        webkitdirectory=${this.webkitdirectory}
-        directory=${this.directory}
-        multiple=${this.multiple}
-
-        @change=${(ev) => {
-            const fileUploaded = ev.target.files[0];
-            const input = this.shadowRoot.querySelector('input[type=text]');
-            var filename = fileUploaded.name;
-            input.value = filename;
-            input.placeholder = filename;
-            input.focus();
-            this.onChange(ev);
-        }}
-      >
-      <label for="filename" class="hide">
-        uploaded file
-      </label>
-      <input type="text" id="filename" autocomplete="off" readonly placeholder="no file chosen">  
-    `;
-    }
-}
-customElements.define('visualscript-file', File);
-
-class Switch extends s {
-    constructor(props = {}) {
-        super();
-        this.persist = false;
-        this.onChange = () => { };
-        if (props.onChange)
-            this.onChange = props.onChange;
-        if (props.label)
-            this.label = props.label;
-        if (props.persist)
-            this.persist = props.persist;
-        // Inside Control
-        const val = getPersistent(props);
-        if (val)
-            this.value = val;
-    }
-    static get styles() {
-        return r$2 `
-
-    :host * {
-      box-sizing: border-box;
-    }
-
-    [role="switch"] {  
-      position: relative;
-      border-radius: 0.5rem;
-      padding: 1em 2em;
-      cursor: pointer;
-      background-color: white;
-      border: none;
-      border-radius: 14px;
-      -webkit-transition: .4s;
-      transition: .4s;
-    }
-
-    [role="switch"] * {
-      pointer-events: none;
-    }
-
-
-    [role="switch"][aria-pressed="true"] {
-      background-color: #1ea7fd;
-    }
-
-    [role="switch"][aria-pressed="true"] > .slider{
-      -webkit-transform: translateY(-50%) translateX(100%);
-      -ms-transform: translateY(-50%) translateX(100%);
-      transform: translateY(-50%) translateX(100%);
-    }
-
-    /* Remove the default outline and 
-    add the outset shadow */  
-    [aria-pressed]:focus {
-      outline: none;
-      box-shadow: white 0 0 5px 2px;
-    }
-
-    /* The slider */
-    .slider {
-      padding: 3px;
-      position: absolute;
-      cursor: pointer;
-      top: 50%;
-      left: 0;
-      -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
-      -webkit-transition: .4s;
-      transition: .4s;
-      height: 100%;
-      aspect-ratio: 1/1;
-    }
-    .slider > * {
-      background-color: #ccc;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Rounded sliders */
-    .slider.round > * {
-      border-radius: 34px;
-    }
-
-    `;
-    }
-    static get properties() {
-        return PersistableProps;
-    }
-    willUpdate(changedProps) {
-        if (changedProps.has('value'))
-            setPersistent(this);
-    }
-    render() {
-        return $ `
-      <button class="switch" role="switch" aria-pressed="${String(this.value)}" aria-labelledby=${this.label} @click=${(e) => {
-            let pressed = e.target.getAttribute('aria-pressed') === 'true';
-            this.value = !pressed;
-            e.target.setAttribute('aria-pressed', String(this.value));
-            this.onChange(e);
-        }}>
-        <div class="slider round"><div></div></div>
-    </button>
-    `;
-    }
-}
-customElements.define('visualscript-switch', Switch);
-
-class Range extends s {
-    constructor(props = {}) {
-        super();
-        this.persist = false;
-        this.value = 0;
-        this.min = 0;
-        this.max = 100;
-        this.onChange = () => { };
-        this.onInput = () => { };
-        if (props.onChange)
-            this.onChange = props.onChange;
-        if (props.label)
-            this.label = props.label;
-        if (props.persist)
-            this.persist = props.persist;
-        if (props.min)
-            this.min = props.min;
-        if (props.max)
-            this.max = props.max;
-        const val = getPersistent(props);
-        if (val)
-            this.value = val;
-    }
-    static get styles() {
-        return r$2 `
-
-    :host {
-      width: 100%;
-      height: 100%;
-    }
-
-    :host * {
-      box-sizing: border-box;
-    }
-
-    .wrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    input[type="range"] {
-      -webkit-appearance: none;
-      position: relative;
-      overflow: hidden;
-      height: 30%;
-      width: 100%;
-      cursor: pointer;
-      border: none;
-      margin: 0;
-  }
-  
-  output {
-      position: absolute; 
-      user-select: none; 
-      pointer-events: none; 
-      z-index: 1;
-      top: 50%;
-      left: 10px;
-      transform: translate(0%, calc(-50% - 0.12rem));
-      font-size: 80%;
-  }
-  
-  input[type="range"]::-webkit-slider-runnable-track {
-  }
-  
-  input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 0; /* 1 */
-      height: 20px;
-      box-shadow: -100vw 0 0 100vw #1ea7fd;
-      opacity: 0.9;
-      transition: opacity 0.5s;
-  }
-  
-  input[type="range"]:hover::-webkit-slider-thumb{
-      opacity: 1;
-  }
-  
-  input[type="range"]::-moz-range-track {
-
-  }
-  
-    .visually-hidden { 
-        position: absolute !important;
-        height: 1px; 
-        width: 1px;
-        overflow: hidden;
-        clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
-        clip: rect(1px, 1px, 1px, 1px);
-        white-space: nowrap; /* added line */
-    }
-
-    `;
-    }
-    static get properties() {
-        return Object.assign(PersistableProps, {
-            min: {
-                type: Number,
-                reflect: true
-            },
-            max: {
-                type: Number,
-                reflect: true
-            }
-        });
-    }
-    willUpdate(changedProps) {
-        if (changedProps.has('value'))
-            setPersistent(this);
-    }
-    render() {
-        return $ `
-      <div class="wrapper">
-        <input type="range" min="${this.min}" max="${this.max}" id="${this.label}" @change=${(ev) => {
-            this.value = ev.target.value;
-            this.onChange(ev);
-        }} @input=${(ev) => {
-            this.onInput(ev);
-        }}/>
-        <output for="${this.label}">${this.value}</output>
-        <label class="visually-hidden" for="${this.label}">${this.label}</label>
-      </div>
-    `;
-    }
-}
-customElements.define('visualscript-range', Range);
+Spectrogram.colorscales = colorscales;
+customElements.define('visualscript-spectrogram', Spectrogram);
 
 class ObjectEditor extends s {
     constructor(props = { target: {}, header: 'Object' }) {
+        var _a, _b, _c;
         super();
         this.history = [];
+        this.getMode = (target, plot) => {
+            return (Array.isArray(target) && plot) ? 'plot' : 'view';
+        };
+        this.set = (target = {}, plot = false) => {
+            this.target = target;
+            this.keys = Reflect.ownKeys(this.target);
+            this.mode = this.getMode(this.target, plot);
+        };
         this.getActions = (key, o) => {
             let actions;
             if (typeof o[key] === 'object') {
+                const mode = this.getMode(o[key], this.plot.includes(key));
                 actions = $ `<visualscript-button primary=true size="small" @click="${() => {
                     this.history.push({ parent: o, key: this.header });
-                    this.target = o[key];
+                    this.set(o[key], this.plot.includes(key));
                     this.header = key;
-                    this.mode = (Array.isArray(o[key])) ? 'plot' : 'view';
-                }}">${Array.isArray(o[key]) ? $ `Plot` : $ `View`}</visualscript-button>`;
+                }}">${mode[0].toUpperCase() + mode.slice(1)}</visualscript-button>`;
             }
             return $ `
       <div class="actions">
@@ -5421,31 +5590,36 @@ class ObjectEditor extends s {
       `;
         };
         this.getElement = (key, o) => {
+            const input = new Input();
+            input.value = o[key];
+            input.oninput = () => {
+                o[key] = input.value; // Modify original data
+            };
             return $ `
         <div class="attribute separate">
-        <div>
+        <div class="info">
           <span class="name">${key}</span><br>
           <span class="value">${(typeof o[key] === 'object'
-                ? (Object.keys(o[key]).length ? o[key].constructor.name : $ `Empty ${o[key].constructor.name}`)
-                : o[key])}</span>
+                ? (Reflect.ownKeys(o[key]).length ? o[key].constructor.name : $ `Empty ${o[key].constructor.name}`)
+                : input)}</span>
         </div>
           ${this.getActions(key, o)}
         </div>`;
         };
-        this.target = props.target ?? {};
-        this.header = props.header ?? 'Object';
-        this.mode = props.mode ?? 'view';
+        this.set(props.target);
+        this.header = (_a = props.header) !== null && _a !== void 0 ? _a : 'Object';
+        this.mode = (_b = props.mode) !== null && _b !== void 0 ? _b : 'view';
+        this.plot = (_c = props.plot) !== null && _c !== void 0 ? _c : [];
+        this.onPlot = props.onPlot;
+        this.timeseries = new TimeSeries({
+            data: []
+        });
     }
     static get styles() {
         return r$2 `
 
-    
-    :host {
-      
-    }
     :host * {
       box-sizing: border-box;
-      
     }
 
     :host > * {
@@ -5453,10 +5627,6 @@ class ObjectEditor extends s {
       border-radius: 4px;
       overflow: hidden;
       box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
-    }
-
-    .main {
-      
     }
 
     .header {
@@ -5473,13 +5643,13 @@ class ObjectEditor extends s {
     }
 
     .container {
-      background: white;
       width: 100%;
       padding: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-wrap: wrap;
+      position: relative;
     }
 
     .separate {
@@ -5496,6 +5666,11 @@ class ObjectEditor extends s {
       flex-wrap: wrap;
     }
 
+    .info {
+      display: flex;
+      align-items: center;
+    }
+
     .name {
       font-weight: 800;
       padding-right: 10px;
@@ -5505,11 +5680,30 @@ class ObjectEditor extends s {
       font-size: 80%;
     }
 
+    @media (prefers-color-scheme: dark) {
+      :host > * {
+        background-color: rgb(60, 60, 60);
+        box-shadow: 0 1px 5px 0 rgb(255 255 255 / 20%);
+      }
+
+      .header {
+        border-bottom: 1px solid gray;
+      }
+    }
+
     `;
     }
     static get properties() {
         return {
-            target: {
+            // target: {
+            //   type: Object,
+            //   reflect: false,
+            // },
+            keys: {
+                type: Object,
+                reflect: true,
+            },
+            plot: {
                 type: Object,
                 reflect: true,
             },
@@ -5521,13 +5715,21 @@ class ObjectEditor extends s {
                 type: String,
                 reflect: true,
             },
+            onPlot: {
+                type: Function,
+                reflect: true,
+            },
         };
     }
-    willUpdate(changedProps) {
-        // console.log(changedProps)
-        if (changedProps.has('target')) ;
-    }
     render() {
+        var _a;
+        if (this.mode === 'plot') {
+            if (this.onPlot instanceof Function)
+                this.onPlot();
+            this.insertAdjacentElement('afterend', this.timeseries);
+        }
+        else
+            this.timeseries.remove();
         return $ `
       <div>
         <div class="header separate">
@@ -5535,14 +5737,13 @@ class ObjectEditor extends s {
           ${(this.history.length > 0) ? $ `<visualscript-button size="extra-small" @click="${() => {
             const historyItem = this.history.pop();
             this.header = historyItem.key;
-            this.target = historyItem.parent;
+            this.set(historyItem.parent);
         }}">Go Back</visualscript-button>` : ``}
         </div>
         <div class="container">
               ${(this.mode === 'view'
-            ? Object.keys(this.target)?.map(key => this.getElement(key, this.target))
-            : Object.keys(this.target)?.map(key => this.getElement(key, this.target)) // TODO: Implement plot
-        )}
+            ? (_a = this.keys) === null || _a === void 0 ? void 0 : _a.map(key => this.getElement(key, this.target))
+            : '')}
         </div>
       </div>
     `;
@@ -7169,15 +7370,8 @@ var prism = {exports: {}};
   Prism.languages.javascript['class-name'][0].pattern = /(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/;
   Prism.languages.insertBefore('javascript', 'keyword', {
     'regex': {
-      pattern: RegExp( // lookbehind
       // eslint-disable-next-line regexp/no-dupe-characters-character-class
-      /((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source + // Regex pattern:
-      // There are 2 regex patterns here. The RegExp set notation proposal added support for nested character
-      // classes if the `v` flag is present. Unfortunately, nested CCs are both context-free and incompatible
-      // with the only syntax, so we have to define 2 different regex patterns.
-      /\//.source + '(?:' + /(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source + '|' + // `v` flag syntax. This supports 3 levels of nested character classes.
-      /(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source + ')' + // lookahead
-      /(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),
+      pattern: /((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)\/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/,
       lookbehind: true,
       greedy: true,
       inside: {
@@ -7474,6 +7668,7 @@ var Prism = prism.exports;
 
 class CodeEditor extends s {
     constructor(props = { instance: {}, header: 'Object' }) {
+        var _a, _b, _c;
         super();
         this.history = [];
         this.getControls = () => {
@@ -7505,9 +7700,9 @@ class CodeEditor extends s {
                 highlight.scrollLeft = element.scrollLeft;
             }
         };
-        this.instance = props.instance ?? {};
-        this.header = props.header ?? 'Object';
-        this.mode = props.mode ?? 'view';
+        this.instance = (_a = props.instance) !== null && _a !== void 0 ? _a : {};
+        this.header = (_b = props.header) !== null && _b !== void 0 ? _b : 'Object';
+        this.mode = (_c = props.mode) !== null && _c !== void 0 ? _c : 'view';
     }
     static get styles() {
         return r$2 `
@@ -7649,6 +7844,7 @@ customElements.define('visualscript-code-editor', CodeEditor);
 
 class GraphEditor extends s {
     constructor(props = { graph: {}, header: 'Object' }) {
+        var _a, _b, _c;
         super();
         this.history = [];
         this.getActions = (key, o) => {
@@ -7679,9 +7875,9 @@ class GraphEditor extends s {
           ${this.getActions(key, o)}
         </div>`;
         };
-        this.graph = props.graph ?? {};
-        this.header = props.header ?? 'Object';
-        this.mode = props.mode ?? 'view';
+        this.graph = (_a = props.graph) !== null && _a !== void 0 ? _a : {};
+        this.header = (_b = props.header) !== null && _b !== void 0 ? _b : 'Object';
+        this.mode = (_c = props.mode) !== null && _c !== void 0 ? _c : 'view';
     }
     static get styles() {
         return r$2 `
@@ -7775,6 +7971,7 @@ class GraphEditor extends s {
         if (changedProps.has('graph')) ;
     }
     render() {
+        var _a, _b;
         return $ `
       <div>
         <div class="header separate">
@@ -7787,8 +7984,8 @@ class GraphEditor extends s {
         </div>
         <div class="container">
               ${(this.mode === 'view'
-            ? Object.keys(this.graph)?.map(key => this.getElement(key, this.graph))
-            : Object.keys(this.graph)?.map(key => this.getElement(key, this.graph)) // TODO: Implement plot
+            ? (_a = Object.keys(this.graph)) === null || _a === void 0 ? void 0 : _a.map(key => this.getElement(key, this.graph))
+            : (_b = Object.keys(this.graph)) === null || _b === void 0 ? void 0 : _b.map(key => this.getElement(key, this.graph)) // TODO: Implement plot
         )}
         </div>
       </div>
@@ -7877,10 +8074,11 @@ slot {
 `;
 class Dashboard extends s {
     constructor(props = {}) {
+        var _a, _b;
         super();
         this.apps = new Map();
-        this.open = props.open ?? true;
-        this.closeHandler = props.closeHandler ?? (() => { });
+        this.open = (_a = props.open) !== null && _a !== void 0 ? _a : true;
+        this.closeHandler = (_b = props.closeHandler) !== null && _b !== void 0 ? _b : (() => { });
         this.toggle = (typeof props.toggle === 'string') ? document.getElementById(props.toggle) : props.toggle;
     }
     static get styles() {
@@ -8119,6 +8317,7 @@ class TabToggle extends s {
         return TabTogglePropsLit;
     }
     render() {
+        var _a;
         return $ `
       <button class="${(this.selected) ? 'selected' : ''}"  @click=${(ev) => {
             this.to.on(ev);
@@ -8149,7 +8348,7 @@ class TabToggle extends s {
                     sidebar.content = (this.to.controlPanel.children.length) ? this.to.controlPanel : '';
                 }
             }
-        }}>${this.to.name ?? `Tab`} <span>${this.to.type}</span></button>
+        }}>${(_a = this.to.name) !== null && _a !== void 0 ? _a : `Tab`} <span>${this.to.type}</span></button>
     `;
     }
 }
@@ -8386,6 +8585,7 @@ const TabPropsLit = {
 };
 class Tab extends s {
     constructor(props = {}) {
+        var _a;
         super();
         this.controls = [];
         this.on = () => { };
@@ -8413,7 +8613,7 @@ class Tab extends s {
             this.off = props.off;
         // Allow dashboards inside apps!
         let dashboards = document.body.querySelectorAll('visualscript-dashboard');
-        this.dashboard = Array.from(dashboards).find(o => o.parentNode === document.body) ?? new Dashboard(); // Find global dashboard
+        this.dashboard = (_a = Array.from(dashboards).find(o => o.parentNode === document.body)) !== null && _a !== void 0 ? _a : new Dashboard(); // Find global dashboard
         this.dashboard.global = true;
         this.dashboard.open = false;
         // Create a toggle
@@ -8567,9 +8767,10 @@ class Main extends s {
         super();
         this.tabs = new Map();
         this.getTabs = () => {
+            var _a;
             const tabs = [];
             // Apps (only for global Main)
-            if (this.parentNode?.global) {
+            if ((_a = this.parentNode) === null || _a === void 0 ? void 0 : _a.global) {
                 const apps = document.querySelectorAll('visualscript-app');
                 for (var i = 0; i < apps.length; i++) {
                     if (!tabs.includes(apps[i]))
@@ -8827,16 +9028,7 @@ class Sidebar extends s {
     }
 
 
-    #header {
-      width: 100%;
-      padding: 10px 25px;
-      background: var(--dark-color);
-      color: white;
-      margin: 0px;
-    }
-
-
-    #toggle, #header {
+    #toggle {
       position: sticky;
       left:0;
       top: 0;
@@ -8850,13 +9042,6 @@ class Sidebar extends s {
 
       #toggle {
         background: var(--dark-spiral)
-      }
-
-      #header {
-        width: 100%;
-        padding: 5px 25px;
-        color: black;
-        background: var(--light-color);
       }
     }
 
@@ -8875,7 +9060,8 @@ class Sidebar extends s {
         };
     }
     render() {
-        const renderToggle = this.content || this.children?.length; // Note: May also need to check the slot generally...
+        var _a;
+        const renderToggle = this.content || ((_a = this.children) === null || _a === void 0 ? void 0 : _a.length); // Note: May also need to check the slot generally...
         return $ `
         <button id=toggle class="${!!renderToggle ? '' : 'hidden'}" @click=${() => {
             const wasDefault = this.classList.contains('default');
@@ -8888,7 +9074,6 @@ class Sidebar extends s {
                 this.closed = !this.closed; // Closed only added after user interaction
         }}></button>
         <div id=main>
-        ${!!renderToggle ? $ `<h4 id=header>Controls</h4>` : ''}
           <div id=controls>
           ${this.content}
           <slot></slot>
@@ -8899,4 +9084,44 @@ class Sidebar extends s {
 }
 customElements.define('visualscript-sidebar', Sidebar);
 
-export { App, Button, CodeEditor, Control, Dashboard, DeviceEditor, File, Footer, Gallery, GraphEditor, Input, Loader, Main, Modal, Nav, ObjectEditor, Overlay, Range, Search, Select, SessionEditor, Sidebar, Switch, Tab, TabBar, TabBarPropsLit, TabPropsLit, TabToggle, TabTogglePropsLit, slotGrid, index as streams, tabStyle };
+class SidebarHeader extends s {
+    static get styles() {
+        return r$2 `
+
+    :host {
+      width: 100%;
+      background: rgb(25, 25, 25);
+      position: sticky;
+      left:0;
+      top: 0;
+    }
+
+    h4 {
+      color: white;
+      margin: 0px;
+      padding: 10px 25px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      h4 {
+        background: rgb(60, 60, 60);
+      }
+    }
+
+    `;
+    }
+    static get properties() {
+        return {};
+    }
+    constructor(props = {}) {
+        super();
+    }
+    render() {
+        return $ `
+          <h4><slot></slot></h4>
+      `;
+    }
+}
+customElements.define('visualscript-sidebar-header', SidebarHeader);
+
+export { App, Button, CodeEditor, Control, Dashboard, DeviceEditor, File, Footer, Gallery, GraphEditor, Input, Loader, Main, Modal, Nav, ObjectEditor, Overlay, Range, Search, Select, SessionEditor, Sidebar, SidebarHeader, Spectrogram, Switch, Tab, TabBar, TabBarPropsLit, TabPropsLit, TabToggle, TabTogglePropsLit, TimeSeries, slotGrid, index$1 as streams, tabStyle };

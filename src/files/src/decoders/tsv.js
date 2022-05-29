@@ -5,7 +5,8 @@ const isContentfulRow = row => row && !/^\s*$/.test(row)
 import text from './text'
 
 export default (o) => {
-    let contents = text(o)
+    if (!o.text) o.text = text(o)
+    let contents = o.text
     const collection = []
     contents = stripBOM(contents)
     const rows = normalizeEOL(contents).split('\n').filter(isContentfulRow).map(str => str.split('\t'))

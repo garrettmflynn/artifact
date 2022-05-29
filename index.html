@@ -60,17 +60,19 @@
 		</visualscript-nav>
 		<visualscript-dashboard>
 		<visualscript-sidebar>
-			<div>
-			  <visualscript-control id=dataset type="file" label="Load a Dataset" webkitdirectory directory multiple></visualscript-control>
-			  <visualscript-control id=download type="button" label="Download BIDS Dataset">Download</visualscript-control>
-			  <visualscript-control id=tag type="select" label="Select Artifact"></visualscript-control>
+			<visualscript-sidebar-header>Dataset</visualscript-sidebar-header>
+			<visualscript-control id=dataset type="file" label="Load a Dataset" webkitdirectory=true directory=true multiple=true></visualscript-control>
+			<visualscript-control id=download type="button" label="Download BIDS Dataset">Download</visualscript-control>
+			
+			<visualscript-sidebar-header>Tags</visualscript-sidebar-header>
+			<visualscript-control id=xml type="file" label="Load an HED Schema" accept="application/xml"></visualscript-control>
+			<visualscript-control id=tag type="select" label="Select a Tag"></visualscript-control>
 
-			</div>
-			<h4 class="header">Errors</h4>
+			<visualscript-sidebar-header>Errors</visualscript-sidebar-header>
 			<div id="errors" class="container">	
 				N/A
 			</div>
-			<h4 class="header">Warnings</h4>
+			<visualscript-sidebar-header>Warnings</visualscript-sidebar-header>
 			<div id="warnings" class="container">	
 				N/A
 			</div>

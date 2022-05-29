@@ -27,8 +27,7 @@ visualscript-sidebar h4 {
 }
 visualscript-sidebar .container {
 	padding: 5px 15px;
-	max-width: 400px;
-
+	/* max-width: 400px; */
 }
 
 visualscript-main {

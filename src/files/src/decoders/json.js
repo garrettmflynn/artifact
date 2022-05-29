@@ -1,5 +1,5 @@
 import text from './text'
 export default (o) => {
-    const textContent = text(o)
-    return JSON.parse(textContent)
+    if (!o.text) o.text = text(o)
+    return JSON.parse(o.text)
 }
