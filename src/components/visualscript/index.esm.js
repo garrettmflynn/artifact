@@ -3820,6 +3820,7 @@ class File extends s {
       width: 100%;
       display: flex;
       justify-content: center;
+      overflow: hidden;
     }
     
     input[type=file] {
@@ -3861,6 +3862,7 @@ class File extends s {
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       border: none;
+      overflow: hidden;
     }
 
     input[type=text] {
@@ -8438,7 +8440,7 @@ class Control extends s {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0px 15px;
+      padding: 0px 5px;
       margin: 10px;
       border: 1px solid rgb(180,180,180);
       /* white-space: nowrap; */
@@ -8988,6 +8990,10 @@ class Sidebar extends s {
 
     :host([closed]) > #toggle {
       width: var(--final-toggle-width);
+    }
+
+    #main {
+      overflow: hidden;
     }
 
     #toggle:hover { 

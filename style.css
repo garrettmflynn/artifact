@@ -21,6 +21,11 @@ body * {
 	/* padding: 20px 5%;  */
 }
 
+visualscript-nav span {
+	text-transform: uppercase;
+	font-size: 150%;
+}
+
 
 visualscript-sidebar h4 {
 	padding: 5px 15px;
