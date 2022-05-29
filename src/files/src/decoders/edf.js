@@ -1,7 +1,5 @@
 export default async (o) => {
     const edf = new EDF(o.buffer)
-    // await edf.loadChannelData()
-    console.log('EDF', edf)
     return edf
 }
 
@@ -28,8 +26,10 @@ class EDF {
         this.has_annotations = false;
         const n = this.channelCount;
         this.annotation_bytes = 0;
-        this.sampling_rate = this.channels[0].num_samples * this.data_record_duration;
-        this.sample_size = 0;
+        if (n > 0){
+            this.sampling_rate = this.channels[0].num_samples * this.data_record_duration;
+            this.sample_size = 0;
+        }
 
         if (this.has_annotations) this.sample_size = (n - 1) * 2 * this.sampling_rate + 60 * 2;
         else this.sample_size = (n) * 2 * this.sampling_rate;

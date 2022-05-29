@@ -46,8 +46,10 @@ export default async (fileList) => {
 
         if (content) {
             target[file.name] = content // filesystem target
+            if (extension){
             if (!bidsFiles.types[extension]) bidsFiles.types[extension] = {}
             bidsFiles.types[extension][file.name.replace(`.${extension}`, '')] = content // filetypes extension
+            } else bidsFiles.types[file.name] = content // e.g. README, CHANGES
         }
         else {
             // if (!target[file.name]) target[file.name] = null
