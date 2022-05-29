@@ -8973,6 +8973,7 @@ class Sidebar extends s {
       position: relative;
       display: flex;
       overflow: hidden;
+      max-width: 50vw;
     }
 
 
@@ -9017,6 +9018,10 @@ class Sidebar extends s {
     }
 
     @media only screen and (max-width: ${collapseThreshold}px) {
+      :host {
+        max-width: auto;
+      }
+
       :host(.default) > #main {
           width: 0px;
           overflow: hidden;
