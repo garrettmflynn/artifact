@@ -60,32 +60,27 @@ function registerValidSW(swUrl, config) {
                 // At this point, the updated pre-cached content has been fetched,
                 // but the previous service worker will still serve the older
                 // content until all client tabs are closed.
-                console.log(
-                  'New content is available and will be used when all ' +
-                    'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
+                alert(
+                  'New content is available and will be used when all tabs for this page are closed.'
                 );
   
                 // Execute callback
-                if (config && config.onUpdate) {
-                  config.onUpdate(registration);
-                }
+                if (config && config.onUpdate)  config.onUpdate(registration);
               } else {
                 // At this point, everything has been pre-cached.
                 // It's the perfect time to display a
                 // "Content is cached for offline use." message.
-                console.log('Content is cached for offline use.');
+                alert('Content is cached for offline use.');
   
                 // Execute callback
-                if (config && config.onSuccess) {
-                  config.onSuccess(registration);
-                }
+                if (config && config.onSuccess) config.onSuccess(registration);
               }
             }
           };
         };
       })
       .catch(error => {
-        console.error('Error during service worker registration:', error);
+        alert('Error during service worker registration:', error);
       });
 }
 
@@ -111,9 +106,7 @@ function checkValidServiceWorker(swUrl, config) {
         }
       })
       .catch(() => {
-        console.log(
-          'No internet connection found. App is running in offline mode.'
-        );
+        alert('No internet connection found. App is running in offline mode.');
       });
 }
   

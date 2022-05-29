@@ -2772,14 +2772,15 @@ class Button extends s {
         return r$2 `
 
     .storybook-button {
-      
       font-weight: 700;
       border: 0;
       border-radius: 1em;
       cursor: pointer;
       display: inline-block;
       line-height: 1;
+      overflow: hidden;
     }
+
     .storybook-button--primary {
       color: white;
       background-color: #1ea7fd;
@@ -3229,13 +3230,15 @@ class Input extends s {
 
         :host {
             width: 100%;
+            font-size: 15px;
+
         }
 *{
 box-sizing: border-box;
 }
 .form-group {
 position: relative;
-margin: 1rem 0;
+margin: 15px 0;
 }
 input.outline {
 border: 1px solid  #333333;
@@ -3243,7 +3246,6 @@ border-radius: 5px;
 }
 label {
 position: absolute;
-font-size: 1rem;
 left: 0;
 top: 50%;
 transform: translateY(-50%);
@@ -3255,11 +3257,10 @@ transform-origin: left top;
 pointer-events: none;
 }
 input {
-font-size: 1rem;
 outline: none;
 border: none;
 border-radius: 0px;
-padding: 1rem 0.6rem;
+padding: 15px 0.6rem 10px 0.6rem;
 transition: 0.1s ease-out;
 border-bottom: 1px solid  #333333;
 background: transparent;
@@ -3554,7 +3555,6 @@ class Select extends s {
     .selectNative, .selectCustom {
       position: relative;
       width: 100%;
-      height: 50px;
       font-size: 15px;
     }
 
@@ -3595,8 +3595,8 @@ class Select extends s {
       background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
       background-repeat: no-repeat;
       background-position-x: 100%;
-      background-position-y: 0.8rem;
-      padding: 0rem 0.8rem;
+      background-position-y: 0.45rem;
+      padding: 10px 10px;
     }
     
     .selectCustom-trigger  > div {
@@ -3608,7 +3608,7 @@ class Select extends s {
       display: flex;
       align-items: center;
       position: relative;
-      padding: 0rem 0.8rem;
+      padding: 0px 10px;
       width: 100%;
       height: 100%;
       cursor: pointer;
@@ -3691,6 +3691,10 @@ class Select extends s {
     @media (prefers-color-scheme: dark) {
       .selectCustom {
         background: rgb(59, 59, 59);
+      }
+
+      .selectNative {
+        background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
       }
 
       .selectCustom-options {
@@ -3817,7 +3821,6 @@ class File extends s {
         return r$2 `
 
     :host {
-      width: 100%;
       display: flex;
       justify-content: center;
       overflow: hidden;
@@ -3858,7 +3861,7 @@ class File extends s {
 
     input[type=text] {
       flex-grow: 1;
-      padding: 8px 8px;
+      padding: 10px;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       border: none;
@@ -9018,14 +9021,14 @@ class Sidebar extends s {
     }
 
     #controls {
-      overflow-x: scroll; 
+      overflow-x: hidden;
       overflow-y: scroll;
       height: 100%;
     }
 
     @media only screen and (max-width: ${collapseThreshold}px) {
       :host {
-        max-width: auto;
+        max-width: 100%;
       }
 
       :host(.default) > #main {
