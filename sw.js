@@ -4,6 +4,8 @@ self.addEventListener("install", event => {
 	// Kick out the old service worker
 	self.skipWaiting();
 
+	console.log('New content is available.')
+
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
 			return cache.addAll([
@@ -30,6 +32,7 @@ self.addEventListener("install", event => {
 });
 
 self.addEventListener("activate", event => {
+
 	// Delete any non-current cache
 	event.waitUntil(
 		caches.keys().then(keys => {
@@ -52,10 +55,11 @@ self.addEventListener("fetch", event => {
 	event.respondWith(
 		caches.open(cacheName).then(cache => {
 			return cache.match(event.request).then(response => {
-				return response || fetch(event.request).then(networkResponse => {
+				// -------- Check the Network --------
+				fetch(event.request).then(async networkResponse => {
 					cache.put(event.request, networkResponse.clone());
-					return networkResponse;
-				}).catch(e => console.error(e))
+				})
+				return response
 			})
 		})
 	);
