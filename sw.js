@@ -54,12 +54,14 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
 	event.respondWith(
 		caches.open(cacheName).then(cache => {
-			return cache.match(event.request).then(response => {
+			return cache.match(event.request).then(async response => {
 				// -------- Check the Network --------
-				fetch(event.request).then(async networkResponse => {
+				const fetchPromise = fetch(event.request).then(async networkResponse => {
 					cache.put(event.request, networkResponse.clone());
+					return networkResponse
 				})
-				return response
+
+				return response || await fetchPromise
 			})
 		})
 	);
