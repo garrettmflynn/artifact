@@ -80,7 +80,7 @@ class BIDSDataset {
     // }
 
     check = async (options={}, override=false) => {
-      const zippedBlob = await zip(this.name, this.filesystem)
+      const zippedBlob = await zip(this.name, this.files.system)
 
       // Spoof Files for Pre-Export Validation
       const unzipped = await JSZip.loadAsync(zippedBlob)
@@ -94,6 +94,7 @@ class BIDSDataset {
 
       // Validate Files
       const info = await this.validate(fileList, options)
+      console.log('Check', info)
       if (override || info.errors.length === 0) return zippedBlob
       else return info
     }

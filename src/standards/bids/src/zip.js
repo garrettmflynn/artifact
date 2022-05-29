@@ -15,8 +15,9 @@ export default (name, object) => {
             const splitKey = key.split('.')
             const notKeyword = keywords.map(k => key !== k).reduce((a,b) => a * b, true)
             if (!notKeyword) return await drill(subObj[key], file, key) // Special files
-            else if (splitKey.length === 1 && (typeof subObj[key] === 'object')) return await drill(subObj[key], file.folder(prefixKey ? `${prefixKey}-${key}` : key))
-            else {
+            else if (splitKey.length === 1 && (typeof subObj[key] === 'object')) {
+                return await drill(subObj[key], file.folder(prefixKey ? `${prefixKey}-${key}` : key))
+            } else {
                 const returned = await files.encode(key, subObj[key])
                 file.file(key, returned) // Encoded file
             }

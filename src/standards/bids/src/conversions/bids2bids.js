@@ -1,6 +1,8 @@
 // import { keywords } from './index.js'
+import * as templates from '../templates.js'
 
-const topLevel = ['README', 'CHANGES', '.bidsignore', 'participants.tsv']
+const required = ['README', 'participants.json', 'participants.tsv', 'dataset_description.json']
+const topLevel = ['CHANGES', '.bidsignore', ...required]
 // const validModalities = ['eeg']
 
 // Convert BIDS-Formatted Directories to Valid Structure
@@ -14,6 +16,17 @@ export default (files) => {
 
     const originalFiles = files.system
     files.system = {}
+
+    required.forEach(name => {
+        const ext = name.split('.').slice(1).join('.')
+        if (templates.files[name]) files.system[name] = templates.files[name]
+        else if (ext === 'json') files.system[name] = {}
+        else if (ext === 'tsv') files.system[name] = []
+        else files.system[name] = ''
+
+        if (!files.types[ext]) files.types[ext] = {}
+        files.types[ext][name.replace(`.ext`, '')] = files.system[name] // Link in types references
+    })
     
     if (!(hasSubjects && hasSessions)){
 
@@ -37,6 +50,86 @@ export default (files) => {
             })
         }
     } else files.system = originalFiles
+
+
+    // Rename directory names in alignment with files
+    // Overwrite directory with filename
+    const toDelete = []
+    for (let subjectName in files.system.sub) {
+        for (let sessionName in files.system.sub[subjectName].ses){
+            const sessionBase = files.system.sub[subjectName].ses[sessionName]
+            const info = {subjectName, sessionName, base: files.system}
+            const agnosticToDelete =  renameFileEntries(sessionBase, info) // Grab modality-agnostic files
+            toDelete.push(agnosticToDelete)
+            Object.values(sessionBase).forEach(modalityBase => {
+                const specificToDelete = renameFileEntries(modalityBase, info) // Grab modality-specific files
+                toDelete.push(specificToDelete)
+            })
+        }
+    }
+
+    // Delete Extraneous Subject / Session Names
+    toDelete.forEach(o => {
+
+        // Delete Sessions
+        o.sessions.forEach(([sub, ses]) => {
+            delete files.system.sub[sub].ses[ses]
+        })
+
+        // Delete Subjects
+        o.subjects.forEach(name => {
+            delete files.system.sub[name]
+        })
+    })
+
+    // Populate empty participants.tsv file
+    const participants = files.system['participants.tsv']
+    if (participants.length === 0){
+        Object.keys(files.system.sub).forEach(key => {
+            participants.push({
+                'participant_id': `sub-${key}`
+            })
+        })
+    }
     
     return files
+}
+
+
+const renameFileEntries = (baseDir, info) => {
+    const subsToDelete = new Set()
+    const sessionsToDelete = new Set()
+
+    Object.entries(baseDir).filter(arr => arr[0].split('.').length > 1).forEach(([firstKey, firstValue]) => {
+        const fileNameStructure = {}
+        const split = firstKey.split('_')
+        const extraSlice = split.filter(str => !['sub', 'ses'].includes(str.split('-')[0]))
+        split.map(str => str.split('-')).forEach(arr => fileNameStructure[arr[0]] = arr[1])
+        if (!fileNameStructure.sub) fileNameStructure.sub = info.subjectName
+        if (!fileNameStructure.ses) fileNameStructure.ses = info.sessionName
+
+        // Update in Directory
+        if (fileNameStructure.sub != info.subjectName) {
+            console.log(info.base.sub[info.subjectName],info.subjectName, info.base.sub)
+            info.base.sub[fileNameStructure.sub] = info.base.sub[info.subjectName]
+            subsToDelete.add(info.subjectName)
+        }
+
+        if (fileNameStructure.ses != info.sessionName) {
+            info.base.sub[fileNameStructure.sub].ses[fileNameStructure.ses] = info.base.sub[info.subjectName].ses[info.sessionName]
+            sessionsToDelete.add([info.subjectName, info.sessionName])
+        }
+
+        // Update in File Name
+        const updatedKey = `sub-${fileNameStructure.sub}_ses-${fileNameStructure.ses}_${extraSlice.join('_')}`
+        if (updatedKey != firstKey){
+            baseDir[updatedKey] = firstValue
+            delete baseDir[firstKey]
+        }
+    })
+
+    return {
+        subjects: subsToDelete,
+        sessions: sessionsToDelete
+    }
 }

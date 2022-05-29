@@ -206,7 +206,7 @@ const showValidation = (info) => {
 
 downloadButton.onClick = async () => {
   if (bidsDataset) {
-    const info = await bidsDataset.download()
+    const info = await bidsDataset.download(true) // Auto-override the lock on downloading because of errors
     if (info) showValidation(info)
   }
 }
