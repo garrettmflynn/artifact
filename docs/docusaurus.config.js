@@ -6,15 +6,15 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Artifact',
-  tagline: 'EEG Artifact Annotation on the Browser',
+  title: 'GEN',
+  tagline: 'EEG Annotation on the Browser',
   url: 'https://globalbrainconsortium.org',
   baseUrl: '/',
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'globalbrainconsortium',
-  projectName: 'Artifact',
+  projectName: 'GEN',
 
   themes: ['@docusaurus/theme-live-codeblock'],
 
@@ -80,9 +80,9 @@ const config = {
         disableSwitch: true,
       },
       navbar: {
-        title: 'Artifact',
+        title: 'GEN',
         logo: {
-          alt: 'Artifact Logo',
+          alt: 'Global EEG Norms Logo',
           src: 'img/logo_colorized-min.png',
         },
         items: [

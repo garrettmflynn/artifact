@@ -1,4 +1,4 @@
-# Artifact Datasets
+# Test Datasets
 ## /cuban
 Data from the Cuban Human Brain Mapping Project (downloaded from LORIS)
 

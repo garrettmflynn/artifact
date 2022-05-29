@@ -1,9 +1,9 @@
 html, body {
 	background-color: black;
-	color: white;
+	/* color: white; */
 	font-family: helvetica, arial, sans-serif;
 	font-size: 14px;
-	line-height: 1.5;
+	/* line-height: 1.5; */
 	margin: 0;
 	padding: 0;
 	width: 100vw;
@@ -21,26 +21,39 @@ body * {
 	/* padding: 20px 5%;  */
 }
 
+#footer {
+	padding: 5px 25px;
+}
+
+visualscript-nav {
+	line-height: 1.0;
+}
+
 visualscript-nav span {
 	text-transform: uppercase;
-	font-size: 150%;
+	font-size: 125%;
+}
+
+visualscript-nav small {
+	font-weight: normal;
+	font-size: 65%;
 }
 
 
-visualscript-sidebar h4 {
+/* visualscript-sidebar h4 {
 	padding: 5px 15px;
-}
+} */
+
 visualscript-sidebar .container {
 	padding: 5px 15px;
 	/* max-width: 400px; */
 }
 
-visualscript-main {
+/* visualscript-main {
 	background-color: #171717;
-}
+} */
 
 h1, h2 {
-	line-height: 1;
 	text-transform: uppercase;
 }
 
@@ -91,12 +104,12 @@ section {
 }
 
 a {
-	color: aquamarine;
+	color: #1ea7fd;
 	font-weight: bold;
 }
 
 a:hover, a:active {
-	color: mediumaquamarine;
+	color: #1892de;
 }
 
 a code {
@@ -104,7 +117,7 @@ a code {
 }
 
 code {
-	background-color: aquamarine;
+	background-color: #1ea7fd;
 	color: black;
 	font-family: monospace;
 	padding: 1px;

@@ -1,6 +1,6 @@
 {
-    "name": "Artifact",
-    "short_name": "Artifact",
+    "name": "Global EEG Norms",
+    "short_name": "GEN",
     "theme_color": "#222222",
     "background_color": "#222222",
 	"display": "standalone",

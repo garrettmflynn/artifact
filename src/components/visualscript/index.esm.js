@@ -5575,7 +5575,7 @@ class ObjectEditor extends s {
         };
         this.set = (target = {}, plot = false) => {
             this.target = target;
-            this.keys = Reflect.ownKeys(this.target);
+            this.keys = Object.keys(this.target);
             this.mode = this.getMode(this.target, plot);
         };
         this.getActions = (key, o) => {
@@ -5595,20 +5595,29 @@ class ObjectEditor extends s {
       `;
         };
         this.getElement = (key, o) => {
-            const input = new Input();
-            input.value = o[key];
-            input.oninput = () => {
-                o[key] = input.value; // Modify original data
-            };
+            let display;
+            if (typeof o[key] === 'string' && o[key].includes('data:image')) {
+                display = document.createElement('img');
+                display.src = o[key];
+                display.style.height = '100%';
+            }
+            else {
+                display = new Input();
+                display.value = o[key];
+                display.oninput = () => {
+                    o[key] = display.value; // Modify original data
+                };
+            }
+            const isObject = typeof o[key] === 'object';
             return $ `
         <div class="attribute separate">
         <div class="info">
           <span class="name">${key}</span><br>
-          <span class="value">${(typeof o[key] === 'object'
-                ? (Reflect.ownKeys(o[key]).length ? o[key].constructor.name : $ `Empty ${o[key].constructor.name}`)
-                : input)}</span>
+          <span class="value">${(isObject
+                ? (Object.keys(o[key]).length ? o[key].constructor.name : $ `Empty ${o[key].constructor.name}`)
+                : '')}</span>
         </div>
-          ${this.getActions(key, o)}
+          ${isObject ? this.getActions(key, o) : display}
         </div>`;
         };
         this.set(props.target);
@@ -5632,6 +5641,10 @@ class ObjectEditor extends s {
       border-radius: 4px;
       overflow: hidden;
       box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+    }
+
+    img {
+      max-height: 100px;
     }
 
     .header {
@@ -9104,13 +9117,10 @@ class SidebarHeader extends s {
 
     :host {
       width: 100%;
-      background: rgb(25, 25, 25);
-      position: sticky;
-      left:0;
-      top: 0;
     }
 
     h4 {
+      background: rgb(25, 25, 25);
       color: white;
       margin: 0px;
       padding: 10px 25px;
@@ -9118,6 +9128,7 @@ class SidebarHeader extends s {
 
     @media (prefers-color-scheme: dark) {
       h4 {
+        color: black;
         background: rgb(60, 60, 60);
       }
     }

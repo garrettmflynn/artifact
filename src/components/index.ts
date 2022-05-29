@@ -1,7 +1,7 @@
 
 export * from './visualscript/index.esm.js'
-import {ObjectEditor} from './ObjectEditor'
+// import {ObjectEditor} from './ObjectEditor'
 
 export {
-    ObjectEditor
+    // ObjectEditor
 }

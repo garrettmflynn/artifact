@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 ---
-# Artifact
+# GEN
 
-`artifact` is a Progressive Web App (PWA) for annotating EEG data on the browser.
+`GEN` is a Progressive Web App (PWA) for annotating EEG data on the browser.
 
