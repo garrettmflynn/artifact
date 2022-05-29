@@ -24,3 +24,6 @@ pyodide.html
 # CLI
 **/test/**
 
+# Data
+**/datasets/*/**
+
