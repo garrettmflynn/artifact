@@ -9,6 +9,8 @@ const errorDiv = document.getElementById('errors')
 const warningDiv = document.getElementById('warnings')
 const downloadButton = document.getElementById('download')
 const tagControl = document.getElementById('tag')
+const freeTextControl = document.getElementById('freetext')
+
 // tagControl.style.display = 'none'
 
 const handleXML = ({HED}) => {
@@ -26,7 +28,21 @@ const handleXML = ({HED}) => {
 
     drillNodes(o,'')
     tagControl.options = Array.from(options)
+    toggleFreeFormInput(tagControl.element)
 }
+
+const toggleFreeFormInput = (target) => {
+  const value = target.value ?? ''
+  if (value.at(-1) === '#') {
+    freeTextControl.style.display = ''
+  } else freeTextControl.style.display = 'none'
+}
+
+tagControl.onChange = (ev) => {
+  toggleFreeFormInput(ev.target)
+}
+
+
 
 files.decode({text: xmlHEDScore}, 'application/xml').then(handleXML)
 
@@ -91,7 +107,7 @@ editor.onPlot = () => {
       const shapes = editor.timeseries.div.layout.shapes || [];
 
       if (!hedAnnotation.x) {
-        hedAnnotation.tag = tagControl.element.value
+        hedAnnotation.tag = tagControl.element.value.replace('#', freeTextControl.element.value)
         const annotate_text = `<b>${hedAnnotation.tag}</b>`
         hedAnnotation.x = point.x
         annotations.push({
@@ -155,7 +171,7 @@ dataset.onChange = async (ev) => {
   // Register Actual Directories
   if (bidsDataset.files.system) {
     editor.set(bidsDataset.files.system)
-    console.log(editor, editor.target, bidsDataset.files.system)
+    // console.log(editor, editor.target, bidsDataset.files.system)
   }
 
   showValidation(info)

@@ -156,6 +156,7 @@ class EDF {
             for (var i = 0; i < n; i++) {
                 const o = {i, data: null}
                 Object.defineProperty(this._channels[i], 'data', {
+                    enumerable: true,
                     get: () => {
                         if (!o.data) o.data = this.getChannelData(o.i)
                         return o.data
