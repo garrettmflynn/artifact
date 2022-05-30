@@ -17,12 +17,24 @@ const handleXML = ({HED}) => {
     const options = new Set()
     const o = HED.schema[0]
 
+    const filter = ['/EEG-artifact']
+    const shortName = true
+
     const drillNodes = (o, base) => {
       if (o.name) base += `/${o.name[0]['_']}`
       if (o.node) {
         o.node.forEach(o => drillNodes(o,base))
       } else {
-        options.add(base)
+        const count = filter.reduce((a,b) => a + base.includes(b), 0)
+        if (count) {
+          if (shortName) {
+            const val = base.split('/').at(-1)
+            if (val === '#') options.add(base)
+            else options.add(val)
+          } else {
+            options.add(base)
+          }
+        }
       }
     }
 
