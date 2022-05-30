@@ -1,5 +1,6 @@
 # Global EEG Norms (GEN)
- EEG Annotation on the Browser
+A Progressive Web Application for Global EEG Norms
+
 
 ## What is this?
 **GEN** is a Progressive Web App (PWA) for annotating EEG data on the browser.
