@@ -15,7 +15,7 @@ export default (files) => {
     const hasSessions = sessions && sessions.length > 0
 
     const originalFiles = files.system
-    files.system = {}
+    files.system = {sub: {}}
 
     required.forEach(name => {
         const ext = name.split('.').slice(1).join('.')
@@ -49,7 +49,7 @@ export default (files) => {
                 }
             })
         }
-    } else files.system = originalFiles
+    } else Object.assign(files.system, originalFiles) // Don't lose top-level files
 
 
     // Rename directory names in alignment with files
@@ -84,11 +84,12 @@ export default (files) => {
 
     // Populate empty participants.tsv file
     const participants = files.system['participants.tsv']
+    console.log(files.system, files.system['participants.tsv'])
     if (participants.length === 0){
         Object.keys(files.system.sub).forEach(key => {
-            participants.push({
-                'participant_id': `sub-${key}`
-            })
+            const participantTemplate = JSON.parse(JSON.stringify(templates.objects['participants.tsv']))
+            participantTemplate.participant_id =  `sub-${key}`
+            participants.push(participantTemplate)
         })
     }
     

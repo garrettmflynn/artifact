@@ -14,17 +14,54 @@ export const files = {
         "DatasetDOI": ""
     },
 
-    "participants.json": {},
-    'participants.tsv': []
+    "participants.json": {
+        "age": {
+            "Description": "age of the participant",
+            "Units": "years"
+        },
+        "sex": {
+            "Description": "sex of the participant",
+            "Levels": {
+                "M": "male",
+                "F": "female"
+            }
+        }
+    },
+    'participants.tsv': [],
+
+
+    // Files Specified by Suffix
+    'events.json': {
+
+        onset: {
+            Description: "Position of event marker in seconds relative to the start.",
+            Units: "s"
+          },
+          duration: {
+              Description: "Duration of the event in seconds.",
+              Units: "s"
+          }
+          
+    }
+}
+
+
+const metadataBase = {
+    LongName: "",
+    Description: "Insert description here",
+    Levels: {},
+    Units: "",
+    TermURL: "",
 }
 
 
 export const objects = {
-    "participants.json" : {
-        "LongName": "",
-        "Description": "",
-        "Levels": {},
-        "Units": "",
-        "TermURL": ""
-    }
+    "participants.tsv" : {
+        participant_id: '',
+        age: '',
+        sex: ''
+    },
+    
+    "participants.json" : Object.assign({}, metadataBase),
+    "events.json": Object.assign({HED: ""}, metadataBase)
 }

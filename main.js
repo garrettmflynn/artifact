@@ -2,6 +2,8 @@
 import * as bids from './src/standards/bids/src/index.js'
 import * as components from './src/components/index.js'
 import * as files from './src/files/src/index.js'
+import * as templates from './src/standards/bids/src/templates.js'
+
 import xmlHEDScore from './HED_score_1.0.0.xml'
 
 const editorDiv = document.getElementById('editor')
@@ -12,6 +14,8 @@ const tagControl = document.getElementById('tag')
 const freeTextControl = document.getElementById('freetext')
 
 // tagControl.style.display = 'none'
+
+const deepClone = (o) => JSON.parse(JSON.stringify(o))
 
 const handleXML = ({HED}) => {
     const options = new Set()
@@ -57,6 +61,54 @@ tagControl.onChange = (ev) => {
 
 
 files.decode({text: xmlHEDScore}, 'application/xml').then(handleXML)
+
+const getSidecar = (o) => {
+  const jsonSidecarName = Object.keys(o).find(str => str.includes('_events.json'))
+  let jsonSidecar = o[jsonSidecarName]
+  console.log('jsonSidecar', jsonSidecar)
+  if (!jsonSidecar) jsonSidecar = o[jsonSidecarName] = {} // Create JSON sidecar
+  return jsonSidecar
+}
+
+
+const addHEDTag = (hed, eventInfo, fileName, modalityFileDirectory, history, method="inheritance") => {
+
+    // Account for Missing Info
+    if (!hed.code) hed.code = hed.tag
+    if (!hed.label) hed.label = hed.code
+
+    // Get Event .tsv File
+    const fileSplit = fileName.split('_')
+    const fileCoreName = fileSplit.slice(0, fileSplit.length - 1).join('_')
+
+    const expectedFileName = `${fileCoreName}_events.tsv`
+    console.log('directory', modalityFileDirectory)
+    console.log('expectedFileName', expectedFileName)
+
+    const foundFileName = Object.keys(modalityFileDirectory).find(str => str.includes(fileCoreName) && str.includes('_events.tsv'))
+    let tsvEventFile = (!foundFileName) ? modalityFileDirectory[expectedFileName] = [] : modalityFileDirectory[foundFileName]
+    console.log('tsvEventFile', tsvEventFile)
+
+    const eventTemplate = deepClone(tsvEventFile[0]) ?? templates // Add structured event
+    eventInfo[hed.code] = hed.label // Associate code and label
+    tsvEventFile.push(Object.assign(eventTemplate, eventInfo))
+
+    // Inherit from a Top-Level JSON Sidecar
+    let sidecarDir;
+    if (method === 'long') sidecarDir = history[0].parent
+
+    // Inherit from a Subject-Specific JSON Sidecar
+    else sidecarDir = history.at(-1).parent
+
+    const jsonSidecar = getSidecar(sidecarDir)
+    if (!jsonSidecar[hed.code]) jsonSidecar[hed.code] = (method === 'long') ? longSidecarTemplate : eventTemplate
+    // if (!jsonSidecar[hed.code]) jsonSidecar[hed.code] = eventTemplate
+    if (!jsonSidecar[hed.code].Levels[hed.label]) jsonSidecar[hed.code].Levels[hed.label] = 'Insert description here'
+    if (!jsonSidecar[hed.code].HED[hed.label]) jsonSidecar[hed.code].HED = hed.tag // String
+
+    console.log('jsonSidecar', jsonSidecar)
+
+}
 
 
 const editor = new components.ObjectEditor({ header: 'Dataset', plot: ['data'] })
@@ -144,6 +196,27 @@ editor.onPlot = () => {
           },
           layer: 'below'
         })
+
+
+        // Specify Info to Add HED Tag
+        const eventInfo = {
+          onset: hedAnnotation.x,
+          duration: 'n/a',
+          [hedAnnotation.tag]: hedAnnotation.tag // FIX!
+        }
+
+        const nestDepth = 2 // Expected depth of .edf channel data
+        const history = editor.history.slice(0, editor.history.length - nestDepth)
+        console.log('RevisedHistory', history)
+        const fileHistoryObject = history.pop()
+        const modalityHistoryObject = history.pop()
+        console.log('modalityHistoryObject', modalityHistoryObject)
+
+        addHEDTag(hedAnnotation, eventInfo, fileHistoryObject.key, modalityHistoryObject.parent, history, 'inheritance')
+
+
+
+
         delete hedAnnotation.x
       }
 
