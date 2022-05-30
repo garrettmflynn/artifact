@@ -57,11 +57,11 @@ const metadataBase = {
 
 export const objects = {
     "participants.tsv" : {
-        participant_id: '',
-        age: '',
-        sex: ''
+        participant_id: 'n/a',
+        age: 'n/a',
+        sex: 'n/a'
     },
     
     "participants.json" : Object.assign({}, metadataBase),
-    "events.json": Object.assign({HED: ""}, metadataBase)
+    "events.json": Object.assign({HED: {}}, metadataBase)
 }

@@ -37,6 +37,10 @@ class EDF {
         this.samples_in_one_data_record = this.sampling_rate * this.data_record_duration;
     }
 
+    get bytes() {
+        return globalBytes // Don't save as enumerable on the object
+    }
+
     get headerOffset() {
         if (!this._headerOffset) this._headerOffset = this.channelCount * (16 + 2 * (80) + 6 * (8) + 1 * (32))
         return this._headerOffset

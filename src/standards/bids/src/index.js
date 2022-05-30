@@ -94,15 +94,14 @@ class BIDSDataset {
 
       // Validate Files
       const info = await this.validate(fileList, options)
-      console.log('Check', info)
-      if (override || info.errors.length === 0) return zippedBlob
-      else return info
+      info.zip = zippedBlob
+      return info
     }
 
     download = async (override=false) => {
-      const info = await this.check(override)
-      if (info instanceof Blob) saveAs(info, `${this.name}.zip`)
-      else return info
+      const info = await this.check({}, override)
+      if (info.zip instanceof Blob && (info.errors.length === 0 || override)) saveAs(info.zip, `${this.name}.zip`)
+      return info
     }
 }
 

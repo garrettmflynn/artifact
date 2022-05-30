@@ -19,6 +19,9 @@ export default async (name, o) => {
         case "application/x-nii": 
             buffer = encoders.nii(o)
             break;
+        case "application/x-edf": 
+            buffer = encoders.edf(o)
+            break;
         default: 
             buffer = encoders.text(o)
             break;
