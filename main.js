@@ -204,8 +204,9 @@ const onPlot = async (thisEditor) => {
 
       if (!hedAnnotation.onset) {
         const shortTag = tagControl.element.value
-        hedAnnotation.fullTag = fullHEDTagMap[shortTag]
-        hedAnnotation.artifact = shortTag.replace('#', freeTextControl.element.value)
+        const freeText = freeTextControl.element.value ?? 'placeholder'
+        hedAnnotation.fullTag = fullHEDTagMap[shortTag].replace('#', freeText)
+        hedAnnotation.artifact = shortTag.replace('#', freeText)
         hedAnnotation.onset = point.x
         hedAnnotation.y = point.y
 
