@@ -104,8 +104,8 @@ const plotEvent = (eventInfo, method) => {
 
           annotations.push({
             text: annotate_text,
-            x: parseFloat(onset.toPrecision(4)),
-            y: parseFloat(y.toPrecision(4))
+            x: onset,
+            y: y
           });
 
     }
