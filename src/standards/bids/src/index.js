@@ -83,18 +83,15 @@ class BIDSDataset {
         } else shortcutInfo[key] = value
       })
 
-      let o = this.files.system.sub[shortcutInfo.sub]
-      if (shortcutInfo.ses) o.ses[shortcutInfo.ses]
-      if (shortcutInfo.type) {
-        const tempO = o[shortcutInfo.type]
-
-        // Check All File Types in This Subject / Session
+      let o = this.files.system
+      const keys = ['sub', 'ses', 'type']
+      // Drill or Check System Subset
+      await Promise.all(keys.map(async str => {
+        const tempO = o[shortcutInfo[str]]
         if (!tempO) o = await drill(tempO)
         else o = tempO
-      }
-
+      }))
       const shortcut = o[fileName]
-
       if (shortcut) return o
 
       // Check All Files
