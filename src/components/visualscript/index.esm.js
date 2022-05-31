@@ -8097,6 +8097,8 @@ class Dashboard extends s {
         this.apps = new Map();
         this.open = (_a = props.open) !== null && _a !== void 0 ? _a : true;
         this.closeHandler = (_b = props.closeHandler) !== null && _b !== void 0 ? _b : (() => { });
+        if (props.toggletext)
+            this.toggletext = props.toggletext;
         this.toggle = (typeof props.toggle === 'string') ? document.getElementById(props.toggle) : props.toggle;
     }
     static get styles() {
@@ -8199,6 +8201,14 @@ class Dashboard extends s {
     }
     static get properties() {
         return {
+            toggletext: {
+                type: String,
+                reflect: true
+            },
+            toggle: {
+                type: Object,
+                reflect: true
+            },
             open: {
                 type: Boolean,
                 reflect: true,
@@ -8214,6 +8224,7 @@ class Dashboard extends s {
         };
     }
     render() {
+        var _a;
         // Add Global Class
         if (this.global)
             this.classList.add('global');
@@ -8247,7 +8258,7 @@ class Dashboard extends s {
         if (this.toggle)
             this.toggle.onclick = onClick;
         return $ `
-      ${(this.global && !this.toggle) ? $ `<div id="dashboard-toggle" @click=${onClick}>Edit</div>` : ''}
+      ${(this.global && !this.toggle) ? $ `<div id="dashboard-toggle" @click=${onClick}>${(_a = this.toggletext) !== null && _a !== void 0 ? _a : 'Edit'}</div>` : ''}
       ${this.global ? $ `<visualscript-button id='close' secondary size="small" @click=${() => this.open = false}>Close</visualscript-button>` : ``}
       <slot>
       </slot>
