@@ -2,7 +2,8 @@ import * as encoders from './encoders/index.js'
 import { getInfo } from './index.js'
 
 export default async (name, o) => {
-    const {mimeType, zipped} = getInfo({name})
+
+    const {mimeType, zipped} = getInfo({name}) // Spoof the original file
 
     let buffer = ''
     if (mimeType && (mimeType.includes('image/') || mimeType.includes('video/'))) content = encoders.datauri(o)
@@ -28,6 +29,7 @@ export default async (name, o) => {
     }
 
     if (zipped) buffer = await encoders.gzip(buffer)
+
     return buffer
 
 }

@@ -52,11 +52,8 @@
 
 	<visualscript-app id="app" name="Global EEG Norms">
 		<visualscript-nav>
-			<!-- <div class="container"> -->
-				<!-- <a href="./" class="logo" aria-label="Logo"><img src="./share.jpg" alt="Logo"></a> -->
-				<span>GEN</span><br>
-				<small>Global EEG Norms</small>
-			<!-- </div> -->
+			<span>GEN</span><br>
+			<small>Global EEG Norms</small>
 		</visualscript-nav>
 		<visualscript-dashboard>
 		<visualscript-sidebar>
@@ -80,9 +77,14 @@
 		</visualscript-sidebar>
 	  
 		<visualscript-main style="display: flex; align-items: center; justify-content: center;">
+			<visualscript-overlay>
+				<div id="inneroverlay">
+					<visualscript-loader type="linear"></visualscript-loader>
+				</div>
+			</visualscript-overlay>
 
 			<section>
-				<div id="editor">
+				<div id="annotation-app">
 				</div>
 			</section>
 
@@ -98,8 +100,11 @@
 		<visualscript-nav>GEN Advanced Mode</visualscript-nav>
 	  <visualscript-sidebar></visualscript-sidebar>
 	  <visualscript-main id="main">
-		<visualscript-overlay></visualscript-overlay>
 		<visualscript-tab id="bidseditor" name="BIDS Editor">
+			<section>
+				<div id="editor">
+				</div>
+			</section>
 		</visualscript-tab>
 	  </visualscript-main>
 	</visualscript-dashboard>

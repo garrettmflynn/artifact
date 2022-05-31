@@ -7,14 +7,16 @@ const checkTopLevel = (filesystem, extension) => {
     ), 0) !== 0 
 }
 
-export default async (fileList) => {
+export default async (fileList, callback) => {
     const bidsFiles = {
         format: 'bids',
         system: {},
-        types: {}
+        types: {},
+        list: []
     }
 
     // ---------------------- Load Files ----------------------
+    let count = 0
     const dataPromises = Array.from(Object.values(fileList)).map(async file => {
         let target = bidsFiles.system
 
@@ -47,9 +49,11 @@ export default async (fileList) => {
         if (content) {
             target[file.name] = content // filesystem target
             if (extension){
-            if (!bidsFiles.types[extension]) bidsFiles.types[extension] = {}
-            bidsFiles.types[extension][file.name.replace(`.${extension}`, '')] = content // filetypes extension
+                if (!bidsFiles.types[extension]) bidsFiles.types[extension] = {}
+                bidsFiles.types[extension][file.name.replace(`.${extension}`, '')] = content // filetypes extension
             } else bidsFiles.types[file.name] = content // e.g. README, CHANGES
+
+            bidsFiles.list.push(content) // Create a full list of files
         }
         else {
             // if (!target[file.name]) target[file.name] = null
@@ -57,6 +61,8 @@ export default async (fileList) => {
             console.warn(msg)
         }
 
+       count++
+       if (callback instanceof Function) callback(count/fileList.length, fileList.length)
        return target[file.name]
     })
 

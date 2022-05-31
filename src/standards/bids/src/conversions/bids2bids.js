@@ -85,7 +85,6 @@ export default (files) => {
 
     // Populate empty participants.tsv file
     const participants = files.system['participants.tsv']
-    console.log(files.system, files.system['participants.tsv'])
     if (participants.length === 0){
         Object.keys(files.system.sub).forEach(key => {
             const participantTemplate = JSON.parse(JSON.stringify(templates.objects['participants.tsv']))

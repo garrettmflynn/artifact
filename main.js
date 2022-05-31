@@ -4,7 +4,12 @@ import * as components from './src/components/index.js'
 import * as files from './src/files/src/index.js'
 import xmlHEDScore from './HED_score_1.0.0.xml'
 
+const overlay = document.body.querySelector('visualscript-overlay')
+const loader = document.body.querySelector('visualscript-loader')
+
 const editorDiv = document.getElementById('editor')
+const annotationApp = document.getElementById('annotation-app')
+
 const errorDiv = document.getElementById('errors')
 const warningDiv = document.getElementById('warnings')
 const errorHeader = document.getElementById('errorsheader')
@@ -71,10 +76,10 @@ const plotEvent = (eventInfo, method) => {
     const duration = parseFloat(new Number(eventInfo.duration) ?? 1) // May be n/a
     const y = parseFloat(new Number(eventInfo.y ?? 0)) // TODO: Derive y from data file...
 
-    if (!method || method === 'annotation'){
+    // TODO: Only plot artifacts for now. Make this general for existing events!
+    if (eventInfo.artifact && eventInfo.artifact != 'n/a'){
 
-        // TODO: Only plot artifacts for now. Make this general for existing events!
-        if (eventInfo.artifact && eventInfo.artifact != 'n/a'){
+    if (!method || method === 'annotation'){
 
           // Display short tag as the annotation
           const shortTag = eventInfo.artifact.split('/').at(-1)
@@ -86,7 +91,6 @@ const plotEvent = (eventInfo, method) => {
             y: parseFloat(y.toPrecision(4))
           });
 
-        }
     }
 
 
@@ -107,6 +111,7 @@ const plotEvent = (eventInfo, method) => {
         layer: 'below'
       })
     }
+  }
 
   return {annotations, shapes}
 }
@@ -116,11 +121,22 @@ const plotEvent = (eventInfo, method) => {
 files.decode({text: xmlHEDScore}, 'application/xml').then(handleXML)
 
 const editor = new components.ObjectEditor({ header: 'Dataset', plot: ['data'] })
-editor.onPlot = async () => {
+const editor2 = new components.ObjectEditor({ header: 'First EDF Channel' })
+
+// const nestDepth = 2 // Expected depth of .edf channel data
+let fallbackFileObject = {}
+let fallbackEntryName = 'File'
+let fallbackChannelInfo = {}
+
+
+const onPlot = async (thisEditor) => {
+
+  if (bidsDataset){
 
   // const maxNum = 1000000 // TODO: Should we keep or remove for performance?
-  const entryName = editor.history.at(-3).key
-  const channelInfo = editor.history.at(-1).parent
+  const entryName = thisEditor.history.at(-3)?.key ?? fallbackEntryName
+  const channelInfo = thisEditor.history.at(-1)?.parent ?? fallbackChannelInfo
+
   // console.log('Original Data Length', channelInfo.data.length)
   // const y = (channelInfo.data.length < maxNum) ? channelInfo.data : channelInfo.data.slice(0, maxNum)
   // console.log('New Data Length', y.length)
@@ -128,14 +144,7 @@ editor.onPlot = async () => {
   let hedAnnotation = {}
 
   // Plot Existing HED Events
-  const nestDepth = 2 // Expected depth of .edf channel data
-  const history = editor.history.slice(0, editor.history.length - nestDepth)
-  const fileHistoryObject = history.pop()
-  const focusFileName = fileHistoryObject.key
-  const modalityHistoryObject = history.pop()
-  const focusDirectory = modalityHistoryObject.parent
-
-  const hedEvents = await bidsDataset.getEvents(focusFileName)
+  const hedEvents = await bidsDataset.getEvents(entryName)
 
   const toPlot = {annotations: [], shapes: []}
   hedEvents.forEach(e => {
@@ -144,14 +153,14 @@ editor.onPlot = async () => {
     toPlot.shapes.push(...info.shapes ?? [])
   })
   
-  editor.timeseries.data = [
+  thisEditor.timeseries.data = [
     {
       name: channelInfo.label, //this.header,
-      y: editor.target
+      y: thisEditor.target
     }
   ]
 
-  editor.timeseries.layout = {
+  thisEditor.timeseries.layout = {
     annotations: toPlot.annotations,
     shapes: toPlot.shapes,
     title: `${entryName} - ${channelInfo.label}`,
@@ -186,12 +195,12 @@ editor.onPlot = async () => {
   }
 
   // Create New HED Events
-  editor.timeseries.onClick = async (data) => {
+  thisEditor.timeseries.onClick = async (data) => {
     for (var i = 0; i < data.points.length; i++) {
       const point = data.points[i]
 
-      const annotations = editor.timeseries.div.layout.annotations || []
-      const shapes = editor.timeseries.div.layout.shapes || []
+      const annotations = thisEditor.timeseries.div.layout.annotations || []
+      const shapes = thisEditor.timeseries.div.layout.shapes || []
 
       if (!hedAnnotation.onset) {
         const shortTag = tagControl.element.value
@@ -208,7 +217,7 @@ editor.onPlot = async () => {
         const hedInfo = {
           header: 'artifact',
           tag: hedAnnotation.fullTag,
-          code: hedAnnotation.tag
+          code: hedAnnotation.artifact
         }
 
         const eventInfo = {
@@ -220,18 +229,23 @@ editor.onPlot = async () => {
         const toPlot = plotEvent(eventInfo, 'shape') 
         shapes.push(...toPlot.shapes ?? [])
 
-        bidsDataset.addHED(hedInfo, eventInfo, focusFileName, focusDirectory, history, 'inheritance')
+        bidsDataset.addHED(hedInfo, eventInfo, entryName)
         delete hedAnnotation.onset
       }
 
       // Relayout the Plot
-      editor.timeseries.Plotly.relayout(editor.timeseries.div, { annotations, shapes })
+      thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { annotations, shapes })
 
     }
   }
+  }
 }
 
+editor2.onPlot = onPlot
+editor.onPlot = onPlot
+
 editorDiv.appendChild(editor)
+annotationApp.appendChild(editor2)
 
 let bidsDataset = null
 const dataset = document.getElementById('dataset')
@@ -247,6 +261,7 @@ xmlSelector.onChange = async (ev) => {
 
 // --------------- Create a BIDS Dataset ---------------
 dataset.onChange = async (ev) => {
+
   const files = ev.target.files
   bidsDataset = new bids.BIDSDataset({
     ignoreWarnings: false,
@@ -254,16 +269,35 @@ dataset.onChange = async (ev) => {
     ignoreSubjectConsistency: false,
   })
 
+  loader.text = 'Validating Dataset'
+  overlay.open = true
+
   const info = await bidsDataset.validate(files)
-  await bidsDataset.load(files)
+  loader.text = 'Parsing Dataset Files'
+
+  await bidsDataset.load(files, (ratio) => {
+    loader.progress = ratio
+  })
 
   console.log(bidsDataset)
+
+  // overlayDiv.innerHTML = 'Dataset loaded!'
 
   // Register Actual Directories
   if (Object.values(bidsDataset.files.system).length) {
     editor.set(bidsDataset.files.system)
+
+    // Plot Default Data
+    const allEDFFiles = bidsDataset.files.types.edf
+    fallbackFileObject = Object.values(allEDFFiles)[0]
+    fallbackEntryName = `${Object.keys(allEDFFiles)[0]}.edf`
+    fallbackChannelInfo = fallbackFileObject.channels[0]
+    editor2.set(fallbackChannelInfo.data, true) // Force plot
+
     showValidation(info)
   }
+
+  overlay.open = false
 }
 
 const showValidation = (info) => {
@@ -306,8 +340,18 @@ const showValidation = (info) => {
 
 downloadButton.onClick = async () => {
   if (bidsDataset) {
-    const info = await bidsDataset.check() // Show potential errors in your download
+    loader.progress = 0 // Reset loader
+    overlay.open = true
+    const info = await bidsDataset.zipCheck({}, (ratio) => {
+      loader.text = 'Zipping Edited Dataset'
+      loader.progress = ratio
+    }, (ratio) => {
+      loader.text = 'Unzipping Dataset to Validate'
+      loader.progress = ratio
+    }) // Show potential errors in your download
     showValidation(info)
-    await bidsDataset.download(true) // Auto-override the lock on downloading because of errors
+    loader.text = 'Downloading Edited Dataset'
+    await bidsDataset.download(true, info) // Auto-override the lock on downloading because of errors
+    overlay.open = false
   }
 }

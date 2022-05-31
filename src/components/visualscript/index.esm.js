@@ -5578,13 +5578,16 @@ class ObjectEditor extends s {
             this.keys = Object.keys(this.target);
             this.mode = this.getMode(this.target, plot);
         };
+        this.toPlot = (key) => {
+            return this.plot && (!Array.isArray(this.plot) || this.plot.includes(key));
+        };
         this.getActions = (key, o) => {
             let actions;
             if (typeof o[key] === 'object') {
-                const mode = this.getMode(o[key], this.plot.includes(key));
+                const mode = this.getMode(o[key], this.toPlot(key));
                 actions = $ `<visualscript-button primary=true size="small" @click="${() => {
                     this.history.push({ parent: o, key: this.header });
-                    this.set(o[key], this.plot.includes(key));
+                    this.set(o[key], this.toPlot(key));
                     this.header = key;
                 }}">${mode[0].toUpperCase() + mode.slice(1)}</visualscript-button>`;
             }
@@ -5623,7 +5626,7 @@ class ObjectEditor extends s {
         this.set(props.target);
         this.header = (_a = props.header) !== null && _a !== void 0 ? _a : 'Object';
         this.mode = (_b = props.mode) !== null && _b !== void 0 ? _b : 'view';
-        this.plot = (_c = props.plot) !== null && _c !== void 0 ? _c : [];
+        this.plot = (_c = props.plot) !== null && _c !== void 0 ? _c : false;
         this.onPlot = props.onPlot;
         this.timeseries = new TimeSeries({
             data: []
@@ -5743,7 +5746,7 @@ class ObjectEditor extends s {
         var _a;
         if (this.mode === 'plot') {
             if (this.onPlot instanceof Function)
-                this.onPlot();
+                this.onPlot(this);
             this.insertAdjacentElement('afterend', this.timeseries);
         }
         else

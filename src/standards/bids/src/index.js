@@ -65,7 +65,7 @@ class BIDSDataset {
             // Drill Directories
             else if (key.split('.').length === 1) {
               if (typeof o[key] === 'object'){
-                layers++
+                checks++
                 resolve(await drill(o[key]))
               }
             }
@@ -86,11 +86,15 @@ class BIDSDataset {
       let o = this.files.system
       const keys = ['sub', 'ses', 'type']
       // Drill or Check System Subset
-      await Promise.all(keys.map(async str => {
-        const tempO = o[shortcutInfo[str]]
-        if (!tempO) o = await drill(tempO)
-        else o = tempO
-      }))
+      // TODO: Make sure this never stalls—or at least throw an error!
+      const promises = keys.map(async str => {
+        const tempO = (str === 'type') ? o?.[shortcutInfo[str]] : o?.[str]?.[shortcutInfo[str]]
+        if (!tempO) return false
+        else return o = tempO
+      })
+
+      await Promise.all(promises)
+
       const shortcut = o[fileName]
       if (shortcut) return o
 
@@ -102,10 +106,12 @@ class BIDSDataset {
     
     getSidecar = async (name, options={}) => {
 
+      const ogDir = await this.getDirectory(name)
+
       let type;
       if (options.type){
         const split = name.split('_')
-        type = split.at(-1).split('.')[0]
+        type = split.at(-1).split('.')[0] // Original type
         name = `${split.slice(0, split.length - 1).join('_')}_${options.type}` // No extension needed
       }
 
@@ -114,7 +120,7 @@ class BIDSDataset {
         if (arr.length === 2) fileInfo[arr[0]] = arr[1]
         else {
           const split = arr[0].split('.') // Might have an extension
-          fileInfo.type =  type ?? split[0] // Keep OG type
+          fileInfo.type =  options.type ?? type ?? split[0] // Keep OG type
           fileInfo.extension =  split?.[1]
         }
       })
@@ -123,7 +129,7 @@ class BIDSDataset {
 
       // TODO: Look for more matches than just task
       if (options.global) return this.get(`${task ? `task-${task}` : ''}_${fileInfo.type}.${fileInfo.extension}`, this.files.system, fileInfo.type, 'json')
-      else this.get(name, await this.getDirectory(name), fileInfo.type, 'json')
+      else return this.get(name, ogDir, fileInfo.type, 'json')
     }
 
     validate = (files, options={}) => {
@@ -149,11 +155,11 @@ class BIDSDataset {
         })
     }
 
-    load = async (files) => {
+    load = async (files, callback) => {
         if (files.length){
           this.name = files[0].webkitRelativePath?.split('/')?.[0] // directory name
           this._setConfig()
-          const dataStructure = await load(files)
+          const dataStructure = await load(files, callback)
           this.files = convert(dataStructure, `${dataStructure.format}2bids`)
           return this.files
         }
@@ -182,16 +188,21 @@ class BIDSDataset {
     //   }
     // }
 
-    check = async (options={}, override=false) => {
-      const zippedBlob = await zip(this.name, this.files.system)
+    zipCheck = async (options={}, zipCallback, unzipCallback) => {
+      const zippedBlob = await zip(this.files, zipCallback)
 
       // Spoof Files for Pre-Export Validation
       const unzipped = await JSZip.loadAsync(zippedBlob)
-      const fileList = await Promise.all(Object.entries(unzipped.files).filter(([path, f]) => !f.dir).map(async ([path, f]) => {
+
+      let count = 0
+      const fileEntries = Object.entries(unzipped.files).filter(([path, f]) => !f.dir)
+      const fileList = await Promise.all(fileEntries.map(async ([path, f], i) => {
         const buffer = await f.async("arraybuffer")
         const blob = new Blob([buffer])
         blob.name = f.name.split('/').at(-1)
         blob.webkitRelativePath = `${this}/${path}`
+        count++
+        if (unzipCallback) unzipCallback(count/fileEntries.length, fileEntries.length)
         return blob
       }))
 
@@ -201,8 +212,8 @@ class BIDSDataset {
       return info
     }
 
-    download = async (override=false) => {
-      const info = await this.check({}, override)
+    download = async (override=false, info=null) => {
+      if (!info) info = await this.zipCheck({}, override)
       if (info.zip instanceof Blob && (info.errors.length === 0 || override)) saveAs(info.zip, `${this.name}.zip`)
       return info
     }

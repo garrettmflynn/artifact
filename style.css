@@ -43,6 +43,24 @@ body * {
 	background: rgb(255, 245, 205);
 }
 
+#inneroverlay {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items:center;
+	justify-content: center;
+	flex-wrap: wrap;
+	position: relative;
+	font-size:170%;
+	font-weight: bold;
+	font-family: sans-serif;
+	padding: 50px;
+}
+
+visualscript-loader {
+	width: 100%;
+}
+
 visualscript-nav {
 	line-height: 1.0;
 }

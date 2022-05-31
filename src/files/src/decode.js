@@ -1,9 +1,9 @@
 import * as decoders from './decoders/index.js'
 export default async (o, mimeType, zipped) => {
 
+
     if (zipped) o = await decoders.gzip(o, mimeType)
     if (mimeType && (mimeType.includes('image/') || mimeType.includes('video/'))) return o.dataurl
-
 
     switch(mimeType){
         // case "text/comma-separated-values":
