@@ -29,28 +29,45 @@ const handleXML = ({HED}) => {
     const filter = ['/EEG-artifact']
     const shortName = true
 
-    const drillNodes = (o, base) => {
-      if (o.name) base += `/${o.name[0]['_']}`
-      if (o.node) {
-        o.node.forEach(o => drillNodes(o,base))
-      } else {
-        const count = filter.reduce((a,b) => a + base.includes(b), 0)
-        if (count) {
-          if (shortName) {
-            const short = base.split('/').at(-1)
-            const val = (short === '#') ? base : short
-            options.add(val)
-            fullHEDTagMap[val] = base
-          } else {
-            options.add(base)
-            fullHEDTagMap[base] = base
-          }
+    const drillNodes = (o, base='') => {
+      const emptyBase = base === ''
+      const count = filter.reduce((a,b) => a + base.includes(b), 0)
+      if (count || base === '') {
+        const val = o.name?.[0]?.['_']
 
+        if (o.name) {
+          base += `/${val}`
+          if (val !== '#'){
+            const toInclude = !emptyBase || filter.includes(base)
+            if (toInclude){
+              fullHEDTagMap[base] = val // Intermediary tags
+              options.add(val)
+            }
+          }
         }
-      }
+
+        if (o.node) {
+          o.node.forEach(o => drillNodes(o,base))
+        } 
+        
+        // Final Tags
+        else {
+            if (shortName) {
+              const split = base.split('/')
+              const short = split.at(-1)
+              const val = (short === '#') ? split.slice(split.length - 2).join('/') : short
+              options.add(val)
+              fullHEDTagMap[val] = base
+            } else {
+              options.add(base)
+              fullHEDTagMap[base] = base
+            }
+
+          }
+        }
     }
 
-    drillNodes(o,'')
+    drillNodes(o)
     tagControl.options = Array.from(options)
     toggleFreeFormInput(tagControl.element)
 }
@@ -204,8 +221,13 @@ const onPlot = async (thisEditor) => {
 
       if (!hedAnnotation.onset) {
         const shortTag = tagControl.element.value
-        const freeText = freeTextControl.element.value ?? 'placeholder'
-        hedAnnotation.fullTag = fullHEDTagMap[shortTag].replace('#', freeText)
+        const freeText = freeTextControl.element.value
+        let fullTag = fullHEDTagMap[shortTag]
+        if (fullTag.includes('#')) {
+          if (freeText) fullTag = fullTag.replace('#', freeText)
+          else fullTag = fullTag.replace('/#', '') // Remove free text area
+        }
+        hedAnnotation.fullTag = fullTag
         hedAnnotation.artifact = shortTag.replace('#', freeText)
         hedAnnotation.onset = point.x
         hedAnnotation.y = point.y
