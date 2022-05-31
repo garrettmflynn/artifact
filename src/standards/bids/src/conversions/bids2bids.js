@@ -12,7 +12,7 @@ export default (files) => {
     const hasSubjects = subjects && subjects.length > 0 // Top-level only
     let sessions = Object.values(files.system.ses ?? {}) 
     if (sessions.length === 0) sessions = subjects.map(o => o.ses).filter(val => !!val) // Top-level or nested in subject folders
-    const hasSessions = sessions && sessions.length > 0
+    const hasSessions = true // sessions && sessions.length > 0 // Doesn't matter if there are no sessions
 
     const originalFiles = files.system
     files.system = {sub: {}}
@@ -40,13 +40,13 @@ export default (files) => {
 
         // Nest Directories 
         if (!hasSubjects && !hasSessions) {
-            files.system.sub = {0: {ses: {0:originalFiles}}}
-        } else if (!hasSubjects && hasSessions) files.system.sub = {0: originalFiles}
+            files.system.sub = {'01': {ses: {'1':originalFiles}}}
+        } else if (!hasSubjects && hasSessions) files.system.sub = {'01': originalFiles}
         else if (hasSubjects && !hasSessions) {
             Object.entries(originalFiles.sub).map(([key, value]) => {
-                files.system.sub[key] = {
-                    0: value
-                }
+                files.system.sub[key] = {ses:{
+                    '1': value
+                }}
             })
         }
     } else Object.assign(files.system, originalFiles) // Don't lose top-level files
@@ -56,8 +56,9 @@ export default (files) => {
     // Overwrite directory with filename
     const toDelete = []
     for (let subjectName in files.system.sub) {
-        for (let sessionName in files.system.sub[subjectName].ses){
-            const sessionBase = files.system.sub[subjectName].ses[sessionName]
+        const sessions = Object.assign({}, files.system.sub[subjectName].ses ?? {})
+        for (let sessionName in sessions){
+            const sessionBase = sessions[sessionName]
             const info = {subjectName, sessionName, base: files.system}
             const agnosticToDelete =  renameFileEntries(sessionBase, info) // Grab modality-agnostic files
             toDelete.push(agnosticToDelete)
@@ -107,22 +108,22 @@ const renameFileEntries = (baseDir, info) => {
         const extraSlice = split.filter(str => !['sub', 'ses'].includes(str.split('-')[0]))
         split.map(str => str.split('-')).forEach(arr => fileNameStructure[arr[0]] = arr[1])
         if (!fileNameStructure.sub) fileNameStructure.sub = info.subjectName
-        if (!fileNameStructure.ses) fileNameStructure.ses = info.sessionName
+        // if (!fileNameStructure.ses) fileNameStructure.ses = info.sessionName
 
         // Update in Directory
         if (fileNameStructure.sub != info.subjectName) {
-            console.log(info.base.sub[info.subjectName],info.subjectName, info.base.sub)
             info.base.sub[fileNameStructure.sub] = info.base.sub[info.subjectName]
             subsToDelete.add(info.subjectName)
         }
 
-        if (fileNameStructure.ses != info.sessionName) {
-            info.base.sub[fileNameStructure.sub].ses[fileNameStructure.ses] = info.base.sub[info.subjectName].ses[info.sessionName]
-            sessionsToDelete.add([info.subjectName, info.sessionName])
-        }
+        // if (fileNameStructure.ses != info.sessionName) {
+        //     info.base.sub[fileNameStructure.sub].ses[fileNameStructure.ses] = info.base.sub[info.subjectName].ses[info.sessionName]
+        //     sessionsToDelete.add([info.subjectName, info.sessionName])
+        // }
 
         // Update in File Name
-        const updatedKey = `sub-${fileNameStructure.sub}_ses-${fileNameStructure.ses}_${extraSlice.join('_')}`
+        const updatedKey = `sub-${fileNameStructure.sub}_${extraSlice.join('_')}`
+        // const updatedKey = `sub-${fileNameStructure.sub}_ses-${fileNameStructure.ses}_${extraSlice.join('_')}`
         if (updatedKey != firstKey){
             baseDir[updatedKey] = firstValue
             delete baseDir[firstKey]

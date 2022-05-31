@@ -25,6 +25,24 @@ body * {
 	padding: 5px 25px;
 }
 
+#errorsheader, #warningsheader{
+	display: none
+}
+
+.error, .warning {
+	color: black;
+	padding: 10px;
+	border-radius: 20px;
+}
+
+.error {
+	background: rgb(255, 205, 205);
+}
+
+.warning {
+	background: rgb(255, 245, 205);
+}
+
 visualscript-nav {
 	line-height: 1.0;
 }

@@ -48,7 +48,7 @@
 	<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
  </head>
 
- <body onload="() => console.log('LOADED')">
+ <body>
 
 	<visualscript-app id="app" name="Global EEG Norms">
 		<visualscript-nav>
@@ -69,13 +69,11 @@
 			<visualscript-control id=tag type="select" label="Select a Tag" persist></visualscript-control>
 			<visualscript-control id=freetext type="input" label="Free Text" persist></visualscript-control>
 
-			<visualscript-sidebar-header>Errors</visualscript-sidebar-header>
+			<visualscript-sidebar-header id="errorsheader">Errors</visualscript-sidebar-header>
 			<div id="errors" class="container">	
-				N/A
 			</div>
-			<visualscript-sidebar-header>Warnings</visualscript-sidebar-header>
+			<visualscript-sidebar-header id="warningsheader">Warnings</visualscript-sidebar-header>
 			<div id="warnings" class="container">	
-				N/A
 			</div>
 
 

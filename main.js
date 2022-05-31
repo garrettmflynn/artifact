@@ -2,13 +2,14 @@
 import * as bids from './src/standards/bids/src/index.js'
 import * as components from './src/components/index.js'
 import * as files from './src/files/src/index.js'
-import * as hed from './src/standards/bids/src/hed.js'
-
 import xmlHEDScore from './HED_score_1.0.0.xml'
 
 const editorDiv = document.getElementById('editor')
 const errorDiv = document.getElementById('errors')
 const warningDiv = document.getElementById('warnings')
+const errorHeader = document.getElementById('errorsheader')
+const warningHeader = document.getElementById('warningsheader')
+
 const downloadButton = document.getElementById('download')
 const tagControl = document.getElementById('tag')
 const freeTextControl = document.getElementById('freetext')
@@ -65,9 +66,6 @@ const plotEvent = (eventInfo, method) => {
   const annotations = [];
   const shapes = [];
 
-  // TODO: Only plot artifacts for now. Make this general for existin gevents!
-  if (eventInfo.artifact != 'n/a'){
-
     // TODO: Move this outside of the for loop for performant batch processing
     const onset = parseFloat(new Number(eventInfo.onset))
     const duration = parseFloat(new Number(eventInfo.duration) ?? 1) // May be n/a
@@ -75,15 +73,20 @@ const plotEvent = (eventInfo, method) => {
 
     if (!method || method === 'annotation'){
 
-        // Display short tag as the annotation
-        const shortTag = eventInfo.artifact.split('/').at(-1)
-        const annotate_text = `<b>${shortTag}</b>` // TODO: Specific to artifact annotation
+        // TODO: Only plot artifacts for now. Make this general for existing events!
+        if (eventInfo.artifact && eventInfo.artifact != 'n/a'){
 
-        annotations.push({
-          text: annotate_text,
-          x: parseFloat(onset.toPrecision(4)),
-          y: parseFloat(y.toPrecision(4))
-        });
+          // Display short tag as the annotation
+          const shortTag = eventInfo.artifact.split('/').at(-1)
+          const annotate_text = `<b>${shortTag}</b>` // TODO: Specific to artifact annotation
+
+          annotations.push({
+            text: annotate_text,
+            x: parseFloat(onset.toPrecision(4)),
+            y: parseFloat(y.toPrecision(4))
+          });
+
+        }
     }
 
 
@@ -104,7 +107,6 @@ const plotEvent = (eventInfo, method) => {
         layer: 'below'
       })
     }
-  }
 
   return {annotations, shapes}
 }
@@ -114,7 +116,7 @@ const plotEvent = (eventInfo, method) => {
 files.decode({text: xmlHEDScore}, 'application/xml').then(handleXML)
 
 const editor = new components.ObjectEditor({ header: 'Dataset', plot: ['data'] })
-editor.onPlot = () => {
+editor.onPlot = async () => {
 
   // const maxNum = 1000000 // TODO: Should we keep or remove for performance?
   const entryName = editor.history.at(-3).key
@@ -132,7 +134,7 @@ editor.onPlot = () => {
   const focusFileName = fileHistoryObject.key
   const modalityHistoryObject = history.pop()
   const focusDirectory = modalityHistoryObject.parent
-  const hedEvents = hed.getEvents(focusFileName, focusDirectory)
+  const hedEvents = await bidsDataset.getEvents(focusFileName)
         
   const toPlot = {annotations: [], shapes: []}
   hedEvents.forEach(e => {
@@ -183,7 +185,7 @@ editor.onPlot = () => {
   }
 
   // Create New HED Events
-  editor.timeseries.onClick = (data) => {
+  editor.timeseries.onClick = async (data) => {
     for (var i = 0; i < data.points.length; i++) {
       const point = data.points[i]
 
@@ -211,13 +213,13 @@ editor.onPlot = () => {
         const eventInfo = {
           onset: Math.min(point.x, hedAnnotation.onset),
           duration: Math.abs(point.x - hedAnnotation.onset),
-          artifact: hed.code // Redundant...
+          artifact: hedInfo.code // Redundant...
         }
 
         const toPlot = plotEvent(eventInfo, 'shape') 
         shapes.push(...toPlot.shapes ?? [])
 
-        hed.add(hedInfo, eventInfo, focusFileName, focusDirectory, history, 'inheritance')
+        bidsDataset.addHED(hedInfo, eventInfo, focusFileName, focusDirectory, history, 'inheritance')
         delete hedAnnotation.onset
       }
 
@@ -257,12 +259,10 @@ dataset.onChange = async (ev) => {
   console.log(bidsDataset)
 
   // Register Actual Directories
-  if (bidsDataset.files.system) {
+  if (Object.values(bidsDataset.files.system).length) {
     editor.set(bidsDataset.files.system)
-    // console.log(editor, editor.target, bidsDataset.files.system)
+    showValidation(info)
   }
-
-  showValidation(info)
 }
 
 const showValidation = (info) => {
@@ -271,26 +271,36 @@ const showValidation = (info) => {
   warningDiv.innerHTML = ''
 
 
-  const createView = (o, i, type = 'Error') => {
+  const createView = (o, i, type = 'error') => {
     return `
-    <h5>${type} ${i + 1}: [${o.code}] ${o.key}</h5>
-    <a href=${o.helpUrl}>Click here for more information about this issue</a>
-    <p><small>${o.reason}</small></p>
-    <span>${o.files.length} files.</span>
-    <ul>
-      ${o.files.map((file, j) => `<li>File ${j} - ${file?.file?.name}</li>`).join('')}
-    </ul>
+    <div class=${type}>
+      <h5>${i + 1}: [${o.code}] ${o.key}</h5>
+      <a href=${o.helpUrl}>Click here for more information about this issue</a>
+      <p><small>${o.reason}</small></p>
+      <span>${o.files.length} files.</span>
+      <ul>
+        ${o.files.map((file, j) => `<li>File ${j} - ${file?.file?.name}</li>`).join('')}
+      </ul>
+    <div>
     `
   }
 
   console.log('Info', info)
-  if (info.errors) info.errors.forEach((error, i) => {
-      errorDiv.insertAdjacentHTML('beforeend', createView(error, i, 'Error'))
+  if (info.errors) {
+    if (info.errors.length > 0) errorHeader.style.display = 'block'
+    else errorHeader.style.display = ''
+    info.errors.forEach((error, i) => {
+      errorDiv.insertAdjacentHTML('beforeend', createView(error, i, 'error'))
     })
+  }
 
-    if (info.warnings) info.warnings.forEach((warning, i) => {
-      warningDiv.insertAdjacentHTML('beforeend', createView(warning, i, 'Warning'))
-    })
+    if (info.warnings) {
+      if (info.warnings.length > 0) warningHeader.style.display = 'block'
+      else warningHeader.style.display = ''
+      info.warnings.forEach((warning, i) => {
+        warningDiv.insertAdjacentHTML('beforeend', createView(warning, i, 'warning'))
+      })
+    }
 }
 
 downloadButton.onClick = async () => {

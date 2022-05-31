@@ -18,9 +18,7 @@ export default (name, object) => {
             else if (splitKey.length === 1 && (typeof subObj[key] === 'object')) {
                 return await drill(subObj[key], file.folder(prefixKey ? `${prefixKey}-${key}` : key))
             } else {
-                console.log('Encode', key, file)
                 const returned = await files.encode(key, subObj[key]).catch(e => console.error(e))
-                console.log('returned', returned)
                 file.file(key, returned) // Encoded file
             }
         }))

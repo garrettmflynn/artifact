@@ -42,13 +42,34 @@ export const files = {
               Units: "s"
           }
           
+    },
+
+    'eeg.json': {
+        "TaskName": "", // Required
+        "TaskDescription": "",
+        "InstitutionAddress": "",
+        "InstitutionName": "",
+        "EEGReference": "", // Required
+        "EEGGround": "",
+        "SamplingFrequency": 250, // Required
+        "PowerLineFrequency": 50, // Required
+        "SoftwareFilters": "n/a", // {} // Required
+        "EEGPlacementScheme": "",
+        "CapManufacturer": "",
+        "EEGChannelCount": 0,
+        "EOGChannelCount": 0,
+        "RecordingType": "",
+        "MiscChannelCount": 0,
+        "RecordingDuration": 0,
+        "ECGChannelCount": 0,
+        "EMGChannelCount": 0
     }
 }
 
 
 const metadataBase = {
     LongName: "",
-    Description: "Insert description here",
+    Description: "",
     Levels: {},
     Units: "",
     TermURL: "",
