@@ -134,8 +134,9 @@ editor.onPlot = async () => {
   const focusFileName = fileHistoryObject.key
   const modalityHistoryObject = history.pop()
   const focusDirectory = modalityHistoryObject.parent
+
   const hedEvents = await bidsDataset.getEvents(focusFileName)
-        
+
   const toPlot = {annotations: [], shapes: []}
   hedEvents.forEach(e => {
     const info = plotEvent(e)

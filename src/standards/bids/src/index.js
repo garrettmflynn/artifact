@@ -50,10 +50,13 @@ class BIDSDataset {
 
     getDirectory = async (fileName) => {
 
-      let layers = 0
+      let checks = 0
       let drill = (o) => {
         return new Promise(async (resolve, reject) => {
-          if (layers > 50) reject('No file with this name can be found.') // Likely an invalid file name 
+          if (checks > 50) {
+            console.error('TOO MANY CHECKS!')
+            reject('No file with this name can be found.') // Likely an invalid file name 
+          }
           for (let key in o) {
 
             // File Found!
@@ -70,6 +73,31 @@ class BIDSDataset {
         })
       }
 
+      // Check Shortcut based on File Name
+      const shortcutInfo = {}
+      fileName.split('_').map(str => str.split('-')).forEach(([key, value]) => {
+        if (!value) {
+          const split = key.split('.')
+          shortcutInfo.type = split[0]
+          shortcutInfo.extension = split[1]
+        } else shortcutInfo[key] = value
+      })
+
+      let o = this.files.system.sub[shortcutInfo.sub]
+      if (shortcutInfo.ses) o.ses[shortcutInfo.ses]
+      if (shortcutInfo.type) {
+        const tempO = o[shortcutInfo.type]
+
+        // Check All File Types in This Subject / Session
+        if (!tempO) o = await drill(tempO)
+        else o = tempO
+      }
+
+      const shortcut = o[fileName]
+
+      if (shortcut) return o
+
+      // Check All Files
       const directory = await drill(this.files.system)
       return directory
 
@@ -77,8 +105,10 @@ class BIDSDataset {
     
     getSidecar = async (name, options={}) => {
 
+      let type;
       if (options.type){
         const split = name.split('_')
+        type = split.at(-1).split('.')[0]
         name = `${split.slice(0, split.length - 1).join('_')}_${options.type}` // No extension needed
       }
 
@@ -87,7 +117,7 @@ class BIDSDataset {
         if (arr.length === 2) fileInfo[arr[0]] = arr[1]
         else {
           const split = arr[0].split('.') // Might have an extension
-          fileInfo.type =  split[0]
+          fileInfo.type =  type ?? split[0] // Keep OG type
           fileInfo.extension =  split?.[1]
         }
       })
