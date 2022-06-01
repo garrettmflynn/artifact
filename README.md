@@ -9,11 +9,6 @@ This software validates the effectiveness of modern web technologies to drastica
 
 Most methods for the BIDSDataset are asynchronous to allow for iterative reading: decoding files only as they are relevant to the end-user.
 
-
-### Development Notes
-- Recompression of .nii files takes a lot of processing power. Can we avoid that?
-    - Use Web Workers!
-
 ### Checklist
 - [ ] `bids-standard`: An NPM library for reading/writing/exporting BIDS files on the browser
 - [ ] `hed-standard`: An ontology for EEG artifacts that is interoperable with the HED schema

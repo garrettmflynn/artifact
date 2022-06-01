@@ -32,7 +32,7 @@ export default class IterativeFile {
         }
 
         this.data = await getFileData(this.file).catch(this.onError)
-        await this.get() // Get files right away (test)
+        // await this.get() // Get files right away (test)
     }
 
     // Read Buffer Data
@@ -95,9 +95,8 @@ export default class IterativeFile {
 
 
     export = async () => {
-        // if (this[`#cache`] === this[`#original`]) return this.data.buffer
-        // else 
-        return await this.set(this[`#cache`]) // Re-encode cache data
+        if (this[`#cache`] === this[`#original`]) return this.data.buffer
+        else return await this.set(this[`#cache`]) // Re-encode cache data
     }
 
     onError = (e) => {

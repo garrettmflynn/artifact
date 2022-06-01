@@ -168,7 +168,6 @@ const onPlot = async (thisEditor) => {
   const hedEvents = await bidsDataset.getEvents(entryName)
 
   const toPlot = {annotations: [], shapes: []}
-  console.log(hedEvents)
   hedEvents.forEach(e => {
     const info = plotEvent(e)
     toPlot.annotations.push(...info.annotations ?? [])
