@@ -1,6 +1,7 @@
 import decode from './decode.js'
 import encode from './encode.js'
 import getFileData from './get.js'
+import IterativeFile from './IterativeFile.js'
 
 const types = {
     'gz': "application/x-gzip",
@@ -25,10 +26,9 @@ const types = {
 
 
 const get = async (file) => {
-    const {mimeType, zipped} = getInfo(file)
-    const data = await getFileData(file).catch(e => console.error(e))
-    if (data) return await decode(data, mimeType, zipped).catch(e => console.error(e))
-    else return null
+    const iterativeFile = new IterativeFile(file)
+    await iterativeFile.init()
+    return iterativeFile
 }
 
 
@@ -36,5 +36,7 @@ export {
     get,
     decode,
     encode,
-    getInfo
+    getInfo,
+    getFileData,
+    IterativeFile
 }

@@ -7,16 +7,15 @@ const checkTopLevel = (filesystem, extension) => {
     ), 0) !== 0 
 }
 
-export default async (fileList, callback) => {
+export default async (fileList, options, callback) => {
     const bidsFiles = {
         format: 'bids',
         system: {},
         types: {},
-        list: []
+        n: 0
     }
 
     // ---------------------- Load Files ----------------------
-    let count = 0
     const dataPromises = Array.from(Object.values(fileList)).map(async file => {
         let target = bidsFiles.system
 
@@ -41,32 +40,36 @@ export default async (fileList, callback) => {
             }
         })
         
-
         // Decode File Contents
-        const {extension} = files.getInfo(file)
-        const content = await files.get(file)
+        const fileManager = await files.get(file).catch(e => console.error(e))
 
-        if (content) {
-            target[file.name] = content // filesystem target
-            if (extension){
-                if (!bidsFiles.types[extension]) bidsFiles.types[extension] = {}
-                bidsFiles.types[extension][file.name.replace(`.${extension}`, '')] = content // filetypes extension
-            } else bidsFiles.types[file.name] = content // e.g. README, CHANGES
+        // filesystem
+        target[file.name] = fileManager
 
-            bidsFiles.list.push(content) // Create a full list of files
-        }
-        else {
-            // if (!target[file.name]) target[file.name] = null
-            const msg = `No decoder for ${file.name} - ${file.type || 'No file type recognized'}`
-            console.warn(msg)
+        // filetype
+        const extension = fileManager.extension
+        if (extension){
+            const shortName = file.name.replace(`.${extension}`, '')
+            if (!bidsFiles.types[extension]) bidsFiles.types[extension] = {}
+            bidsFiles.types[extension][shortName] = fileManager
+        } else {
+            bidsFiles.types[file.name] = fileManager // e.g. README, CHANGES
         }
 
-       count++
-       if (callback instanceof Function) callback(count/fileList.length, fileList.length)
-       return target[file.name]
+
+        // keep track of how many
+        bidsFiles.n++
+       if (callback instanceof Function) callback(bidsFiles.n/fileList.length, fileList.length)
+       return true // Done!
     })
 
+    const tic = performance.now()
     await Promise.allSettled(dataPromises)
+    const toc = performance.now()
+    if (options.debug) console.warn(`Time to Load Files: ${toc-tic}ms`)
+ 
+    const rejected = dataPromises.filter(result => result.status === 'rejected').map(result => result.reason)
+    if (options.debug) console.warn('Rejected Files', rejected, dataPromises)
 
     if (checkTopLevel(bidsFiles.system, 'edf')) bidsFiles.format = 'edf' // replace bids with edf
     if (checkTopLevel(bidsFiles.system, 'nwb')) bidsFiles.format = 'nwb' // replace bids with nwb

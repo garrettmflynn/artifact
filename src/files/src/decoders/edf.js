@@ -219,37 +219,4 @@ class EDF {
             }
         } else return this._annotations
     }
-
-    // readSingleChannel(channel, startSecond, lengthSeconds) {
-    //     var startSample = startSecond * this.sampling_rate;
-    //     var endSample = startSample + lengthSeconds * this.sampling_rate;
-
-    //     if (endSample > this.maxSample) {
-    //         endSample = this.maxSample;
-    //     }
-
-    //     var data = [];
-
-    //     var ch = this.channels[channel].data;
-    //     for (var i = startSample; i < endSample; i++) {
-    //         data.push(ch[i]);
-    //     }
-
-    //     return data;
-    // }
-
-
-    // read(startSecond, lengthSeconds) {
-    //     var array = [];
-
-    //     let realChannelCount = (this.has_annotations) ? this.channelCount - 1 : this.channelCount
-
-    //     for (var i = 0; i < realChannelCount; i++) {
-    //         array.push(this.readSingleChannel(i, startSecond, lengthSeconds));
-    //     }
-
-    //     return array;
-    // }
-
-
 }

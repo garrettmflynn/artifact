@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver';
 import convert from './convert.js';
 
 import * as templates from './templates.js'
+import { IterativeFile } from 'src/files/src/index.js';
 
 const deepClone = (o) => JSON.parse(JSON.stringify(o))
 
@@ -27,25 +28,30 @@ class BIDSDataset {
       else this.options.config = `${this.name}/.bids-validator-config.json`
     }
 
-    // TODO: Automatically find directory
-    get = (name, directory, type, extension) => {
-
-      let defaultObj;
-      if (extension === 'json') defaultObj = {}
-      else if (extension === 'tsv') defaultObj = []
-      else defaultObj = ''
+    get = async (name, directory, type, extension) => {
 
       const fileSplit = name.split('_')
       const fileCoreName = fileSplit.slice(0, fileSplit.length - 1).join('_') // Remove extension and modality
       const hasPrefix = fileCoreName.length > 0
       const expectedFileName = `${fileCoreName}${type ? ((hasPrefix) ? `_${type}` : type) : ''}.${extension}`
       const foundFileName = Object.keys(directory).find(str => str.includes(fileCoreName) && (type ? str.includes(`_${type}.${extension}`) : str.includes(`.${extension}`)))
-      return (!foundFileName) ? directory[expectedFileName] = defaultObj : directory[foundFileName] // Creates if not found
+
+
+      // Create File If Not Found
+      if (!foundFileName){
+        const fileSpoof = {name: expectedFileName}
+        if (extension === 'json') fileSpoof.data = {}
+        else if (extension === 'tsv') fileSpoof.data = []
+        else defaultObj = fileSpoof.data = ''
+        const file = directory[expectedFileName] =  new IterativeFile(fileSpoof, this.options)
+        await file.init()
+        return file
+      } else return await directory[foundFileName].get()
     }
 
     getEvents = async (name) => {
       const directory = await this.getDirectory(name)
-      return this.get(name, directory, 'events', 'tsv')
+      return await this.get(name, directory, 'events', 'tsv')
     }
 
     getDirectory = async (fileName) => {
@@ -128,8 +134,8 @@ class BIDSDataset {
       const task = fileInfo.task
 
       // TODO: Look for more matches than just task
-      if (options.global) return this.get(`${task ? `task-${task}` : ''}_${fileInfo.type}.${fileInfo.extension}`, this.files.system, fileInfo.type, 'json')
-      else return this.get(name, ogDir, fileInfo.type, 'json')
+      if (options.global) return await this.get(`${task ? `task-${task}` : ''}_${fileInfo.type}.${fileInfo.extension}`, this.files.system, fileInfo.type, 'json')
+      else return await this.get(name, ogDir, fileInfo.type, 'json')
     }
 
     validate = (files, options={}) => {
@@ -159,8 +165,8 @@ class BIDSDataset {
         if (files.length){
           this.name = files[0].webkitRelativePath?.split('/')?.[0] // directory name
           this._setConfig()
-          const dataStructure = await load(files, callback)
-          this.files = convert(dataStructure, `${dataStructure.format}2bids`)
+          const dataStructure = await load(files, this.options, callback)
+          this.files = await convert(dataStructure, `${dataStructure.format}2bids`, this.options)
           return this.files
         }
     }
@@ -189,7 +195,9 @@ class BIDSDataset {
     // }
 
     zipCheck = async (options={}, zipCallback, unzipCallback) => {
-      const zippedBlob = await zip(this.files, zipCallback)
+      options = Object.assign(this.options, options) // Override current global options
+      
+      const zippedBlob = await zip(this.files, this.options, zipCallback)
 
       // Spoof Files for Pre-Export Validation
       const unzipped = await JSZip.loadAsync(zippedBlob)

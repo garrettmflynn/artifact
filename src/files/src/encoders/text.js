@@ -1,1 +1,1 @@
-export default (o) => o.toString()
+export default (o) => new TextEncoder().encode(o.toString())

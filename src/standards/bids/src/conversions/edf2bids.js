@@ -3,9 +3,9 @@ import bids2bids from './bids2bids.js'
 
 const validModalities = ['eeg']
 
-export default (files) => {
+export default async (files) => {
     const firstPass = edf2bids(files)
-    return bids2bids(firstPass)
+    return await bids2bids(firstPass)
 }
 
 

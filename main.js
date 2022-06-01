@@ -21,7 +21,7 @@ const freeTextControl = document.getElementById('freetext')
 
 // tagControl.style.display = 'none'
 
-const fullHEDTagMap = {}
+const HEDTagMap = {}
 const handleXML = ({HED}) => {
     const options = new Set()
     const o = HED.schema[0]
@@ -40,7 +40,7 @@ const handleXML = ({HED}) => {
           if (val !== '#'){
             const toInclude = !emptyBase || filter.includes(base)
             if (toInclude){
-              fullHEDTagMap[base] = val // Intermediary tags
+              HEDTagMap[val] = base // Intermediary tags
               options.add(val)
             }
           }
@@ -57,10 +57,10 @@ const handleXML = ({HED}) => {
               const short = split.at(-1)
               const val = (short === '#') ? split.slice(split.length - 2).join('/') : short
               options.add(val)
-              fullHEDTagMap[val] = base
+              HEDTagMap[val] = base
             } else {
               options.add(base)
-              fullHEDTagMap[base] = base
+              HEDTagMap[base] = base
             }
 
           }
@@ -138,6 +138,10 @@ const plotEvent = (eventInfo, method) => {
 files.decode({text: xmlHEDScore}, 'application/xml').then(handleXML)
 
 const editor = new components.ObjectEditor({ header: 'Dataset', plot: ['data'] })
+editor.preprocess = async (o) => {
+  if (o instanceof files.IterativeFile) return await o.get()
+  else return o
+}
 const editor2 = new components.ObjectEditor({ header: 'First EDF Channel' })
 
 // const nestDepth = 2 // Expected depth of .edf channel data
@@ -164,6 +168,7 @@ const onPlot = async (thisEditor) => {
   const hedEvents = await bidsDataset.getEvents(entryName)
 
   const toPlot = {annotations: [], shapes: []}
+  console.log(hedEvents)
   hedEvents.forEach(e => {
     const info = plotEvent(e)
     toPlot.annotations.push(...info.annotations ?? [])
@@ -220,9 +225,11 @@ const onPlot = async (thisEditor) => {
       const shapes = thisEditor.timeseries.div.layout.shapes || []
 
       if (!hedAnnotation.onset) {
+
         const shortTag = tagControl.element.value
         const freeText = freeTextControl.element.value
-        let fullTag = fullHEDTagMap[shortTag]
+        let fullTag = HEDTagMap[shortTag]
+
         if (fullTag.includes('#')) {
           if (freeText) fullTag = fullTag.replace('#', freeText)
           else fullTag = fullTag.replace('/#', '') // Remove free text area
@@ -290,6 +297,7 @@ dataset.onChange = async (ev) => {
     ignoreWarnings: false,
     ignoreNiftiHeaders: false,
     ignoreSubjectConsistency: false,
+    debug: true
   })
 
   loader.text = 'Validating Dataset'
@@ -312,12 +320,15 @@ dataset.onChange = async (ev) => {
 
     // Plot Default Data
     const allEDFFiles = bidsDataset.files.types.edf
-    fallbackFileObject = Object.values(allEDFFiles)[0]
-    fallbackEntryName = `${Object.keys(allEDFFiles)[0]}.edf`
-    fallbackChannelInfo = fallbackFileObject.channels[0]
-    editor2.set(fallbackChannelInfo.data, true) // Force plot
+    if (allEDFFiles){
+        fallbackFileObject = await Object.values(allEDFFiles)[0].get()
+        fallbackEntryName = `${Object.keys(allEDFFiles)[0]}.edf`
+        fallbackChannelInfo = fallbackFileObject.channels[0]
+        editor2.set(fallbackChannelInfo.data, true) // Force plot
 
-    showValidation(info)
+        showValidation(info)
+    }
+
   }
 
   overlay.open = false

@@ -1,1 +1,3 @@
-export default (object) => JSON.stringify(object)
+import text from './text.js'
+
+export default (object) => text(JSON.stringify(object))

@@ -7,6 +7,8 @@ A Progressive Web Application for Global EEG Norms
 
 This software validates the effectiveness of modern web technologies to drastically simplify neuroscience research pipelines through standardized tools available on the Open Web. A similar pipeline can be used to develop, publish about, and monetize future web-based neurophysiology tools
 
+Most methods for the BIDSDataset are asynchronous to allow for iterative reading: decoding files only as they are relevant to the end-user.
+
 
 ### Development Notes
 - Recompression of .nii files takes a lot of processing power. Can we avoid that?

@@ -1,12 +1,13 @@
 // import { keywords } from './index.js'
 import * as templates from '../templates.js'
+import { IterativeFile } from 'src/files/src/index.js'
 
 const required = ['README', 'participants.json', 'participants.tsv', 'dataset_description.json']
 const topLevel = ['CHANGES', '.bidsignore', ...required]
 // const validModalities = ['eeg']
 
 // Convert BIDS-Formatted Directories to Valid Structure
-export default (files) => {
+export default async (files, options) => {
 
     const subjects = Object.values(files.system.sub ?? {})
     const hasSubjects = subjects && subjects.length > 0 // Top-level only
@@ -17,16 +18,25 @@ export default (files) => {
     const originalFiles = files.system
     files.system = {sub: {}}
 
-    required.forEach(name => {
-        const ext = name.split('.').slice(1).join('.')
-        if (templates.files[name]) files.system[name] = templates.files[name]
-        else if (ext === 'json') files.system[name] = {}
-        else if (ext === 'tsv') files.system[name] = []
-        else files.system[name] = ''
+    // Add Required Top-Level Files
+    await Promise.allSettled(required.map(async name => {
+        if (!files.system[name]){
+            const fileSpoof = {
+                name
+            }
+            const ext = name.split('.').slice(1).join('.')
+            if (templates.files[name]) fileSpoof.data = templates.files[name]
+            else if (ext === 'json') fileSpoof.data = {}
+            else if (ext === 'tsv') fileSpoof.data = []
+            else fileSpoof.data = ''
+            files.system[name] = new IterativeFile(fileSpoof, options)
+            await files.system[name].init()
 
-        if (!files.types[ext]) files.types[ext] = {}
-        files.types[ext][name.replace(`.ext`, '')] = files.system[name] // Link in types references
-    })
+            const key = ext || name
+            if (!files.types[key]) files.types[key] = {}
+            files.types[key][name.replace(`.ext`, '')] = files.system[name] // Link in types references
+        }
+    }))
     
     if (!(hasSubjects && hasSessions)){
 
@@ -84,7 +94,7 @@ export default (files) => {
     })
 
     // Populate empty participants.tsv file
-    const participants = files.system['participants.tsv']
+    const participants = await files.system['participants.tsv'].get()
     if (participants.length === 0){
         Object.keys(files.system.sub).forEach(key => {
             const participantTemplate = JSON.parse(JSON.stringify(templates.objects['participants.tsv']))
