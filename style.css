@@ -25,12 +25,17 @@ body * {
 	padding: 5px 25px;
 }
 
+.disabled {
+	pointer-events: none;
+	opacity: 0.5;
+}
+
 #errorsheader, #warningsheader{
 	display: none
 }
 
 #artifacts {
-	max-height: 25%;
+	max-height: 50%;
 	overflow-y: scroll;
 }
 
@@ -40,7 +45,7 @@ body * {
 	justify-content: space-between;
 	padding: 10px;
 	border-radius: 10px;
-	background: whitesmoke;
+	border: 1px solid rgb(184, 184, 184);
 }
 
 .error, .warning {

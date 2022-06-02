@@ -234,7 +234,16 @@ class BIDSDataset {
       // Account for Missing Info
       if (!hed.code) hed.code = hed.tag
       if (!hed.label) hed.label = hed.code
-  
+
+
+      // TODO: Update Description
+      // const description = await this.files.system['dataset_description.json'].get()
+      // if (!description.HEDVersion) {
+      //   description.HEDVersion = { base: '8.0.0' }
+      // } else if (typeof description.HEDVersion === 'string') description.HEDVersion = {base: description.HEDVersion}
+      // if (!description.HEDVersion.libraries) description.HEDVersion.libraries = {sc: 'score_0.0.1'}
+
+      
       // Get Event .tsv File
       const tsvEventFile = await this.getEvents(fileName)
       const eventTemplate = deepClone(tsvEventFile[0]) ?? templates.objects['events.json'] // Add structured event
@@ -258,7 +267,7 @@ class BIDSDataset {
       globalSidecar[hed.header].Levels = subjectSidecar[hed.header].Levels // Link these directly // TODO: Make this work for more than one subjectSidecar!
   }
 
-  removeHED = async (offset) => {
+  deleteHED = async (offset) => {
     console.error('CANNOT REMOVE TAG YET', offset)
   }
 

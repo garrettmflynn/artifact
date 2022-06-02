@@ -4,6 +4,7 @@ import * as components from './src/components/index.js'
 import * as files from './src/files/src/index.js'
 import xmlHEDScore from './HED_score_1.0.0.xml'
 
+const rangeFillColor = '#d3d3d3'
 const overlay = document.body.querySelector('visualscript-overlay')
 const loader = document.body.querySelector('visualscript-loader')
 
@@ -94,9 +95,6 @@ const plotEvent = (eventInfo, method) => {
     const duration = parseFloat(new Number(eventInfo.duration) ?? 1) // May be n/a
     const y = parseFloat(new Number(eventInfo.y ?? 0)) // TODO: Derive y from data file...
 
-    // TODO: Only plot artifacts for now. Make this general for existing events!
-    if (eventInfo.artifact && eventInfo.artifact != 'n/a'){
-
     if (!method || method === 'line'){
 
         shapes.push({
@@ -118,7 +116,7 @@ const plotEvent = (eventInfo, method) => {
     }
 
 
-    if (!method || method === 'shape'){
+    if (!method || method === 'range'){
       shapes.push({
         type: 'rect',
         xref: 'x',
@@ -127,7 +125,7 @@ const plotEvent = (eventInfo, method) => {
         y0: 0,
         x1: onset + duration,
         y1: 1,
-        fillcolor: '#d3d3d3',
+        fillcolor: rangeFillColor,
         opacity: 0.5,
         line: {
           width: 0
@@ -135,7 +133,6 @@ const plotEvent = (eventInfo, method) => {
         layer: 'below'
       })
     }
-  }
 
   return {annotations, shapes}
 }
@@ -161,23 +158,106 @@ const onPlot = async (thisEditor) => {
 
   if (bidsDataset){
 
+  // Initialize Plot-Specific Function Scopes
+  const allAnnotations = {}
+  let lastAnnotation = null
+
+  const createAnnotationEditor = (info, section=true) => {
+
+    if (section === true || section === 0){
+      const div = document.createElement('div')
+      div.classList.add('item')
+      const controlDiv = document.createElement('div')
+      const bold = document.createElement('b')
+      const onset = document.createElement('onset')
+      const button = document.createElement('visualscript-button')
+      button.size = 'small'
+      bold.innerHTML = info.artifact
+      onset.innerHTML = info.onset
+      button.innerHTML = 'Delete'
+      button.classList.add('disabled')
+      button.onClick = () => {
+        div.remove()
+        lastAnnotation = null
+        delete info[info.offset]
+        shapes = shapes.filter(o => o !== info.line && o !== info.range)
+        thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { shapes })
+        bidsDataset.deleteHED(info.offset)
+      }
+
+      div.insertAdjacentElement('beforeend', bold)
+      div.insertAdjacentElement('beforeend', onset)
+      div.insertAdjacentElement('beforeend', controlDiv)
+      controlDiv.insertAdjacentElement('beforeend', button)
+      artifactsDiv.insertAdjacentElement('beforeend', div)
+      info.div = div
+      info.controlDiv = controlDiv
+    }
+
+    if (section === true || section === 1){
+      const button = document.createElement('visualscript-button')
+      button.innerHTML = 'Hide'
+      button.primary = true
+      button.size = 'small'
+
+      button.onClick = () => {
+        if (button.innerHTML === 'Hide') {
+          info.range.opacity = 0
+          button.innerHTML = 'Show'
+        } else if (button.innerHTML === 'Show') {
+          button.innerHTML = 'Hide'
+          info.range.opacity = 0.5
+        }
+        thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { shapes: thisEditor.timeseries.div.layout.shapes })
+      }
+
+      button.onmouseover = () => {
+        info.range.fillcolor = 'lime'
+        thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { shapes: thisEditor.timeseries.div.layout.shapes })
+      }
+
+      button.onmouseout= () => {
+        info.range.fillcolor = rangeFillColor
+        thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { shapes: thisEditor.timeseries.div.layout.shapes })
+      }
+
+      info.controlDiv.insertAdjacentElement('afterbegin', button)
+    }
+
+    return info
+  }
+
+
+  // Get Basic Info from the Editor
   // const maxNum = 1000000 // TODO: Should we keep or remove for performance?
   const entryName = thisEditor.history.at(-3)?.key ?? fallbackEntryName
   const channelInfo = thisEditor.history.at(-1)?.parent ?? fallbackChannelInfo
+  
 
   // console.log('Original Data Length', channelInfo.data.length)
   // const y = (channelInfo.data.length < maxNum) ? channelInfo.data : channelInfo.data.slice(0, maxNum)
   // console.log('New Data Length', y.length)
 
   // Plot Existing HED Events
-  const hedEvents = await bidsDataset.getEvents(entryName)
+  const dataEvents = await bidsDataset.getEvents(entryName)
 
   const toPlot = {annotations: [], shapes: []}
-  hedEvents.forEach(e => {
-    const info = plotEvent(e)
-    toPlot.annotations.push(...info.annotations ?? [])
-    toPlot.shapes.push(...info.shapes ?? [])
+
+  console.log(dataEvents)
+  dataEvents.forEach(e => {
+
+      // TODO: Only plot artifacts for now. Make this general for existing events!
+      if (e.artifact && e.artifact != 'n/a'){
+
+      const info = plotEvent(e, 'range')
+      toPlot.shapes.push(...info.shapes ?? [])
+      e.range = info.shapes[0]
+      createAnnotationEditor(e)
+    }
   })
+
+  console.log(toPlot)
+
   
   thisEditor.timeseries.data = [
     {
@@ -220,9 +300,6 @@ const onPlot = async (thisEditor) => {
     // }
   }
 
-  const allAnnotations = {}
-  let lastAnnotation = null
-
   // Create New HED Events
   thisEditor.timeseries.onClick = async (data) => {
     for (var i = 0; i < data.points.length; i++) {
@@ -250,37 +327,12 @@ const onPlot = async (thisEditor) => {
         lastAnnotation = annotation.onset = point.x
         // annotation[point.x].y = point.y
 
-        const div = document.createElement('div')
-        div.classList.add('item')
-        const bold = document.createElement('b')
-        const onset = document.createElement('onset')
-        const button = document.createElement('visualscript-button')
-        button.classList.add('small')
-        bold.innerHTML = shortTag
-        onset.innerHTML = annotation.onset
-        button.innerHTML = 'Delete'
-        button.onClick = () => {
-          div.remove()
-          lastAnnotation = null
-          delete annotation[point.x]
-
-          shapes = shapes.filter(o => o !== annotation.line && o !== annotation.range)
-          thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { shapes })
-
-          bidsDataset.deleteHED(annotation.offset)
-
-        }
-        div.insertAdjacentElement('beforeend', bold)
-        div.insertAdjacentElement('beforeend', onset)
-        div.insertAdjacentElement('beforeend', button)
-        artifactsDiv.insertAdjacentElement('beforeend', div)
+        annotation = createAnnotationEditor(annotation, 0)
 
         // Plot Line
         const toPlot = plotEvent(annotation, 'line') 
-        shapes.push(...toPlot.shapes ?? [])
-
-        annotation.div = div
         annotation.line = toPlot.shapes[0]
+        shapes.push(...toPlot.shapes ?? [])
 
       } else {
 
@@ -297,32 +349,18 @@ const onPlot = async (thisEditor) => {
           artifact: hedInfo.code // Redundant...
         }
 
-        const toPlot = plotEvent(eventInfo, 'shape') 
+        const toPlot = plotEvent(eventInfo, 'range') 
         shapes.push(...toPlot.shapes ?? [])
 
         annotation.range = toPlot.shapes[0]
 
         bidsDataset.addHED(hedInfo, eventInfo, entryName)
 
-
         // Interact with the Annotation
-        const button = document.createElement('visualscript-button')
-        button.classList.add('small')
-        button.innerHTML = 'Hide'
-        button.onClick = () => {
-          if (button.innerHTML === 'Hide') {
-            toPlot.shapes.forEach(o => o.opacity = 0)
-            button.innerHTML = 'Show'
-          } else if (button.innerHTML === 'Show') {
-            button.innerHTML = 'Hide'
-            toPlot.shapes.forEach(o => o.opacity = 0.5)
-          }
-          thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { shapes })
-        }
+        createAnnotationEditor(annotation, 1)
 
-        annotation.div.insertAdjacentElement('beforeend', button)
-
-        shapes = shapes.filter(o => o !== annotation.line)
+        // Remove Line
+        shapes = thisEditor.timeseries.div.layout.shapes = shapes.filter(o => o !== annotation.line)
 
         lastAnnotation = null
       }
@@ -393,11 +431,13 @@ dataset.onChange = async (ev) => {
     if (allEDFFiles){
         fallbackFileObject = await Object.values(allEDFFiles)[0].get()
         fallbackEntryName = `${Object.keys(allEDFFiles)[0]}.edf`
-        fallbackChannelInfo = fallbackFileObject.channels[0]
-        editor2.set(fallbackChannelInfo.data, true) // Force plot
-
-        showValidation(info)
+        if (fallbackFileObject.channels.length > 0){
+          fallbackChannelInfo = fallbackFileObject.channels[0]
+          editor2.set(fallbackChannelInfo.data, true) // Force plot
+        }
     }
+
+    showValidation(info)
 
   }
 
@@ -418,7 +458,7 @@ const showValidation = (info) => {
       <p><small>${o.reason}</small></p>
       <span>${o.files.length} files.</span>
       <ul>
-        ${o.files.map((file, j) => `<li>File ${j} - ${file?.file?.name}</li>`).join('')}
+        ${o.files.map((file, j) => `<li><p><b>File ${j}</b> - ${file?.file?.name}<p><p><small><b>Evidence:</b> ${file.evidence}</small></li>`).join('')}
       </ul>
     <div>
     `
