@@ -257,6 +257,11 @@ class BIDSDataset {
       globalSidecar[hed.header].HED = subjectSidecar[hed.header].HED // Link these directly // TODO: Make this work for more than one subjectSidecar!
       globalSidecar[hed.header].Levels = subjectSidecar[hed.header].Levels // Link these directly // TODO: Make this work for more than one subjectSidecar!
   }
+
+  removeHED = async (offset) => {
+    console.error('CANNOT REMOVE TAG YET', offset)
+  }
+
 }
 
 

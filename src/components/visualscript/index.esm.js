@@ -3538,7 +3538,8 @@ class Select extends s {
         if (props.persist)
             this.persist = props.persist;
         const val = getPersistent(props);
-        if (val)
+        // Only Use Cached Value if Included In Options
+        if (val && this.options.includes(val))
             this.value = val;
     }
     static get styles() {

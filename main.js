@@ -9,6 +9,7 @@ const loader = document.body.querySelector('visualscript-loader')
 
 const editorDiv = document.getElementById('editor')
 const annotationApp = document.getElementById('annotation-app')
+const artifactsDiv = document.getElementById('artifacts')
 
 const errorDiv = document.getElementById('errors')
 const warningDiv = document.getElementById('warnings')
@@ -96,17 +97,23 @@ const plotEvent = (eventInfo, method) => {
     // TODO: Only plot artifacts for now. Make this general for existing events!
     if (eventInfo.artifact && eventInfo.artifact != 'n/a'){
 
-    if (!method || method === 'annotation'){
+    if (!method || method === 'line'){
 
-          // Display short tag as the annotation
-          const shortTag = eventInfo.artifact.split('/').at(-1)
-          const annotate_text = `<b>${shortTag}</b>` // TODO: Specific to artifact annotation
-
-          annotations.push({
-            text: annotate_text,
-            x: onset,
-            y: y
-          });
+        shapes.push({
+          type: 'line',
+          xref: 'x',
+          yref: 'paper',
+          x0: onset,
+          y0: 0,
+          x1: onset,
+          y1: 1,
+          fillcolor: 'black',
+          opacity: 1.0,
+          line: {
+            width: 2
+          },
+          layer: 'below'
+        })
 
     }
 
@@ -121,7 +128,7 @@ const plotEvent = (eventInfo, method) => {
         x1: onset + duration,
         y1: 1,
         fillcolor: '#d3d3d3',
-        opacity: 0.7,
+        opacity: 0.5,
         line: {
           width: 0
         },
@@ -161,8 +168,6 @@ const onPlot = async (thisEditor) => {
   // console.log('Original Data Length', channelInfo.data.length)
   // const y = (channelInfo.data.length < maxNum) ? channelInfo.data : channelInfo.data.slice(0, maxNum)
   // console.log('New Data Length', y.length)
-
-  let hedAnnotation = {}
 
   // Plot Existing HED Events
   const hedEvents = await bidsDataset.getEvents(entryName)
@@ -215,55 +220,121 @@ const onPlot = async (thisEditor) => {
     // }
   }
 
+  const allAnnotations = {}
+  let lastAnnotation = null
+
   // Create New HED Events
   thisEditor.timeseries.onClick = async (data) => {
     for (var i = 0; i < data.points.length; i++) {
       const point = data.points[i]
 
-      const annotations = thisEditor.timeseries.div.layout.annotations || []
-      const shapes = thisEditor.timeseries.div.layout.shapes || []
+      // let annotations = thisEditor.timeseries.div.layout.annotations || []
+      let shapes = thisEditor.timeseries.div.layout.shapes || []
 
-      if (!hedAnnotation.onset) {
+      let annotation = allAnnotations[lastAnnotation ?? point.x]
+      if (!annotation) {
+
+        annotation = allAnnotations[point.x] = {}
 
         const shortTag = tagControl.element.value
         const freeText = freeTextControl.element.value
-        let fullTag = HEDTagMap[shortTag]
+        let fullTag = HEDTagMap[shortTag] ?? ''
+        if (!fullTag) console.warn('Full tag not found', shortTag)
 
-        if (fullTag.includes('#')) {
+        if (fullTag && fullTag.includes('#')) {
           if (freeText) fullTag = fullTag.replace('#', freeText)
           else fullTag = fullTag.replace('/#', '') // Remove free text area
         }
-        hedAnnotation.fullTag = fullTag
-        hedAnnotation.artifact = shortTag.replace('#', freeText)
-        hedAnnotation.onset = point.x
-        hedAnnotation.y = point.y
+        annotation.fullTag = fullTag
+        annotation.artifact = shortTag.replace('#', freeText)
+        lastAnnotation = annotation.onset = point.x
+        // annotation[point.x].y = point.y
 
-        const toPlot = plotEvent(hedAnnotation, 'annotation') 
-        annotations.push(...toPlot.annotations ?? [])
+        const div = document.createElement('div')
+        div.classList.add('item')
+        const bold = document.createElement('b')
+        const onset = document.createElement('onset')
+        const button = document.createElement('visualscript-button')
+        button.classList.add('small')
+        bold.innerHTML = shortTag
+        onset.innerHTML = annotation.onset
+        button.innerHTML = 'Delete'
+        button.onClick = () => {
+          div.remove()
+          lastAnnotation = null
+          delete annotation[point.x]
+
+          shapes = shapes.filter(o => o !== annotation.line && o !== annotation.range)
+          thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { shapes })
+
+          bidsDataset.deleteHED(annotation.offset)
+
+        }
+        div.insertAdjacentElement('beforeend', bold)
+        div.insertAdjacentElement('beforeend', onset)
+        div.insertAdjacentElement('beforeend', button)
+        artifactsDiv.insertAdjacentElement('beforeend', div)
+
+        // Plot Line
+        const toPlot = plotEvent(annotation, 'line') 
+        shapes.push(...toPlot.shapes ?? [])
+
+        annotation.div = div
+        annotation.line = toPlot.shapes[0]
+
       } else {
 
         // Specify Info to Add HED Tag
         const hedInfo = {
           header: 'artifact',
-          tag: hedAnnotation.fullTag,
-          code: hedAnnotation.artifact
+          tag: annotation.fullTag,
+          code: annotation.artifact
         }
 
         const eventInfo = {
-          onset: Math.min(point.x, hedAnnotation.onset),
-          duration: Math.abs(point.x - hedAnnotation.onset),
+          onset: Math.min(point.x, annotation.onset),
+          duration: Math.abs(point.x - annotation.onset),
           artifact: hedInfo.code // Redundant...
         }
 
         const toPlot = plotEvent(eventInfo, 'shape') 
         shapes.push(...toPlot.shapes ?? [])
 
+        annotation.range = toPlot.shapes[0]
+
         bidsDataset.addHED(hedInfo, eventInfo, entryName)
-        delete hedAnnotation.onset
+
+
+        // Interact with the Annotation
+        const button = document.createElement('visualscript-button')
+        button.classList.add('small')
+        button.innerHTML = 'Hide'
+        button.onClick = () => {
+          if (button.innerHTML === 'Hide') {
+            toPlot.shapes.forEach(o => o.opacity = 0)
+            button.innerHTML = 'Show'
+          } else if (button.innerHTML === 'Show') {
+            button.innerHTML = 'Hide'
+            toPlot.shapes.forEach(o => o.opacity = 0.5)
+          }
+          thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { shapes })
+        }
+
+        annotation.div.insertAdjacentElement('beforeend', button)
+
+        shapes = shapes.filter(o => o !== annotation.line)
+
+        lastAnnotation = null
       }
 
       // Relayout the Plot
-      thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, { annotations, shapes })
+      thisEditor.timeseries.Plotly.relayout(
+        thisEditor.timeseries.div, 
+        { 
+          // annotations, 
+          shapes 
+        }
+      )
 
     }
   }

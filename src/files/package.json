@@ -1,7 +1,7 @@
 {
-  "name": "@brainsatplay/files",
+  "name": "freerange",
   "version": "0.0.0",
-  "description": "File import and export utilities",
+  "description": "File import and export utilities with free range-request support for remote files",
   "main": "src/index.js",
   "license": "MIT",
   "dependencies": {

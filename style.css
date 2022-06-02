@@ -29,6 +29,20 @@ body * {
 	display: none
 }
 
+#artifacts {
+	max-height: 25%;
+	overflow-y: scroll;
+}
+
+#artifacts .item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	border-radius: 10px;
+	background: whitesmoke;
+}
+
 .error, .warning {
 	color: black;
 	padding: 10px;
@@ -81,8 +95,12 @@ visualscript-nav small {
 } */
 
 visualscript-sidebar .container {
-	padding: 5px 15px;
+	padding: 10px 15px;
 	/* max-width: 400px; */
+}
+
+.container > * {
+	margin: 10px;
 }
 
 /* visualscript-main {
