@@ -4735,8 +4735,8 @@ class ObjectEditor extends s {
           <span>${this.header}</span>
           ${(this.history.length > 0) ? $ `<visualscript-button size="extra-small" @click="${() => {
             const historyItem = this.history.pop();
-            this.header = historyItem.key;
             this.set(historyItem.parent);
+            this.header = historyItem.key;
         }}">Go Back</visualscript-button>` : ``}
         </div>
         <div class="container">
