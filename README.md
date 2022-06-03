@@ -5,7 +5,7 @@ A Progressive Web Application for Global EEG Norms
 **GEN** is a Progressive Web Application (PWA) for managing BIDS datasets on the browser. While this tool has primary support for the electroencephalography (EEG) modality of the BIDS specification, we intend to expand support for other modalities as we continue development.
 
 ### Goals
-**Short Term:** We intend for **GEN** to enable the development of standard annotations (particularly for artifacts) in EEG datasets through *global feedback from clinical neurophysiologists*.
+**Short Term:** We intend for **GEN** to enable the development of standard annotations for EEG datasets (starting with resting-state artifacts) through *global feedback from clinical neurophysiologists*.
 
 **Mid Term:** We intend for the libraries resulting from **GEN** to reduce the barriers to entry for neurophysiology research by enabling standalone data management and analysis applications to be prototyped and released on modern browsers.
 
@@ -25,6 +25,9 @@ A Progressive Web Application for Global EEG Norms
 ### GSoC Milestones
 1. [x] Release **GEN** as a Progressive Web App (PWA) for loading, annotating and exporting BIDS datasets on the browser
 2. [ ] Conduct usability testing with clinical neurophysiologists and determine interrater agreement
+    - Develop a simplified UI to gether feedback. Here is a slice of a dataset. Does it have an artifact? If so, what and where?
+    - Host a curated collection of datasets remotely. Allow users to submit us their annotations about them (from the web interface).
+    - Compare stored annotations
 3. [ ] Publish thorough documentation for released libraries
     - [ ] `bids-standard`: Manage BIDS datasets in the browser and Node.js
     - [ ] `neurowidgets`: A Web Component library for loading, visualizing and annotating EEG data 
