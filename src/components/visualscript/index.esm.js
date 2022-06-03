@@ -7551,7 +7551,7 @@ class Control extends s {
         const nodes = slot.assignedNodes();
         // Manually Place Slot Text in Button
         if (this.type === 'button' && nodes.length)
-            nodes.forEach(el => this.element.appendChild(el));
+            nodes.forEach(el => this.element.appendChild(el.cloneNode()));
     }
 }
 customElements.define('visualscript-control', Control);

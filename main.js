@@ -176,7 +176,7 @@ const onPlot = async (thisEditor) => {
       const onset = document.createElement('onset')
       const button = document.createElement('visualscript-button')
       button.size = 'small'
-      bold.innerHTML = info.artifact
+      bold.innerHTML = info.annotation_type
       onset.innerHTML = info.onset
       button.innerHTML = 'Delete'
       button.classList.add('disabled')
@@ -249,7 +249,7 @@ const onPlot = async (thisEditor) => {
   dataEvents.forEach(e => {
 
       // TODO: Only plot artifacts for now. Make this general for existing events!
-      if (e.artifact && e.artifact != 'n/a'){
+      if (e.annotation_type && e.annotation_type != 'n/a'){
 
       const info = plotEvent(e, 'range')
       toPlot.shapes.push(...info.shapes ?? [])
@@ -428,7 +428,7 @@ const onPlot = async (thisEditor) => {
           else fullTag = fullTag.replace('/#', '') // Remove free text area
         }
         annotation.fullTag = fullTag
-        annotation.artifact = shortTag.replace('#', freeText)
+        annotation.annotation_type = shortTag.replace('#', freeText)
         lastAnnotation = annotation.onset = point.x
         // annotation[point.x].y = point.y
 
@@ -445,13 +445,13 @@ const onPlot = async (thisEditor) => {
         const hedInfo = {
           header: 'artifact',
           tag: annotation.fullTag,
-          code: annotation.artifact
+          code: annotation.annotation_type
         }
 
         const eventInfo = {
           onset: Math.min(point.x, annotation.onset),
           duration: Math.abs(point.x - annotation.onset),
-          artifact: hedInfo.code // Redundant...
+          annotation_type: hedInfo.code // Redundant...
         }
 
         const toPlot = plotEvent(eventInfo, 'range') 
