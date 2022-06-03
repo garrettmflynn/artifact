@@ -241,8 +241,6 @@ const onPlot = async (thisEditor) => {
     fileObject = fallbackFileObject
   }
 
-  console.log(entryName, fileObject)
-
   // Plot Existing HED Events
   const dataEvents = await bidsDataset.getEvents(entryName)
 
@@ -274,7 +272,7 @@ const onPlot = async (thisEditor) => {
     dragmode: 'pan',
     xaxis: {
       rangemode: 'tozero',
-      range: [0, 500], // TODO: Set to 5 seconds
+      range: [0, 1500], // TODO: Set to 5 seconds
       rangeslider: {},
       title: {
         text: `Sample Number`,
@@ -337,26 +335,26 @@ const onPlot = async (thisEditor) => {
       const axisName = `yaxis${i+2}`
       if (changeLayout){
 
-        console.log('found', axisName, thisEditor.timeseries.div.layout[axisName], i)
+        // console.log('found', axisName, thisEditor.timeseries.div.layout[axisName], i)
         if (!thisEditor.timeseries.div.layout[axisName]) {
-          // thisEditor.timeseries.div.layout[axisName] = {
-          //   showgrid: false,
-          //   zeroline: false,
-          //   showline: true,
-          //   autotick: true,
-          //   ticks: '',
-          //   showticklabels: false,
-          //   autorange: true,
-          //   // range: [o.phys_min, o.phys_max],
-          //   type: 'linear',
-          // }
+          thisEditor.timeseries.div.layout[axisName] = {
+            showgrid: false,
+            zeroline: false,
+            showline: true,
+            autotick: true,
+            ticks: '',
+            showticklabels: false,
+            autorange: true,
+            // range: [o.phys_min, o.phys_max],
+            type: 'linear',
+          }
         }
   
         
         update[axisName] = thisEditor.timeseries.div.layout[axisName]  ?? {}
         update[axisName].domain = [(count)/(n), (interval*overlap) + (count+1)/(n)]
 
-        console.log('Still Active', axisName, update[axisName].domain)
+        // console.log('Still Active', axisName, update[axisName].domain)
         count++
 
         // if (plot) thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, axisName, update[axisName]) // Update domain
@@ -367,9 +365,9 @@ const onPlot = async (thisEditor) => {
     })
 
     if (plot) {
-      console.log('update',JSON.parse(JSON.stringify(update)))
+      // console.log('update',JSON.parse(JSON.stringify(update)))
       thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, update)
-      console.log('LAYOUT', JSON.parse(JSON.stringify(thisEditor.timeseries.layout)))
+      // console.log('LAYOUT', JSON.parse(JSON.stringify(thisEditor.timeseries.layout)))
     }
 
 
@@ -396,7 +394,7 @@ const onPlot = async (thisEditor) => {
   
   thisEditor.timeseries.layout = Object.assign(layout, relayout(thisEditor.timeseries.data), false) // first layout
 
-  console.log('OG LAYOUT', JSON.parse(JSON.stringify(thisEditor.timeseries.layout)))
+  // console.log('OG LAYOUT', JSON.parse(JSON.stringify(thisEditor.timeseries.layout)))
 
     // TODO: Relayout the Channels on the Y Axis
     // thisEditor.timeseries.onLegendClick = (data) => {
