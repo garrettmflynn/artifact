@@ -158,20 +158,17 @@ const totalMaxPoints = ungodlyLarge //1000000
 const onPlot = async (thisEditor) => {
 
 
-  console.log('On Plot!')
   if (bidsDataset){
 
   // Initialize Plot-Specific Function Scopes
   const allAnnotations = {}
   let lastAnnotation = null
   const montage = [
-    (o,i) => i === 0,
-    (o,i) => i === 1,
-    (o,i) => i === 2,
-    (o,i) => i === 3,
-    // (o,i) => i === 4,
-    // (o,i) => i === 5,
-    // (o,i) => i === 6,
+    true, 
+    true, 
+    true, 
+    true, 
+    true
   ]
 
   const createAnnotationEditor = (info, section=true) => {
@@ -264,12 +261,9 @@ const onPlot = async (thisEditor) => {
     modeBarButtonsToRemove: ['zoomIn2d','zoomOut2d', 'autoScale2d']
   }
 
-
-  thisEditor.header = entryName
-
   const layout = {
     legend: {
-      // traceorder: 'reversed'
+      traceorder: 'reversed'
     },
     annotations: toPlot.annotations,
     shapes: toPlot.shapes,
@@ -278,8 +272,6 @@ const onPlot = async (thisEditor) => {
     xaxis: {
       rangemode: 'tozero',
       range: [0, 500], // TODO: Set to 5 seconds
-      // fixedrange: true,
-      // rangeselector: selectorOptions,
       rangeslider: {},
       title: {
         text: `Sample Number`,
@@ -291,6 +283,15 @@ const onPlot = async (thisEditor) => {
     },
     hovermode: 'closest',
     yaxis:  {
+      domain: [0,1],
+      // autorange: true,
+      // showgrid: true,
+      // zeroline: false,
+      // showline: false,
+      // autotick: false,
+      // ticks: '',
+      // showticklabels: false,
+      // fixedrange: true,
       title: {
         text: `Voltage (${fileObject.channels[0].dimensions})`,
         font: {
@@ -303,40 +304,73 @@ const onPlot = async (thisEditor) => {
 
 
   const overlap = 0 // TODO: Make the overlap work
-  const n = montage.length
-  const interval = 1 / n
-  const maxPointsPerChannel = Math.floor(totalMaxPoints / n)
 
+  const channelSubset = fileObject.channels.slice(0,5)
+  const n = channelSubset.length
+  const maxPointsPerChannel = Math.floor(totalMaxPoints / n) // No limit right now
 
-  const relayout = () => {
+  const relayout = (traces, change={}, plot=true) => {
 
+    const update = {}
+
+    let n = traces.reduce((a,b) => a + parseInt(new Number(b.visible === true)), 0)
+    if (change.on === true) n++
+    if (change.on === false) n--
+
+    const interval = 1 / n
+
+    let count = 0
+    traces.forEach((o,i) => {
+      const case1 = o.visible === true
+      const case21 = change.i === i
+      const case22 = change.on === true
+
+      const changeLayout = case1 || (case21 && case22)
+      if (changeLayout){
+        const axisName = `yaxis${i+1}`
+
+        console.log('axisName', axisName)
+
+        // Initialize Axis
+        if (!thisEditor.timeseries.div.layout[axisName]) {
+          thisEditor.timeseries.div.layout[axisName] = {
+            showgrid: false,
+            zeroline: false,
+            showline: true,
+            autotick: true,
+            ticks: '',
+            showticklabels: false,
+            autorange: true,
+            // range: [o.phys_min, o.phys_max],
+            type: 'linear',
+          }
+        }
+
+        // Get Update
+        update[axisName] = thisEditor.timeseries.div.layout[axisName]
+        update[axisName].domain = [(count)/(n), (interval*overlap) + (count+1)/(n)]
+        count++
+      }
+    })
+    // thisEditor.timeseries.data = traces.map((o,i) => {
+    //   const show = 
+    //   o.visible = show ? true : 'legendonly'
+    //   return o
+    // })
+
+    console.log(update)
+    if (plot) thisEditor.timeseries.Plotly.relayout(thisEditor.timeseries.div, update)
+    return update
   }
 
-  thisEditor.timeseries.data = montage.map((condition,i) => {
-    
-    const o = fileObject.channels.find((o, i) => condition(o,i))
-    const domain = [(i)/(n), (interval*overlap) + (i+1)/(n)]
 
-    layout[`yaxis${i === 0 ? '' : i+1}`] = {
-      domain,
-      autorange: true,
-      showgrid: false,
-      zeroline: false,
-      // showline: false,
-      autotick: true,
-      // ticks: '',
-      showticklabels: false,
-      // range: [o.phys_min, o.phys_max],
-      type: 'linear',
-      fixedrange: true
-    }
-
-  const channelSlice =  Math.min(preferredChannelPoints, maxPointsPerChannel)
-  const y = (o.data.length < channelSlice) ?o.data : o.data.slice(0, channelSlice)
-
+  thisEditor.timeseries.data = channelSubset.map((o,i) => {
+    const show = !!montage?.[i]
+    const channelSlice =  Math.min(preferredChannelPoints, maxPointsPerChannel)
+    const y = (o.data.length < channelSlice) ?o.data : o.data.slice(0, channelSlice)
     return {
       name: o.label, //this.header,
-      // visible: 'legendonly',
+      visible: show ? true : 'legendonly',
       line: {
         color: 'black',
         width: 1.0
@@ -346,30 +380,17 @@ const onPlot = async (thisEditor) => {
     }
   })
 
-  thisEditor.timeseries.layout = layout
+  
+  thisEditor.timeseries.layout = Object.assign(layout, relayout(thisEditor.timeseries.data), false) // first layout
+  console.log(thisEditor.timeseries.layout, thisEditor.timeseries.data)
 
-
+    // Relayout the Channels on the Y Axis
     thisEditor.timeseries.onLegendClick = (data) => {
-      // var trColors = [['#5C636E','#5C636E','#5C636E','#5C636E','#5C636E','#5C636E'],
-      //             ['#393e46','#393e46','#393e46','#393e46','#393e46','#393e46']];
-      // var update = {'marker':{color: trColors[data.curveNumber], size:16}};
-      // Plotly.restyle('myDiv', update,[data.curveNumber]);
-
-      const checkToggleOn = (o) => o.visible === 'legendonly'
-
       const focusObject = data.node.__data__[0].trace
-      const toggleOn = checkToggleOn(focusObject)
-
-      console.log(focusObject, data.data)
-      const which = data.data.findIndex((o) => o.name === focusObject.name)
-      console.log(which)
-      if (toggleOn) {
-
-      } else {
-
-      }
-      console.log('Clicked!', data, data.node.__data__[0].trace.visible)
-      // return false;
+      const toggleOn = focusObject.visible === 'legendonly'
+      const which = data.data.findIndex(o => o.name === focusObject.name)
+      console.log('WHICH', which)
+      relayout(data.data, {on: toggleOn, i: which}, true)
     }
 
   // Create New HED Events
@@ -477,7 +498,7 @@ dataset.onChange = async (ev) => {
     ignoreWarnings: false,
     ignoreNiftiHeaders: false,
     ignoreSubjectConsistency: false,
-    debug: true
+    // debug: true
   })
 
   loader.text = 'Validating Dataset'
@@ -489,6 +510,7 @@ dataset.onChange = async (ev) => {
   await bidsDataset.load(files, (ratio) => {
     loader.progress = ratio
   })
+
 
   loader.text = 'Plotting Dataset Files'
 
@@ -504,16 +526,20 @@ dataset.onChange = async (ev) => {
     // Plot Default Data
     const allEDFFiles = bidsDataset.files.types.edf
     if (allEDFFiles){
-        fallbackFileObject = await Object.values(allEDFFiles)[0].get()
-        fallbackEntryName = `${Object.keys(allEDFFiles)[0]}.edf`
-        editor2.set({}, true) // Force plot
-    }
+      setTimeout(() => {
+            Object.values(allEDFFiles)[0].get().then(res => {
+              fallbackFileObject = res 
+              fallbackEntryName = `${Object.keys(allEDFFiles)[0]}.edf`
+              editor2.set({}, true) // Force plot
+              overlay.open = false
+            })
+      }, 500)
+    } else overlay.open = false
+
 
     showValidation(info)
 
   }
-
-  overlay.open = false
 }
 
 const showValidation = (info) => {

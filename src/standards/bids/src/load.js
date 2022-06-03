@@ -7,6 +7,41 @@ const checkTopLevel = (filesystem, extension) => {
     ), 0) !== 0 
 }
 
+
+/**
+ * This function allow you to modify a JS Promise by adding some status properties.
+ * Based on: http://stackoverflow.com/questions/21485545/is-there-a-way-to-tell-if-an-es6-promise-is-fulfilled-rejected-resolved
+ * But modified according to the specs of promises : https://promisesaplus.com/
+ */
+function MakeQuerablePromise(promise) {
+    // Don't modify any promise that has been already modified.
+    if (promise.isFulfilled) return promise;
+
+    // Set initial state
+    var isPending = true;
+    var isRejected = false;
+    var isFulfilled = false;
+
+    // Observe the promise, saving the fulfillment in a closure scope.
+    var result = promise.then(
+        function(v) {
+            isFulfilled = true;
+            isPending = false;
+            return v; 
+        }, 
+        function(e) {
+            isRejected = true;
+            isPending = false;
+            throw e; 
+        }
+    );
+
+    result.isFulfilled = function() { return isFulfilled; };
+    result.isPending = function() { return isPending; };
+    result.isRejected = function() { return isRejected; };
+    return result;
+}
+
 export default async (fileList, options, callback) => {
     const bidsFiles = {
         format: 'bids',
@@ -56,19 +91,18 @@ export default async (fileList, options, callback) => {
             bidsFiles.types[file.name] = fileManager // e.g. README, CHANGES
         }
 
-
         // keep track of how many
         bidsFiles.n++
        if (callback instanceof Function) callback(bidsFiles.n/fileList.length, fileList.length)
        return true // Done!
-    })
+    }).map(p => MakeQuerablePromise(p))
 
     const tic = performance.now()
     await Promise.allSettled(dataPromises)
     const toc = performance.now()
     if (options.debug) console.warn(`Time to Load Files: ${toc-tic}ms`)
  
-    const rejected = dataPromises.filter(result => result.status === 'rejected').map(result => result.reason)
+    const rejected = dataPromises.filter(result => result.isRejected())
     if (options.debug) console.warn('Rejected Files', rejected, dataPromises)
 
     if (checkTopLevel(bidsFiles.system, 'edf')) bidsFiles.format = 'edf' // replace bids with edf
