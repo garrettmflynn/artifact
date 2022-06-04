@@ -12,7 +12,9 @@ export default (response, callback) => {
     reader.read().then(function processBuffer({ done, value }) {
 
       if (done) {
-        const blob = new Blob(buffer, { type })
+          const config = {}
+          if (typeof type === 'string') config.type = type
+        const blob = new Blob(buffer, config)
         resolve(blob)
         return;
       }

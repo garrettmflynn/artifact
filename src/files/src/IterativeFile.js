@@ -1,5 +1,5 @@
-import { getFileData, getInfo, decode, encode } from '.'
-import { isClass } from './utils/utils'
+import { getFileData, getInfo, decode, encode } from './index.js'
+import { isClass } from './utils/utils.js'
 
 export default class IterativeFile {
     constructor(file, options={}){
