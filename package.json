@@ -35,5 +35,9 @@
     "ts-node": "^10.7.0",
     "tslib": "^2.3.1",
     "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "freerange-nwb": "^0.0.0",
+    "freerange-tsv": "^0.0.0"
   }
 }

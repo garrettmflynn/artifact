@@ -209,7 +209,7 @@ export default async (editor) => {
             else fullTag = fullTag.replace('/#', '') // Remove free text area
           }
           entry.fullTag = fullTag
-          entry.annotation_type = shortTag.replace('#', freeText)
+          entry.annotation_type = shortTag.replace('#', freeText) // make these
           lastEntry = entry.onset = point.x
           // annotation[point.x].y = point.y
   

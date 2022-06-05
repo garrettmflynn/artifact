@@ -1,4 +1,10 @@
-import * as files from '../files/src/index.js'
+// XML Loader
+import * as files from 'freerange'
+import * as xml from 'freerange-xml'
+const fileManager = new files.FileManager({debug: true})
+fileManager.extend(xml)
+
+// Your Default XML File
 import xmlHEDScore from '../../HED_score_1.0.0.xml'
 
 export const map = {} // Map of short to long HED tags
@@ -21,14 +27,14 @@ tag.onChange = (ev) => toggleFreeFormInput(ev.target) // Check to display free f
 loader.onChange = async (ev) => {
   tag.style.display = 'block'
   const file = ev.target.files[0]
-  files.get(file).then(loadHEDXML)
+  fileManager.get(file).then(loadHEDXML)
 }
 
 
 // ---------------- Load XML File ----------------
-export const loadHEDXML = ({ HED }) => {
+export const loadHEDXML = (o) => {
   const options = new Set()
-  const o = HED.schema[0]
+  o = o.HED.schema[0]
 
   const filter = ['/EEG-artifact']
   const shortName = true
@@ -76,4 +82,4 @@ export const loadHEDXML = ({ HED }) => {
   toggleFreeFormInput(tag.element)
 }
 
-files.decode({ text: xmlHEDScore }, 'application/xml').then(loadHEDXML)
+fileManager.decode({ text: xmlHEDScore }, {name: 'HED_score_1.0.0.xml', type: 'application/xml'}).then(loadHEDXML)

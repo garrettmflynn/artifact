@@ -1,5 +1,5 @@
 import * as validation from './validation.js'
-import * as standard from '../standards/bids/src/index.js'
+import * as standard from '../bids-standard/src/index.js'
 
 export let bids;
 export let fallback = {

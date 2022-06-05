@@ -54,6 +54,11 @@ A Progressive Web Application for Global EEG Norms
 
 1. Enable the conversion of NWB files into BIDS (and vice-versa)
 
+
+## External Libraries
+1. [visualscript](https://github.com/brainsatplay/visualscript) for UI prototyping
+2. [freerange](https://github.com/brainsatplay/freerange) for file management
+
 ## Acknowledgments
 **GEN** was originally developed for the Global Brain Consortium (GBC) by **Garrett Flynn** for Google Summer of Code 2022 with the mentorship of Pedro Valdes-Sosa, Jorge Bosch-Bayard, and several others from the EEGNet and HED communities.
 
