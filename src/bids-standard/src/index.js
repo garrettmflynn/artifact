@@ -129,7 +129,7 @@ class BIDSDataset {
       let path = ''
 
       // Drill or Check System Subset
-      let partialFileName = '' // Omit ses (TODO: Might not be bids-compliant, but needed for Jorge's dataset and aligned with the BIDS Validator...)
+      // let partialFileName = '' // Omit ses (TODO: Might not be bids-compliant, but needed for Jorge's dataset and aligned with the BIDS Validator...)
       const promises = keys.map(async str => {
         const hasFolder = hasFolders.includes(str)
         const tempO = (str === 'modality') ? o?.[shortcutInfo['modality']] : o?.[str]?.[shortcutInfo[str]]
@@ -141,10 +141,10 @@ class BIDSDataset {
           
           if (str === 'modality') {
             if (hasFolder) path = (path) ? path + '/' + info : info
-            if (info) partialFileName += (partialFileName) ? `_${info}` : info
+            // if (info) partialFileName += (partialFileName) ? `_${info}` : info
           } else {
             if (hasFolder) path = (path) ? path + '/' + generalPathAddition : generalPathAddition
-            if (str != 'ses' && info) partialFileName += (partialFileName) ? `_${generalPathAddition}` : generalPathAddition
+            // if (str != 'ses' && info) partialFileName += (partialFileName) ? `_${generalPathAddition}` : generalPathAddition
           }
 
           if (hasFolder) o = tempO
@@ -153,18 +153,18 @@ class BIDSDataset {
         }
       })
 
-      partialFileName = `${partialFileName}.${shortcutInfo.extension}`
+      // partialFileName = `${partialFileName}.${shortcutInfo.extension}`
 
       await Promise.all(promises)
 
-      const shortcut = o[fileName] ?? o[partialFileName] // Allow Partial Match
+      const shortcut = o[fileName]// ?? o[partialFileName] // Allow Partial Match
 
       if (shortcut) {
         return {
           ref: o,
           path
         }
-      } else this.onError(`No shortcut found for ${fileName} or ${partialFileName}. Checking all directories...`)
+      } else this.onError(`No shortcut found for ${fileName}. Checking all directories...`)
 
       // Check All Files
       const directory = await drill(this.files.system)
