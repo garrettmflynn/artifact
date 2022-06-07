@@ -5,6 +5,7 @@ import * as plotDefaults from '../plot/defaults.js'
 
 export default async (editor) => {
 
+
     if (dataset.bids){
   
     // Initialize Plot-Specific Function Scopes
@@ -21,10 +22,11 @@ export default async (editor) => {
       entryName = dataset.fallback.name
       fileObject = dataset.fallback.file
     }
+
   
     // Plot Existing HED Events
     const dataEvents = await dataset.bids.getEvents(entryName)
-  
+
     const toPlot = {annotations: [], shapes: []}
   
     dataEvents.forEach(e => {
@@ -89,6 +91,7 @@ export default async (editor) => {
   
   
     const channelSubset = fileObject.channels.slice(0,plotDefaults.channels.n)
+
     const n = channelSubset.length
     const maxPointsPerChannel = Math.floor(plotDefaults.channels.points.max / n) // No limit right now
   
@@ -156,10 +159,14 @@ export default async (editor) => {
     }
   
   
-    editor.timeseries.data = channelSubset.map((o,i) => {
+    editor.timeseries.data = await Promise.all(channelSubset.map(async (o,i) => {
       const show = !!montage?.[i]
+
+      const data = await o.data
+      
       const channelSlice =  Math.min(plotDefaults.channels.points.preferred, maxPointsPerChannel)
-      const y = (o.data.length < channelSlice) ?o.data : o.data.slice(0, channelSlice)
+      const y = (data.length < channelSlice) ? data : data.slice(0, channelSlice)
+
       return {
         name: o.label, //this.header,
         visible: show ? true : 'legendonly',
@@ -170,7 +177,7 @@ export default async (editor) => {
         y,
         yaxis: `y${i+2}`,
       }
-    })
+    }))
   
     
     editor.timeseries.layout = Object.assign(layout, relayout(editor.timeseries.data), false) // first layout

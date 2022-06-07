@@ -34,13 +34,11 @@
   "dependencies": {
     "bids-validator": "^1.9.3",
     "buffer": "^6.0.3",
-    "file-saver": "^2.0.5",
-    "freerange": "^0.0.11",
-    "freerange-edf": "^0.0.1",
+    "freerange": "^0.0.15",
+    "freerange-edf": "^0.0.2",
     "freerange-nii": "^0.0.1",
     "freerange-tsv": "^0.0.3",
     "freerange-xml": "^0.0.3",
-    "jszip": "^3.10.0",
     "timers": "^0.1.1"
   }
 }

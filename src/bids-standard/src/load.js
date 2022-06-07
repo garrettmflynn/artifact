@@ -41,13 +41,9 @@ function MakeQuerablePromise(promise) {
 }
 
 export default async (fileList, options, callback) => {
-    const bidsFiles = {
-        format: 'bids',
-        system: {},
-        types: {},
-        n: 0
-    }
-
+    const bidsFiles = files.files // Transer the file objects
+    bidsFiles.format = 'bids' 
+    
     // ---------------------- Load Files ----------------------
     const dataPromises = Array.from(Object.values(fileList)).map(async file => {
         let target = bidsFiles.system
@@ -73,24 +69,8 @@ export default async (fileList, options, callback) => {
             }
         })
         
-        // Decode File Contents
-        const fileManager = await files.get(file).catch(e => console.error(e))
+        await files.loadFile(file, {path}).catch(e => console.error(e)) // Load file into the system
 
-        // filesystem
-        target[file.name] = fileManager
-
-        // filetype
-        const extension = fileManager.extension
-        if (extension){
-            const shortName = file.name.replace(`.${extension}`, '')
-            if (!bidsFiles.types[extension]) bidsFiles.types[extension] = {}
-            bidsFiles.types[extension][shortName] = fileManager
-        } else {
-            bidsFiles.types[file.name] = fileManager // e.g. README, CHANGES
-        }
-
-        // keep track of how many
-        bidsFiles.n++
        if (callback instanceof Function) callback(bidsFiles.n/fileList.length, fileList.length)
        return true // Done!
     }).map(p => MakeQuerablePromise(p))

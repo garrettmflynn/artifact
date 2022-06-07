@@ -1,6 +1,6 @@
 
 import * as files from './files.js'
-import {IterativeFile} from 'freerange'
+import {RangeFile} from 'freerange'
 import JSZip from 'jszip';
 
 export default (bidsFiles, options, callback) => {
@@ -12,16 +12,19 @@ export default (bidsFiles, options, callback) => {
 
     // Asynchronously Drill Files
     let count = 0
+    const files = []
     const drill = async (subObj, file, prefixKey) => {
         return await Promise.allSettled(Object.keys(subObj).map(async key => {
             const splitKey = key.split('.')
             const notKeyword = keywords.map(k => key !== k).reduce((a,b) => a * b, true)
-            if (subObj[key] instanceof IterativeFile){
-                const iterativeFile = subObj[key]
-                const returned = await iterativeFile.export()
+            if (subObj[key] instanceof RangeFile){
+                const rangeFile = subObj[key]
+                const returned = rangeFile.file
+                console.log('Exporting', key, returned)
                 count++
                 callback(count / bidsFiles.n, bidsFiles.n) // TODO: Make this account for new files added for HED tags...
                 file.file(key, returned) // Encoded file
+                files.push(returned)
             } else if (!notKeyword) {
                 return await drill(subObj[key], file, key) // Special files
             } else if (splitKey.length === 1 && (typeof subObj[key] === 'object')) {
@@ -36,6 +39,6 @@ export default (bidsFiles, options, callback) => {
     if (options.debug) console.warn(`Time to Get File Buffers: ${toc-tic}ms`)
 
     // Generate .zip file
-    zip.generateAsync({type:"blob"}).then((content) => resolve(content))
+    zip.generateAsync({type:"blob"}).then((zip) => resolve({zip, files}))
 })
 }

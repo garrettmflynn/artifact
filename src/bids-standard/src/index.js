@@ -1,24 +1,24 @@
 
 import load from './load.js'
-import zip from './zip.js'
-import JSZip from 'jszip';
 import validate from 'bids-validator'
-// import hedValidator from 'hed-validator'
-import { saveAs } from 'file-saver';
 import convert from './convert.js';
-
 import * as templates from './templates.js'
 import fileManager from './files.js'
 
 const deepClone = (o) => JSON.parse(JSON.stringify(o))
 
+const checkTopLevel = (filesystem, extension) => {
+  return Object.keys(filesystem).reduce((a,b) => a + (
+      b.includes(`.${extension}`)
+  ), 0) !== 0 
+}
+
 class BIDSDataset {
 
     constructor(options={}) {
-        this.files = {
-          system: {},
-          types: {}
-        }
+        this.files = {}
+        this.manager = fileManager // Track changes to the filesystem
+
         this.options = { verbose: true }
         Object.assign(this.options, options)
     }
@@ -34,7 +34,7 @@ class BIDSDataset {
       const fileCoreName = fileSplit.slice(0, fileSplit.length - 1).join('_') // Remove extension and modality
       const hasPrefix = fileCoreName.length > 0
       const expectedFileName = `${fileCoreName}${type ? ((hasPrefix) ? `_${type}` : type) : ''}.${extension}`
-      const foundFileName = Object.keys(directory).find(str => str.includes(fileCoreName) && (type ? str.includes(`_${type}.${extension}`) : str.includes(`.${extension}`)))
+      const foundFileName = Object.keys(directory.ref).find(str => str.includes(fileCoreName) && (type ? str.includes(`_${type}.${extension}`) : str.includes(`.${extension}`)))
 
 
       // Create File If Not Found
@@ -43,9 +43,12 @@ class BIDSDataset {
         if (extension === 'json') fileSpoof.data = {}
         else if (extension === 'tsv') fileSpoof.data = []
         else defaultObj = fileSpoof.data = ''
-        const file = directory[expectedFileName] = await fileManager.get(fileSpoof, this.options)
-        return file.get()
-      } else return await directory[foundFileName].get()
+
+        const path = (directory.path) ? `${directory.path}/${fileSpoof.name}` : fileSpoof.name
+        const file = directory.ref[expectedFileName] = await fileManager.loadFile(fileSpoof, {directory: directory.name, path})
+
+        return await file.body // Get file body
+      } else return await directory.ref[foundFileName].body // Get file body
     }
 
     getEvents = async (name) => {
@@ -53,10 +56,12 @@ class BIDSDataset {
       return await this.get(name, directory, 'events', 'tsv')
     }
 
+
+    // Returns a Directory Information Object
     getDirectory = async (fileName) => {
 
       let checks = 0
-      let drill = (o) => {
+      let drill = (o, path="") => {
         return new Promise(async (resolve, reject) => {
           if (checks > 50) {
             console.error('TOO MANY CHECKS!')
@@ -65,13 +70,17 @@ class BIDSDataset {
           for (let key in o) {
 
             // File Found!
-            if (key === fileName) resolve(o)
+            if (key === fileName) resolve({
+              ref: o,
+              path
+            })
 
             // Drill Directories
             else if (key.split('.').length === 1) {
               if (typeof o[key] === 'object'){
                 checks++
-                resolve(await drill(o[key]))
+                let newPath = (path) ? path + '/' + key : key
+                resolve(await drill(o[key], newPath))
               }
             }
           }
@@ -90,18 +99,32 @@ class BIDSDataset {
 
       let o = this.files.system
       const keys = ['sub', 'ses', 'type']
+      let path = ''
+
       // Drill or Check System Subset
       // TODO: Make sure this never stalls—or at least throw an error!
       const promises = keys.map(async str => {
         const tempO = (str === 'type') ? o?.[shortcutInfo[str]] : o?.[str]?.[shortcutInfo[str]]
         if (!tempO) return false
-        else return o = tempO
+        else {
+
+          const generalPathAddition = `${str}-${shortcutInfo[str]}`
+          if (str === 'type') path = (path) ? path + '/' + shortcutInfo[str] : shortcutInfo[str]
+          else path = (path) ? path + '/' + generalPathAddition : generalPathAddition
+          
+          return o = tempO
+        }
       })
 
       await Promise.all(promises)
 
       const shortcut = o[fileName]
-      if (shortcut) return o
+      if (shortcut) {
+        return {
+          ref: o,
+          path
+        }
+      } else console.warn(`No shortcut found for ${fileName}. Checking all directories...`)
 
       // Check All Files
       const directory = await drill(this.files.system)
@@ -133,8 +156,14 @@ class BIDSDataset {
       const task = fileInfo.task
 
       // TODO: Look for more matches than just task
-      if (options.global) return await this.get(`${task ? `task-${task}` : ''}_${fileInfo.type}.${fileInfo.extension}`, this.files.system, fileInfo.type, 'json')
-      else return await this.get(name, ogDir, fileInfo.type, 'json')
+      if (options.global) {
+        return await this.get(
+          `${task ? `task-${task}` : ''}_${fileInfo.type}.${fileInfo.extension}`, 
+          {ref: this.files.system, path: '', name: ''}, 
+          fileInfo.type, 
+          'json'
+        )
+      } else return await this.get(name, ogDir, fileInfo.type, 'json')
     }
 
     validate = (files, options={}) => {
@@ -160,15 +189,28 @@ class BIDSDataset {
         })
     }
 
-    load = async (files, callback) => {
-        if (files.length){
-          this.name = files[0].webkitRelativePath?.split('/')?.[0] // directory name
-          this._setConfig()
-          const dataStructure = await load(files, this.options, callback)
-          this.files = await convert(dataStructure, `${dataStructure.format}2bids`, this.options)
-          return this.files
-        }
+    mount = async (callback) => {
+      this._setConfig()
+      const files = await fileManager.mount(null, callback)
+      files.format = 'bids'
+      if (checkTopLevel(files.system, 'edf')) files.format = 'edf' // replace bids with edf
+      if (checkTopLevel(files.system, 'nwb')) files.format = 'nwb' // replace bids with nwb
+  
+      this.name = fileManager.directoryName // directory name
+      this.files = await convert(files, `${files.format}2bids`, this.options)
+
+      return this.files
     }
+
+    // load = async (files, callback) => {
+    //     if (files.length){
+    //       this.name = files[0].webkitRelativePath?.split('/')?.[0] // directory name
+    //       this._setConfig()
+    //       const dataStructure = await load(files, this.options, callback)
+    //       this.files = await convert(dataStructure, `${dataStructure.format}2bids`, this.options)
+    //       return this.files
+    //     }
+    // }
     
     // checkHED = () => {
     //   const dataset = new hedValidator.validator.BidsDataset(eventData, sidecarData)
@@ -193,35 +235,16 @@ class BIDSDataset {
     //   }
     // }
 
-    zipCheck = async (options={}, zipCallback, unzipCallback) => {
-      options = Object.assign(this.options, options) // Override current global options
-      
-      const zippedBlob = await zip(this.files, this.options, zipCallback)
-
-      // Spoof Files for Pre-Export Validation
-      const unzipped = await JSZip.loadAsync(zippedBlob)
-
-      let count = 0
-      const fileEntries = Object.entries(unzipped.files).filter(([path, f]) => !f.dir)
-      const fileList = await Promise.all(fileEntries.map(async ([path, f], i) => {
-        const buffer = await f.async("arraybuffer")
-        const blob = new Blob([buffer])
-        blob.name = f.name.split('/').at(-1)
-        blob.webkitRelativePath = `${this}/${path}`
-        count++
-        if (unzipCallback) unzipCallback(count/fileEntries.length, fileEntries.length)
-        return blob
-      }))
-
-      // Validate Files
-      const info = await this.validate(fileList, options)
-      info.zip = zippedBlob
-      return info
+    check = async (options={}) => {
+      await fileManager.sync() // Sync before validation
+      return await this.validate(this.files.list.map(o => o.file), options)
     }
 
-    download = async (override=false, info=null) => {
-      if (!info) info = await this.zipCheck({}, override)
-      if (info.zip instanceof Blob && (info.errors.length === 0 || override)) saveAs(info.zip, `${this.name}.zip`)
+    save = async (override=false, callback) => {
+      const info = await this.check() // Validate Files
+      if (info.errors.length === 0 || override) {
+        info.files = await fileManager.save(callback)
+      } else alert('Invalid BIDS dataset not saved. Try again with override=true')
       return info
     }
 

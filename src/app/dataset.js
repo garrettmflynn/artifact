@@ -7,7 +7,7 @@ export let fallback = {
     name: null
 };
 
-export const load = async (files, options={}) => {
+export const mount = async (options={}) => {
 
     bids = new standard.BIDSDataset({
       ignoreWarnings: false,
@@ -15,17 +15,16 @@ export const load = async (files, options={}) => {
       ignoreSubjectConsistency: false,
       // debug: true
     })
+
   
-    options.loader.text = 'Validating Dataset'
     options.overlay.open = true
-  
-    const info = await bids.validate(files)
-    options.loader.text = 'Parsing Dataset Files'
-  
-    await bids.load(files, (ratio) => {
-      options.loader.progress = ratio
-    })
-  
+
+    options.loader.text = 'Mounting Dataset'
+    const files = await bids.mount((ratio) => options.loader.progress = ratio)
+
+    const fileList = files.list.map(o => o.file)
+    options.loader.text = 'Validating Dataset'
+    const info = await bids.validate(fileList)  
   
     options.loader.text = 'Plotting Dataset Files'
   
@@ -41,14 +40,13 @@ export const load = async (files, options={}) => {
       // Plot Default Data
       const allEDFFiles = bids.files.types.edf
       if (allEDFFiles){
-        setTimeout(() => {
+        setTimeout(async () => {
              const editor = options.editors[1]
-              Object.values(allEDFFiles)[0].get().then(res => {
-                fallback.file = res 
-                fallback.name = `${Object.keys(allEDFFiles)[0]}.edf`
+             const file = Object.values(allEDFFiles)[0]
+                fallback.file = await file.body
+                fallback.name = file.name
                 if (editor) editor.set({}, true) // Force plot
                 options.overlay.open = false
-              })
         }, 500)
       } else options.overlay.open = false
   

@@ -4,7 +4,10 @@ import * as nii from 'freerange-nii'
 import * as edf from 'freerange-edf'
 // import * as nwb from 'freerange-nwb'
 
-const filemanager = new files.FileManager({debug: true})
+const filemanager = new files.FileManager({
+    debug: true,
+    ignore: ['DS_Store']
+})
 filemanager.extend(tsv)
 filemanager.extend(nii)
 filemanager.extend(edf)

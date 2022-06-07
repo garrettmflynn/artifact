@@ -6,17 +6,51 @@ const required = ['README', 'participants.json', 'participants.tsv', 'dataset_de
 const topLevel = ['CHANGES', '.bidsignore', ...required]
 // const validModalities = ['eeg']
 
+
+const getFileParts = (name) => {
+    const fileParts = {}
+    const splitFile = name.split('_').map(str => str.split('-'))
+    splitFile.forEach(arr => {
+        if (arr[1]) fileParts[arr[0]] = arr[1]
+        else {
+            const split = arr[0].split('.')
+            fileParts.extension = split[1]
+            fileParts.modality = split[0]
+        }
+    })
+    return fileParts
+}
+
+const moveFiles = (key, parent) => {
+
+    // Check Each Entry in Parent
+    const collection = {} ?? parent[key]
+    for (let key1 in parent){
+        const val = parent[key1]
+        const parts = getFileParts(key1)
+        if (parts[key]) {
+            collection[parts[key]] = val
+            delete parent[key1] // Delete from parent
+        }
+    }
+
+    // Only Move if Enough Entries Found
+    if (Object.keys(collection).length) {
+        parent[key] = collection
+        return parent[key]
+    } else {
+        console.warn(`Only one ${key} recognized in this directory!`)
+        return parent
+    }
+}
+
 // Convert BIDS-Formatted Directories to Valid Structure
 export default async (files, options) => {
 
-    const subjects = Object.values(files.system.sub ?? {})
-    const hasSubjects = subjects && subjects.length > 0 // Top-level only
-    let sessions = Object.values(files.system.ses ?? {}) 
-    if (sessions.length === 0) sessions = subjects.map(o => o.ses).filter(val => !!val) // Top-level or nested in subject folders
-    const hasSessions = true // sessions && sessions.length > 0 // Doesn't matter if there are no sessions
 
-    const originalFiles = files.system
-    files.system = {sub: {}}
+    // Get Subject Folder
+    let newParent = moveFiles('sub', files.system)
+    newParent = moveFiles('ses', newParent)
 
     // Add Required Top-Level Files
     await Promise.allSettled(required.map(async name => {
@@ -29,38 +63,11 @@ export default async (files, options) => {
             else if (ext === 'json') fileSpoof.data = {}
             else if (ext === 'tsv') fileSpoof.data = []
             else fileSpoof.data = ''
-            files.system[name] = await fileManager.get(fileSpoof, options)
 
-            const key = ext || name
-            if (!files.types[key]) files.types[key] = {}
-            files.types[key][name.replace(`.ext`, '')] = files.system[name] // Link in types references
+             await fileManager.loadFile(fileSpoof) // Add to root
         }
     }))
     
-    if (!(hasSubjects && hasSessions)){
-
-        // Lock Top-Level Directories
-        topLevel.forEach(k => {
-            if (k in originalFiles) {
-                files.system[k] = originalFiles[k]
-                delete originalFiles[k]
-            }
-        })
-
-        // Nest Directories 
-        if (!hasSubjects && !hasSessions) {
-            files.system.sub = {'01': {ses: {'1':originalFiles}}}
-        } else if (!hasSubjects && hasSessions) files.system.sub = {'01': originalFiles}
-        else if (hasSubjects && !hasSessions) {
-            Object.entries(originalFiles.sub).map(([key, value]) => {
-                files.system.sub[key] = {ses:{
-                    '1': value
-                }}
-            })
-        }
-    } else Object.assign(files.system, originalFiles) // Don't lose top-level files
-
-
     // Rename directory names in alignment with files
     // Overwrite directory with filename
     const toDelete = []

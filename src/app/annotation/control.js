@@ -60,7 +60,7 @@ export default (info, options={}) => {
 
       button.onmouseout= () => {
         info.range.fillcolor = defaults.range.fill
-        timeseries.relayout(timeseries.div, { shapes: timeseries.div.layout.shapes })
+        timeseries.Plotly.relayout(timeseries.div, { shapes: timeseries.div.layout.shapes })
       }
     } else console.error('Controls will not work for annotations.')
 

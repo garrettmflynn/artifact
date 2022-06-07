@@ -4,16 +4,32 @@ export default async (dataset, options = {}) => {
     if (dataset) {
         options.overlay.open = true
         options.loader.progress = 0 // Reset loader
-        const info = await dataset.zipCheck({}, (ratio) => {
-            options.loader.text = 'Zipping Annotated Dataset'
-            options.loader.progress = ratio
-        }, (ratio) => {
-            options.loader.text = 'Unzipping Dataset to Validate'
-            options.loader.progress = ratio
-        }) // Show potential errors in your download
+
+        options.loader.text = 'Validating Annotated Dataset'
+        console.log('Chagelog', dataset.manager.changelog)
+
+        const info = await dataset.check()
         validation.display(info)
-        options.loader.text = 'Downloading Annotated Dataset'
-        await dataset.download(true, info) // Auto-override the lock on downloading because of errors
+
+        const filtered = info.errors.filter((e) =>  {
+            const case1 = e.key != 'HED_ERROR'
+            const case2 = e.reason != 'The validation on this HED string returned an error.' 
+            return case1 && case2
+        })
+
+
+        if (filtered.length > 0) alert('Cannot save invalid BIDS dataset')
+        else {
+
+            if (filtered.length != info.errors.length) console.warn('Saving changes to disk despite residual HED errors...')
+
+            // Override HED errors
+            await dataset.save(true, (ratio) => {
+                options.loader.text = 'Saving Changes to Disk'
+                options.loader.progress = ratio
+            })
+        }
+
         options.overlay.open = false
     }
 }

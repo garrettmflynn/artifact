@@ -13,7 +13,7 @@ const controls = {
 // Basic Object Editor with Iterative File Support and EDF Plotting
 const editor = new components.ObjectEditor({ header: 'Dataset', plot: [(key, o) => key.includes('.edf')] })
 editor.preprocess = async (o) => {
-  if (o instanceof files.IterativeFile) return await o.get()
+  if (o instanceof files.RangeFile) return o.body // Get the body of the file
   else return o
 }
 editor.onPlot = plot.update
@@ -30,7 +30,7 @@ document.getElementById('annotation-app').appendChild(editor2)
 controls.editors.push(editor2)
 
 // -------------------- Upload Dataset --------------------
-document.getElementById('dataset').onChange = (ev) => dataset.load(ev.target.files, controls)
+document.getElementById('dataset').onClick = () => dataset.mount(controls)
 
 // -------------------- Download Annotated Dataset --------------------
 document.getElementById('download').onClick = () => {
