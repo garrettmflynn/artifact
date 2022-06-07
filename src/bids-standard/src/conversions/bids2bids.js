@@ -1,5 +1,5 @@
 // import { keywords } from './index.js'
-import * as templates from '../templates.js'
+import * as templates from '../templates/general.js'
 import fileManager from '../files.js'
 
 const required = ['README', 'participants.json', 'participants.tsv', 'dataset_description.json']

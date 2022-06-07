@@ -2,7 +2,7 @@
 import load from './load.js'
 import validate from 'bids-validator'
 import convert from './convert.js';
-import * as templates from './templates.js'
+import * as templates from './templates/general.js'
 import fileManager from './files.js'
 import KeyGroup from './KeyGroup.js';
 
