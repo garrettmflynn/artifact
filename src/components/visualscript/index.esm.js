@@ -3,19 +3,19 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t$2 = window.ShadowRoot && (void 0 === window.ShadyCSS || window.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype,
-      e$3 = Symbol(),
-      n$4 = new Map();
+const t$3 = window.ShadowRoot && (void 0 === window.ShadyCSS || window.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype,
+      e$4 = Symbol(),
+      n$6 = new Map();
 
-class s$3 {
+class s$4 {
   constructor(t, n) {
-    if (this._$cssResult$ = !0, n !== e$3) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    if (this._$cssResult$ = !0, n !== e$4) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = t;
   }
 
   get styleSheet() {
-    let e = n$4.get(this.cssText);
-    return t$2 && void 0 === e && (n$4.set(this.cssText, e = new CSSStyleSheet()), e.replaceSync(this.cssText)), e;
+    let e = n$6.get(this.cssText);
+    return t$3 && void 0 === e && (n$6.set(this.cssText, e = new CSSStyleSheet()), e.replaceSync(this.cssText)), e;
   }
 
   toString() {
@@ -24,28 +24,28 @@ class s$3 {
 
 }
 
-const o$4 = t => new s$3("string" == typeof t ? t : t + "", e$3),
-      r$2 = (t, ...n) => {
+const o$5 = t => new s$4("string" == typeof t ? t : t + "", e$4),
+      r$4 = (t, ...n) => {
   const o = 1 === t.length ? t[0] : n.reduce((e, n, s) => e + (t => {
     if (!0 === t._$cssResult$) return t.cssText;
     if ("number" == typeof t) return t;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + t + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
   })(n) + t[s + 1], t[0]);
-  return new s$3(o, e$3);
+  return new s$4(o, e$4);
 },
-      i$3 = (e, n) => {
-  t$2 ? e.adoptedStyleSheets = n.map(t => t instanceof CSSStyleSheet ? t : t.styleSheet) : n.forEach(t => {
+      i$4 = (e, n) => {
+  t$3 ? e.adoptedStyleSheets = n.map(t => t instanceof CSSStyleSheet ? t : t.styleSheet) : n.forEach(t => {
     const n = document.createElement("style"),
           s = window.litNonce;
     void 0 !== s && n.setAttribute("nonce", s), n.textContent = t.cssText, e.appendChild(n);
   });
 },
-      S$1 = t$2 ? t => t : t => t instanceof CSSStyleSheet ? (t => {
+      S$1 = t$3 ? t => t : t => t instanceof CSSStyleSheet ? (t => {
   let e = "";
 
   for (const n of t.cssRules) e += n.cssText;
 
-  return o$4(e);
+  return o$5(e);
 })(t) : t;
 
 /**
@@ -54,16 +54,16 @@ const o$4 = t => new s$3("string" == typeof t ? t : t + "", e$3),
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-var s$2;
+var s$3;
 
-const e$2 = window.trustedTypes,
-      r$1 = e$2 ? e$2.emptyScript : "",
-      h$1 = window.reactiveElementPolyfillSupport,
-      o$3 = {
+const e$3 = window.trustedTypes,
+      r$3 = e$3 ? e$3.emptyScript : "",
+      h$3 = window.reactiveElementPolyfillSupport,
+      o$4 = {
   toAttribute(t, i) {
     switch (i) {
       case Boolean:
-        t = t ? r$1 : null;
+        t = t ? r$3 : null;
         break;
 
       case Object:
@@ -100,13 +100,13 @@ const e$2 = window.trustedTypes,
   }
 
 },
-      n$3 = (t, i) => i !== t && (i == i || t == t),
-      l$2 = {
+      n$5 = (t, i) => i !== t && (i == i || t == t),
+      l$3 = {
   attribute: !0,
   type: String,
-  converter: o$3,
+  converter: o$4,
   reflect: !1,
-  hasChanged: n$3
+  hasChanged: n$5
 };
 
 class a$1 extends HTMLElement {
@@ -129,7 +129,7 @@ class a$1 extends HTMLElement {
     }), t;
   }
 
-  static createProperty(t, i = l$2) {
+  static createProperty(t, i = l$3) {
     if (i.state && (i.attribute = !1), this.finalize(), this.elementProperties.set(t, i), !i.noAccessor && !this.prototype.hasOwnProperty(t)) {
       const s = "symbol" == typeof t ? Symbol() : "__" + t,
             e = this.getPropertyDescriptor(t, s, i);
@@ -154,7 +154,7 @@ class a$1 extends HTMLElement {
   }
 
   static getPropertyOptions(t) {
-    return this.elementProperties.get(t) || l$2;
+    return this.elementProperties.get(t) || l$3;
   }
 
   static finalize() {
@@ -213,7 +213,7 @@ class a$1 extends HTMLElement {
   createRenderRoot() {
     var t;
     const s = null !== (t = this.shadowRoot) && void 0 !== t ? t : this.attachShadow(this.constructor.shadowRootOptions);
-    return i$3(s, this.constructor.elementStyles), s;
+    return i$4(s, this.constructor.elementStyles), s;
   }
 
   connectedCallback() {
@@ -238,13 +238,13 @@ class a$1 extends HTMLElement {
     this._$AK(t, s);
   }
 
-  _$ES(t, i, s = l$2) {
+  _$ES(t, i, s = l$3) {
     var e, r;
 
     const h = this.constructor._$Eh(t, s);
 
     if (void 0 !== h && !0 === s.reflect) {
-      const n = (null !== (r = null === (e = s.converter) || void 0 === e ? void 0 : e.toAttribute) && void 0 !== r ? r : o$3.toAttribute)(i, s.type);
+      const n = (null !== (r = null === (e = s.converter) || void 0 === e ? void 0 : e.toAttribute) && void 0 !== r ? r : o$4.toAttribute)(i, s.type);
       this._$Ei = t, null == n ? this.removeAttribute(h) : this.setAttribute(h, n), this._$Ei = null;
     }
   }
@@ -258,14 +258,14 @@ class a$1 extends HTMLElement {
     if (void 0 !== n && this._$Ei !== n) {
       const t = h.getPropertyOptions(n),
             l = t.converter,
-            a = null !== (r = null !== (e = null === (s = l) || void 0 === s ? void 0 : s.fromAttribute) && void 0 !== e ? e : "function" == typeof l ? l : null) && void 0 !== r ? r : o$3.fromAttribute;
+            a = null !== (r = null !== (e = null === (s = l) || void 0 === s ? void 0 : s.fromAttribute) && void 0 !== e ? e : "function" == typeof l ? l : null) && void 0 !== r ? r : o$4.fromAttribute;
       this._$Ei = n, this[n] = a(i, t.type), this._$Ei = null;
     }
   }
 
   requestUpdate(t, i, s) {
     let e = !0;
-    void 0 !== t && (((s = s || this.constructor.getPropertyOptions(t)).hasChanged || n$3)(this[t], i) ? (this._$AL.has(t) || this._$AL.set(t, i), !0 === s.reflect && this._$Ei !== t && (void 0 === this._$EC && (this._$EC = new Map()), this._$EC.set(t, s))) : e = !1), !this.isUpdatePending && e && (this._$Ep = this._$E_());
+    void 0 !== t && (((s = s || this.constructor.getPropertyOptions(t)).hasChanged || n$5)(this[t], i) ? (this._$AL.has(t) || this._$AL.set(t, i), !0 === s.reflect && this._$Ei !== t && (void 0 === this._$EC && (this._$EC = new Map()), this._$EC.set(t, s))) : e = !1), !this.isUpdatePending && e && (this._$Ep = this._$E_());
   }
 
   async _$E_() {
@@ -342,33 +342,33 @@ class a$1 extends HTMLElement {
 
 a$1.finalized = !0, a$1.elementProperties = new Map(), a$1.elementStyles = [], a$1.shadowRootOptions = {
   mode: "open"
-}, null == h$1 || h$1({
+}, null == h$3 || h$3({
   ReactiveElement: a$1
-}), (null !== (s$2 = globalThis.reactiveElementVersions) && void 0 !== s$2 ? s$2 : globalThis.reactiveElementVersions = []).push("1.3.1");
+}), (null !== (s$3 = globalThis.reactiveElementVersions) && void 0 !== s$3 ? s$3 : globalThis.reactiveElementVersions = []).push("1.3.1");
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-var t$1;
+var t$2;
 
-const i$2 = globalThis.trustedTypes,
-      s$1 = i$2 ? i$2.createPolicy("lit-html", {
+const i$3 = globalThis.trustedTypes,
+      s$2 = i$3 ? i$3.createPolicy("lit-html", {
   createHTML: t => t
 }) : void 0,
-      e$1 = `lit$${(Math.random() + "").slice(9)}$`,
-      o$2 = "?" + e$1,
-      n$2 = `<${o$2}>`,
-      l$1 = document,
-      h = (t = "") => l$1.createComment(t),
-      r = t => null === t || "object" != typeof t && "function" != typeof t,
-      d = Array.isArray,
+      e$2 = `lit$${(Math.random() + "").slice(9)}$`,
+      o$3 = "?" + e$2,
+      n$4 = `<${o$3}>`,
+      l$2 = document,
+      h$2 = (t = "") => l$2.createComment(t),
+      r$2 = t => null === t || "object" != typeof t && "function" != typeof t,
+      d$1 = Array.isArray,
       u = t => {
   var i;
-  return d(t) || "function" == typeof (null === (i = t) || void 0 === i ? void 0 : i[Symbol.iterator]);
+  return d$1(t) || "function" == typeof (null === (i = t) || void 0 === i ? void 0 : i[Symbol.iterator]);
 },
-      c = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,
+      c$1 = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,
       v = /-->/g,
       a = />/g,
       f = />|[ 	\n\r](?:([^\s"'>=/]+)([ 	\n\r]*=[ 	\n\r]*(?:[^ 	\n\r"'`<>=]|("|')|))|$)/g,
@@ -391,18 +391,18 @@ const i$2 = globalThis.trustedTypes,
 
   if (void 0 === l) {
     const t = null !== (o = null == s ? void 0 : s.renderBefore) && void 0 !== o ? o : null;
-    n._$litPart$ = l = new N(i.insertBefore(h(), t), t, void 0, null != s ? s : {});
+    n._$litPart$ = l = new N(i.insertBefore(h$2(), t), t, void 0, null != s ? s : {});
   }
 
   return l._$AI(t), l;
 },
-      A = l$1.createTreeWalker(l$1, 129, null, !1),
+      A = l$2.createTreeWalker(l$2, 129, null, !1),
       C = (t, i) => {
   const o = t.length - 1,
         l = [];
   let h,
       r = 2 === i ? "<svg>" : "",
-      d = c;
+      d = c$1;
 
   for (let i = 0; i < o; i++) {
     const s = t[i];
@@ -411,15 +411,15 @@ const i$2 = globalThis.trustedTypes,
         p = -1,
         $ = 0;
 
-    for (; $ < s.length && (d.lastIndex = $, u = d.exec(s), null !== u);) $ = d.lastIndex, d === c ? "!--" === u[1] ? d = v : void 0 !== u[1] ? d = a : void 0 !== u[2] ? (g.test(u[2]) && (h = RegExp("</" + u[2], "g")), d = f) : void 0 !== u[3] && (d = f) : d === f ? ">" === u[0] ? (d = null != h ? h : c, p = -1) : void 0 === u[1] ? p = -2 : (p = d.lastIndex - u[2].length, o = u[1], d = void 0 === u[3] ? f : '"' === u[3] ? m : _) : d === m || d === _ ? d = f : d === v || d === a ? d = c : (d = f, h = void 0);
+    for (; $ < s.length && (d.lastIndex = $, u = d.exec(s), null !== u);) $ = d.lastIndex, d === c$1 ? "!--" === u[1] ? d = v : void 0 !== u[1] ? d = a : void 0 !== u[2] ? (g.test(u[2]) && (h = RegExp("</" + u[2], "g")), d = f) : void 0 !== u[3] && (d = f) : d === f ? ">" === u[0] ? (d = null != h ? h : c$1, p = -1) : void 0 === u[1] ? p = -2 : (p = d.lastIndex - u[2].length, o = u[1], d = void 0 === u[3] ? f : '"' === u[3] ? m : _) : d === m || d === _ ? d = f : d === v || d === a ? d = c$1 : (d = f, h = void 0);
 
     const y = d === f && t[i + 1].startsWith("/>") ? " " : "";
-    r += d === c ? s + n$2 : p >= 0 ? (l.push(o), s.slice(0, p) + "$lit$" + s.slice(p) + e$1 + y) : s + e$1 + (-2 === p ? (l.push(void 0), i) : y);
+    r += d === c$1 ? s + n$4 : p >= 0 ? (l.push(o), s.slice(0, p) + "$lit$" + s.slice(p) + e$2 + y) : s + e$2 + (-2 === p ? (l.push(void 0), i) : y);
   }
 
   const u = r + (t[o] || "<?>") + (2 === i ? "</svg>" : "");
   if (!Array.isArray(t) || !t.hasOwnProperty("raw")) throw Error("invalid template strings array");
-  return [void 0 !== s$1 ? s$1.createHTML(u) : u, l];
+  return [void 0 !== s$2 ? s$2.createHTML(u) : u, l];
 };
 
 class E {
@@ -446,11 +446,11 @@ class E {
         if (l.hasAttributes()) {
           const t = [];
 
-          for (const i of l.getAttributeNames()) if (i.endsWith("$lit$") || i.startsWith(e$1)) {
+          for (const i of l.getAttributeNames()) if (i.endsWith("$lit$") || i.startsWith(e$2)) {
             const s = a[d++];
 
             if (t.push(i), void 0 !== s) {
-              const t = l.getAttribute(s.toLowerCase() + "$lit$").split(e$1),
+              const t = l.getAttribute(s.toLowerCase() + "$lit$").split(e$2),
                     i = /([.?@])?(.*)/.exec(s);
               c.push({
                 type: 1,
@@ -469,30 +469,30 @@ class E {
         }
 
         if (g.test(l.tagName)) {
-          const t = l.textContent.split(e$1),
+          const t = l.textContent.split(e$2),
                 s = t.length - 1;
 
           if (s > 0) {
-            l.textContent = i$2 ? i$2.emptyScript : "";
+            l.textContent = i$3 ? i$3.emptyScript : "";
 
-            for (let i = 0; i < s; i++) l.append(t[i], h()), A.nextNode(), c.push({
+            for (let i = 0; i < s; i++) l.append(t[i], h$2()), A.nextNode(), c.push({
               type: 2,
               index: ++r
             });
 
-            l.append(t[s], h());
+            l.append(t[s], h$2());
           }
         }
-      } else if (8 === l.nodeType) if (l.data === o$2) c.push({
+      } else if (8 === l.nodeType) if (l.data === o$3) c.push({
         type: 2,
         index: r
       });else {
         let t = -1;
 
-        for (; -1 !== (t = l.data.indexOf(e$1, t + 1));) c.push({
+        for (; -1 !== (t = l.data.indexOf(e$2, t + 1));) c.push({
           type: 7,
           index: r
-        }), t += e$1.length - 1;
+        }), t += e$2.length - 1;
       }
 
       r++;
@@ -500,7 +500,7 @@ class E {
   }
 
   static createElement(t, i) {
-    const s = l$1.createElement("template");
+    const s = l$2.createElement("template");
     return s.innerHTML = t, s;
   }
 
@@ -510,7 +510,7 @@ function P(t, i, s = t, e) {
   var o, n, l, h;
   if (i === b) return i;
   let d = void 0 !== e ? null === (o = s._$Cl) || void 0 === o ? void 0 : o[e] : s._$Cu;
-  const u = r(i) ? void 0 : i._$litDirective$;
+  const u = r$2(i) ? void 0 : i._$litDirective$;
   return (null == d ? void 0 : d.constructor) !== u && (null === (n = null == d ? void 0 : d._$AO) || void 0 === n || n.call(d, !1), void 0 === u ? d = void 0 : (d = new u(t), d._$AT(t, s, e)), void 0 !== e ? (null !== (l = (h = s)._$Cl) && void 0 !== l ? l : h._$Cl = [])[e] = d : s._$Cu = d), void 0 !== d && (i = P(t, d._$AS(t, i.values), d, e)), i;
 }
 
@@ -535,7 +535,7 @@ class V {
       },
       parts: e
     } = this._$AD,
-          o = (null !== (i = null == t ? void 0 : t.creationScope) && void 0 !== i ? i : l$1).importNode(s, !0);
+          o = (null !== (i = null == t ? void 0 : t.creationScope) && void 0 !== i ? i : l$2).importNode(s, !0);
     A.currentNode = o;
     let n = A.nextNode(),
         h = 0,
@@ -588,7 +588,7 @@ class N {
   }
 
   _$AI(t, i = this) {
-    t = P(this, t, i), r(t) ? t === w || null == t || "" === t ? (this._$AH !== w && this._$AR(), this._$AH = w) : t !== this._$AH && t !== b && this.$(t) : void 0 !== t._$litType$ ? this.T(t) : void 0 !== t.nodeType ? this.k(t) : u(t) ? this.S(t) : this.$(t);
+    t = P(this, t, i), r$2(t) ? t === w || null == t || "" === t ? (this._$AH !== w && this._$AR(), this._$AH = w) : t !== this._$AH && t !== b && this.$(t) : void 0 !== t._$litType$ ? this.T(t) : void 0 !== t.nodeType ? this.k(t) : u(t) ? this.S(t) : this.$(t);
   }
 
   A(t, i = this._$AB) {
@@ -600,7 +600,7 @@ class N {
   }
 
   $(t) {
-    this._$AH !== w && r(this._$AH) ? this._$AA.nextSibling.data = t : this.k(l$1.createTextNode(t)), this._$AH = t;
+    this._$AH !== w && r$2(this._$AH) ? this._$AA.nextSibling.data = t : this.k(l$2.createTextNode(t)), this._$AH = t;
   }
 
   T(t) {
@@ -623,12 +623,12 @@ class N {
   }
 
   S(t) {
-    d(this._$AH) || (this._$AH = [], this._$AR());
+    d$1(this._$AH) || (this._$AH = [], this._$AR());
     const i = this._$AH;
     let s,
         e = 0;
 
-    for (const o of t) e === i.length ? i.push(s = new N(this.A(h()), this.A(h()), this, this.options)) : s = i[e], s._$AI(o), e++;
+    for (const o of t) e === i.length ? i.push(s = new N(this.A(h$2()), this.A(h$2()), this, this.options)) : s = i[e], s._$AI(o), e++;
 
     e < i.length && (this._$AR(s && s._$AB.nextSibling, e), i.length = e);
   }
@@ -665,11 +665,11 @@ class S {
   _$AI(t, i = this, s, e) {
     const o = this.strings;
     let n = !1;
-    if (void 0 === o) t = P(this, t, i, 0), n = !r(t) || t !== this._$AH && t !== b, n && (this._$AH = t);else {
+    if (void 0 === o) t = P(this, t, i, 0), n = !r$2(t) || t !== this._$AH && t !== b, n && (this._$AH = t);else {
       const e = t;
       let l, h;
 
-      for (t = o[0], l = 0; l < o.length - 1; l++) h = P(this, e[s + l], i, l), h === b && (h = this._$AH[l]), n || (n = !r(h) || h !== this._$AH[l]), h === w ? t = w : t !== w && (t += (null != h ? h : "") + o[l + 1]), this._$AH[l] = h;
+      for (t = o[0], l = 0; l < o.length - 1; l++) h = P(this, e[s + l], i, l), h === b && (h = this._$AH[l]), n || (n = !r$2(h) || h !== this._$AH[l]), h === w ? t = w : t !== w && (t += (null != h ? h : "") + o[l + 1]), this._$AH[l] = h;
     }
     n && !e && this.C(t);
   }
@@ -691,7 +691,7 @@ class M extends S {
 
 }
 
-const k = i$2 ? i$2.emptyScript : "";
+const k = i$3 ? i$3.emptyScript : "";
 
 class H extends S {
   constructor() {
@@ -741,7 +741,7 @@ class L {
 }
 
 const z = window.litHtmlPolyfillSupport;
-null == z || z(E, N), (null !== (t$1 = globalThis.litHtmlVersions) && void 0 !== t$1 ? t$1 : globalThis.litHtmlVersions = []).push("2.2.1");
+null == z || z(E, N), (null !== (t$2 = globalThis.litHtmlVersions) && void 0 !== t$2 ? t$2 : globalThis.litHtmlVersions = []).push("2.2.1");
 
 /**
  * @license
@@ -749,9 +749,9 @@ null == z || z(E, N), (null !== (t$1 = globalThis.litHtmlVersions) && void 0 !==
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-var l, o$1;
+var l$1, o$2;
 
-class s extends a$1 {
+class s$1 extends a$1 {
   constructor() {
     super(...arguments), this.renderOptions = {
       host: this
@@ -785,16 +785,16 @@ class s extends a$1 {
 
 }
 
-s.finalized = !0, s._$litElement$ = !0, null === (l = globalThis.litElementHydrateSupport) || void 0 === l || l.call(globalThis, {
-  LitElement: s
+s$1.finalized = !0, s$1._$litElement$ = !0, null === (l$1 = globalThis.litElementHydrateSupport) || void 0 === l$1 || l$1.call(globalThis, {
+  LitElement: s$1
 });
-const n$1 = globalThis.litElementPolyfillSupport;
-null == n$1 || n$1({
-  LitElement: s
+const n$3 = globalThis.litElementPolyfillSupport;
+null == n$3 || n$3({
+  LitElement: s$1
 });
-(null !== (o$1 = globalThis.litElementVersions) && void 0 !== o$1 ? o$1 : globalThis.litElementVersions = []).push("3.2.0");
+(null !== (o$2 = globalThis.litElementVersions) && void 0 !== o$2 ? o$2 : globalThis.litElementVersions = []).push("3.2.0");
 
-class Volume extends s {
+class Volume extends s$1 {
     constructor(props = {}) {
         var _a, _b, _c;
         super();
@@ -803,7 +803,7 @@ class Volume extends s {
         this.count = (_c = props.count) !== null && _c !== void 0 ? _c : 10;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
       :host {
         width: 100%;
@@ -871,7 +871,7 @@ var index$3 = /*#__PURE__*/Object.freeze({
   Volume: Volume
 });
 
-class Player extends s {
+class Player extends s$1 {
     constructor(props = {}) {
         super();
         this.source = props.source;
@@ -879,7 +879,7 @@ class Player extends s {
         this.controls = props.controls;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
       video {
         width: 100%;
@@ -2018,7 +2018,7 @@ var WebglLinePlotUtils = /*#__PURE__*/function () {
   return WebglLinePlotUtils;
 }();
 
-class TimeSeries$1 extends s {
+class TimeSeries$1 extends s$1 {
     constructor(props = { seconds: 5, sps: 512 }) {
         var _a, _b, _c;
         super();
@@ -2073,7 +2073,7 @@ class TimeSeries$1 extends s {
         requestAnimationFrame(newFrame);
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
       canvas{
         background: black;
@@ -2117,7 +2117,7 @@ class TimeSeries$1 extends s {
 }
 customElements.define('visualscript-timeseries-stream', TimeSeries$1);
 
-class Spectrogram$1 extends s {
+class Spectrogram$1 extends s$1 {
     constructor(props = {}) {
         var _a, _b, _c;
         super();
@@ -2212,7 +2212,7 @@ class Spectrogram$1 extends s {
         this.onresize();
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
       canvas{
         background: black;
@@ -2281,7 +2281,7 @@ var index = /*#__PURE__*/Object.freeze({
 });
 
 // Note: Inspired by the Red Hat website https://www.redhat.com/en
-class Nav extends s {
+class Nav extends s$1 {
     constructor(props = { brand: {}, primary: { menu: [], options: [] }, secondary: [] }) {
         var _a, _b, _c, _d;
         super();
@@ -2299,7 +2299,7 @@ class Nav extends s {
         this.brand = (_d = props.brand) !== null && _d !== void 0 ? _d : { content: 'My Brand' };
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     
     :host {
@@ -2486,7 +2486,7 @@ class Nav extends s {
 customElements.define('visualscript-nav', Nav);
 
 // Note: Inspired by the Red Hat website https://www.redhat.com/en
-class Loader extends s {
+class Loader extends s$1 {
     constructor(props = {}) {
         var _a, _b, _c, _d;
         super();
@@ -2508,7 +2508,7 @@ class Loader extends s {
         }
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
     
     :host {
       
@@ -2680,7 +2680,7 @@ customElements.define('visualscript-loader', Loader);
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t = {
+const t$1 = {
   ATTRIBUTE: 1,
   CHILD: 2,
   PROPERTY: 3,
@@ -2688,12 +2688,12 @@ const t = {
   EVENT: 5,
   ELEMENT: 6
 },
-      e = t => (...e) => ({
+      e$1 = t => (...e) => ({
   _$litDirective$: t,
   values: e
 });
 
-class i$1 {
+class i$2 {
   constructor(t) {}
 
   get _$AU() {
@@ -2720,10 +2720,10 @@ class i$1 {
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-const i = e(class extends i$1 {
-  constructor(t$1) {
+const i$1 = e$1(class extends i$2 {
+  constructor(t) {
     var e;
-    if (super(t$1), t$1.type !== t.ATTRIBUTE || "style" !== t$1.name || (null === (e = t$1.strings) || void 0 === e ? void 0 : e.length) > 2) throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.");
+    if (super(t), t.type !== t$1.ATTRIBUTE || "style" !== t.name || (null === (e = t.strings) || void 0 === e ? void 0 : e.length) > 2) throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.");
   }
 
   render(t) {
@@ -2760,7 +2760,7 @@ const i = e(class extends i$1 {
 
 });
 
-class Button extends s {
+class Button extends s$1 {
     constructor(props = {}) {
         super();
         this.primary = props.primary;
@@ -2769,7 +2769,7 @@ class Button extends s {
         this.onClick = props.onClick;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     .storybook-button {
       font-weight: 700;
@@ -2850,7 +2850,7 @@ class Button extends s {
       <button
            type="button"
             class=${['storybook-button', `storybook-button--${this.size || 'medium'}`, mode].join(' ')}
-            style=${i({ backgroundColor: this.backgroundColor })}
+            style=${i$1({ backgroundColor: this.backgroundColor })}
             @click=${this.onClick}
       >
         <slot>Button</slot>
@@ -2860,7 +2860,7 @@ class Button extends s {
 }
 customElements.define('visualscript-button', Button);
 
-class Modal extends s {
+class Modal extends s$1 {
     constructor(props = {}) {
         super();
         this.toggle = () => this.open = !this.open;
@@ -2869,7 +2869,7 @@ class Modal extends s {
         this.footer = props.footer;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 /* Modal Header */
 
   :host {
@@ -2999,9 +2999,9 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
 }
 customElements.define('visualscript-modal', Modal);
 
-class Footer extends s {
+class Footer extends s$1 {
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       padding: 25px;
@@ -3048,7 +3048,7 @@ class Footer extends s {
 }
 customElements.define('visualscript-footer', Footer);
 
-class Overlay extends s {
+class Overlay extends s$1 {
     constructor(props = {}) {
         var _a;
         super();
@@ -3056,7 +3056,7 @@ class Overlay extends s {
         this.open = (_a = props.open) !== null && _a !== void 0 ? _a : false;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     div {
       opacity: 0;
@@ -3112,8 +3112,8 @@ customElements.define('visualscript-overlay', Overlay);
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-var n;
-null != (null === (n = window.HTMLSlotElement) || void 0 === n ? void 0 : n.prototype.assignedElements) ? (o, n) => o.assignedElements(n) : (o, n) => o.assignedNodes(n).filter(o => o.nodeType === Node.ELEMENT_NODE);
+var n$2;
+null != (null === (n$2 = window.HTMLSlotElement) || void 0 === n$2 ? void 0 : n$2.prototype.assignedElements) ? (o, n) => o.assignedElements(n) : (o, n) => o.assignedNodes(n).filter(o => o.nodeType === Node.ELEMENT_NODE);
 
 /**
  * @license
@@ -3129,10 +3129,10 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-const o = e(class extends i$1 {
-  constructor(t$1) {
+const o$1 = e$1(class extends i$2 {
+  constructor(t) {
     var i;
-    if (super(t$1), t$1.type !== t.ATTRIBUTE || "class" !== t$1.name || (null === (i = t$1.strings) || void 0 === i ? void 0 : i.length) > 2) throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
+    if (super(t), t.type !== t$1.ATTRIBUTE || "class" !== t.name || (null === (i = t.strings) || void 0 === i ? void 0 : i.length) > 2) throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
   }
 
   render(t) {
@@ -3201,7 +3201,7 @@ const getPersistent = (props) => {
     }
 };
 
-class Input extends s {
+class Input extends s$1 {
     constructor(props = {}) {
         var _a, _b, _c;
         super();
@@ -3226,7 +3226,7 @@ class Input extends s {
             setPersistent(this);
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
         :host {
             width: 100%;
@@ -3304,7 +3304,7 @@ opacity: 0.5;
         return $ `
             <div class="form-group">
                 <input
-                class=${o({
+                class=${o$1({
             outline: this.outline
         })}
                 type="${this.type}"
@@ -3323,7 +3323,7 @@ opacity: 0.5;
 }
 customElements.define("visualscript-input", Input);
 
-class Search extends s {
+class Search extends s$1 {
     constructor(props = {}) {
         super();
         this.getModal = () => {
@@ -3349,7 +3349,7 @@ class Search extends s {
         };
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       display: flex;
@@ -3432,7 +3432,7 @@ Features to make the selectCustom work for mouse users.
 - Sync both selects values when selecting a option. (native or custom)
 
 */
-class Select extends s {
+class Select extends s$1 {
     constructor(props = {}) {
         var _a;
         super();
@@ -3543,7 +3543,7 @@ class Select extends s {
             this.value = val;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     #container { 
       position: relative;
@@ -3803,7 +3803,7 @@ class Select extends s {
 }
 customElements.define('visualscript-select', Select);
 
-class File extends s {
+class File extends s$1 {
     constructor(props = {}) {
         super();
         this.onChange = () => { };
@@ -3819,7 +3819,7 @@ class File extends s {
             this.multiple = props.multiple;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       display: flex;
@@ -3947,7 +3947,7 @@ class File extends s {
 }
 customElements.define('visualscript-file', File);
 
-class Switch extends s {
+class Switch extends s$1 {
     constructor(props = {}) {
         super();
         this.persist = false;
@@ -3964,7 +3964,7 @@ class Switch extends s {
             this.value = val;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host * {
       box-sizing: border-box;
@@ -4054,7 +4054,7 @@ class Switch extends s {
 }
 customElements.define('visualscript-switch', Switch);
 
-class Range extends s {
+class Range extends s$1 {
     constructor(props = {}) {
         super();
         this.persist = false;
@@ -4078,7 +4078,7 @@ class Range extends s {
             this.value = val;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       width: 100%;
@@ -4228,8 +4228,195 @@ function __awaiter(thisArg, _arguments, P, generator) {
   });
 }
 
+/**
+ * @license
+ * Copyright 2020 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+const t = o => null === o || "object" != typeof o && "function" != typeof o,
+      r$1 = o => void 0 === o.strings;
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+const e = (i, t) => {
+  var s, o;
+  const n = i._$AN;
+  if (void 0 === n) return !1;
+
+  for (const i of n) null === (o = (s = i)._$AO) || void 0 === o || o.call(s, t, !1), e(i, t);
+
+  return !0;
+},
+      o = i => {
+  let t, s;
+
+  do {
+    if (void 0 === (t = i._$AM)) break;
+    s = t._$AN, s.delete(i), i = t;
+  } while (0 === (null == s ? void 0 : s.size));
+},
+      n$1 = i => {
+  for (let t; t = i._$AM; i = t) {
+    let s = t._$AN;
+    if (void 0 === s) t._$AN = s = new Set();else if (s.has(i)) break;
+    s.add(i), l(t);
+  }
+};
+
+function r(i) {
+  void 0 !== this._$AN ? (o(this), this._$AM = i, n$1(this)) : this._$AM = i;
+}
+
+function h$1(i, t = !1, s = 0) {
+  const n = this._$AH,
+        r = this._$AN;
+  if (void 0 !== r && 0 !== r.size) if (t) {
+    if (Array.isArray(n)) for (let i = s; i < n.length; i++) e(n[i], !1), o(n[i]);else null != n && (e(n, !1), o(n));
+  } else e(this, i);
+}
+
+const l = i => {
+  var t, e, o, n;
+  i.type == t$1.CHILD && (null !== (t = (o = i)._$AP) && void 0 !== t || (o._$AP = h$1), null !== (e = (n = i)._$AQ) && void 0 !== e || (n._$AQ = r));
+};
+
+class d extends i$2 {
+  constructor() {
+    super(...arguments), this._$AN = void 0;
+  }
+
+  _$AT(i, t, s) {
+    super._$AT(i, t, s), n$1(this), this.isConnected = i._$AU;
+  }
+
+  _$AO(i, t = !0) {
+    var s, n;
+    i !== this.isConnected && (this.isConnected = i, i ? null === (s = this.reconnected) || void 0 === s || s.call(this) : null === (n = this.disconnected) || void 0 === n || n.call(this)), t && (e(this, i), o(this));
+  }
+
+  setValue(t) {
+    if (r$1(this._$Ct)) this._$Ct._$AI(t, this);else {
+      const i = [...this._$Ct._$AH];
+      i[this._$Ci] = t, this._$Ct._$AI(i, this, 0);
+    }
+  }
+
+  disconnected() {}
+
+  reconnected() {}
+
+}
+
+/**
+ * @license
+ * Copyright 2021 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+class s {
+  constructor(t) {
+    this.U = t;
+  }
+
+  disconnect() {
+    this.U = void 0;
+  }
+
+  reconnect(t) {
+    this.U = t;
+  }
+
+  deref() {
+    return this.U;
+  }
+
+}
+
+class i {
+  constructor() {
+    this.Y = void 0, this.q = void 0;
+  }
+
+  get() {
+    return this.Y;
+  }
+
+  pause() {
+    var t;
+    null !== (t = this.Y) && void 0 !== t || (this.Y = new Promise(t => this.q = t));
+  }
+
+  resume() {
+    var t;
+    null === (t = this.q) || void 0 === t || t.call(this), this.Y = this.q = void 0;
+  }
+
+}
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+const n = t$1 => !t(t$1) && "function" == typeof t$1.then;
+
+class h extends d {
+  constructor() {
+    super(...arguments), this._$Cwt = 1073741823, this._$Cyt = [], this._$CG = new s(this), this._$CK = new i();
+  }
+
+  render(...s) {
+    var i;
+    return null !== (i = s.find(t => !n(t))) && void 0 !== i ? i : b;
+  }
+
+  update(s, i) {
+    const r = this._$Cyt;
+    let e = r.length;
+    this._$Cyt = i;
+    const o = this._$CG,
+          h = this._$CK;
+    this.isConnected || this.disconnected();
+
+    for (let t = 0; t < i.length && !(t > this._$Cwt); t++) {
+      const s = i[t];
+      if (!n(s)) return this._$Cwt = t, s;
+      t < e && s === r[t] || (this._$Cwt = 1073741823, e = 0, Promise.resolve(s).then(async t => {
+        for (; h.get();) await h.get();
+
+        const i = o.deref();
+
+        if (void 0 !== i) {
+          const r = i._$Cyt.indexOf(s);
+
+          r > -1 && r < i._$Cwt && (i._$Cwt = r, i.setValue(t));
+        }
+      }));
+    }
+
+    return b;
+  }
+
+  disconnected() {
+    this._$CG.disconnect(), this._$CK.pause();
+  }
+
+  reconnected() {
+    this._$CG.reconnect(this), this._$CK.resume();
+  }
+
+}
+
+const c = e$1(h);
+
 const colorscales$1 = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
-class TimeSeries extends s {
+class TimeSeries extends s$1 {
     constructor(props = {}) {
         var _a;
         super();
@@ -4287,7 +4474,7 @@ class TimeSeries extends s {
         // observer.observe(this.div);
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
       :host {
         overflow: hidden;
@@ -4395,7 +4582,7 @@ TimeSeries.colorscales = colorscales$1;
 customElements.define('visualscript-timeseries', TimeSeries);
 
 const colorscales = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
-class Spectrogram extends s {
+class Spectrogram extends s$1 {
     constructor(props = {}) {
         var _a;
         super();
@@ -4445,7 +4632,7 @@ class Spectrogram extends s {
         // observer.observe(this.div);
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
       `;
     }
@@ -4536,7 +4723,7 @@ class Spectrogram extends s {
 Spectrogram.colorscales = colorscales;
 customElements.define('visualscript-spectrogram', Spectrogram);
 
-class ObjectEditor extends s {
+class ObjectEditor extends s$1 {
     constructor(props = { target: {}, header: 'Object' }) {
         var _a, _b, _c;
         super();
@@ -4552,14 +4739,15 @@ class ObjectEditor extends s {
             this.keys = Object.keys(this.target);
             this.mode = this.getMode(this.target, plot);
         });
-        this.checkToPlot = (key, o) => this.plot.reduce((a, f) => a + f(key, o), 0) === this.plot.length;
-        this.getActions = (key, o) => {
+        this.checkToPlot = (key, o) => this.plot.length !== 0 && this.plot.reduce((a, f) => a + f(key, o), 0) === this.plot.length;
+        this.getActions = (key, o) => __awaiter(this, void 0, void 0, function* () {
             let actions;
-            if (typeof o[key] === 'object') {
-                const mode = this.getMode(o[key], this.checkToPlot(key, o));
+            const val = yield Promise.resolve(o[key]);
+            if (typeof val === 'object') {
+                const mode = this.getMode(val, this.checkToPlot(key, o));
                 actions = $ `<visualscript-button primary=true size="small" @click="${() => __awaiter(this, void 0, void 0, function* () {
                     this.history.push({ parent: o, key: this.header });
-                    yield this.set(o[key], this.checkToPlot(key, o));
+                    yield this.set(val, this.checkToPlot(key, o));
                     this.header = key;
                 })}">${mode[0].toUpperCase() + mode.slice(1)}</visualscript-button>`;
             }
@@ -4568,33 +4756,34 @@ class ObjectEditor extends s {
             ${actions}
       </div>
       `;
-        };
-        this.getElement = (key, o) => {
+        });
+        this.getElement = (key, o) => __awaiter(this, void 0, void 0, function* () {
             let display;
-            if (typeof o[key] === 'string' && o[key].includes('data:image')) {
+            const val = yield Promise.resolve(o[key]);
+            if (typeof val === 'string' && val.includes('data:image')) {
                 display = document.createElement('img');
-                display.src = o[key];
+                display.src = val;
                 display.style.height = '100%';
             }
             else {
                 display = new Input();
-                display.value = o[key];
+                display.value = val;
                 display.oninput = () => {
                     o[key] = display.value; // Modify original data
                 };
             }
-            const isObject = typeof o[key] === 'object';
+            const isObject = typeof val === 'object';
             return $ `
         <div class="attribute separate">
         <div class="info">
           <span class="name">${key}</span><br>
           <span class="value">${(isObject
-                ? (Object.keys(o[key]).length ? o[key].constructor.name : $ `Empty ${o[key].constructor.name}`)
+                ? (Object.keys(val).length ? val.constructor.name : $ `Empty ${val.constructor.name}`)
                 : '')}</span>
         </div>
-          ${isObject ? this.getActions(key, o) : display}
+          ${isObject ? yield this.getActions(key, o) : display}
         </div>`;
-        };
+        });
         this.set(props.target);
         this.header = (_a = props.header) !== null && _a !== void 0 ? _a : 'Object';
         this.mode = (_b = props.mode) !== null && _b !== void 0 ? _b : 'view';
@@ -4607,7 +4796,7 @@ class ObjectEditor extends s {
         });
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host * {
       box-sizing: border-box;
@@ -4618,6 +4807,8 @@ class ObjectEditor extends s {
       border-radius: 4px;
       overflow: hidden;
       box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+      height: 100%;
+      width: 100%;
     }
 
     img {
@@ -4645,6 +4836,8 @@ class ObjectEditor extends s {
       justify-content: center;
       flex-wrap: wrap;
       position: relative;
+      overflow: scroll;
+      height: 100%;
     }
 
     .separate {
@@ -4729,23 +4922,28 @@ class ObjectEditor extends s {
         }
         else
             this.timeseries.remove();
-        return $ `
-      <div>
-        <div class="header separate">
-          <span>${this.header}</span>
-          ${(this.history.length > 0) ? $ `<visualscript-button size="extra-small" @click="${() => {
-            const historyItem = this.history.pop();
-            this.set(historyItem.parent);
-            this.header = historyItem.key;
-        }}">Go Back</visualscript-button>` : ``}
-        </div>
-        <div class="container">
-              ${(this.mode === 'view'
+
+        const content = (this.mode === 'view'
             ? (_a = this.keys) === null || _a === void 0 ? void 0 : _a.map(key => this.getElement(key, this.target))
-            : '')}
+            : []);
+
+        return c(Promise.all(content).then((data) => {
+            return $ `
+        <div>
+          <div class="header separate">
+            <span>${this.header}</span>
+            ${(this.history.length > 0) ? $ `<visualscript-button size="extra-small" @click="${() => {
+                const historyItem = this.history.pop();
+                this.set(historyItem.parent);
+                this.header = historyItem.key;
+            }}">Go Back</visualscript-button>` : ``}
+          </div>
+          <div class="container">
+                ${data}
+          </div>
         </div>
-      </div>
-    `;
+      `;
+        }), $ `<span>Loading...</span>`);
     }
 }
 customElements.define('visualscript-object-editor', ObjectEditor);
@@ -6665,7 +6863,7 @@ var prism = {exports: {}};
 
 var Prism = prism.exports;
 
-class CodeEditor extends s {
+class CodeEditor extends s$1 {
     constructor(props = { instance: {}, header: 'Object' }) {
         var _a, _b, _c;
         super();
@@ -6704,7 +6902,7 @@ class CodeEditor extends s {
         this.mode = (_c = props.mode) !== null && _c !== void 0 ? _c : 'view';
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     
     :host {
@@ -6841,7 +7039,7 @@ class CodeEditor extends s {
 }
 customElements.define('visualscript-code-editor', CodeEditor);
 
-class GraphEditor extends s {
+class GraphEditor extends s$1 {
     constructor(props = { graph: {}, header: 'Object' }) {
         var _a, _b, _c;
         super();
@@ -6879,7 +7077,7 @@ class GraphEditor extends s {
         this.mode = (_c = props.mode) !== null && _c !== void 0 ? _c : 'view';
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     
     :host {
@@ -6993,9 +7191,9 @@ class GraphEditor extends s {
 }
 customElements.define('visualscript-graph-editor', GraphEditor);
 
-class DeviceEditor extends s {
+class DeviceEditor extends s$1 {
     static get styles() {
-        return r$2 `
+        return r$4 `
     :host {
       width: 100%;
       height: 100%;
@@ -7024,9 +7222,9 @@ class DeviceEditor extends s {
 }
 customElements.define('visualscript-device-editor', DeviceEditor);
 
-class SessionEditor extends s {
+class SessionEditor extends s$1 {
     static get styles() {
-        return r$2 `
+        return r$4 `
     :host {
       width: 100%;
       height: 100%;
@@ -7055,7 +7253,7 @@ class SessionEditor extends s {
 }
 customElements.define('visualscript-session-editor', SessionEditor);
 
-const slotGrid = r$2 `
+const slotGrid = r$4 `
 
 slot {
   display: grid;
@@ -7071,7 +7269,7 @@ slot {
 }
 
 `;
-class Dashboard extends s {
+class Dashboard extends s$1 {
     constructor(props = {}) {
         var _a, _b;
         super();
@@ -7083,7 +7281,7 @@ class Dashboard extends s {
         this.toggle = (typeof props.toggle === 'string') ? document.getElementById(props.toggle) : props.toggle;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
     
     :host {
       color-scheme: light dark;
@@ -7254,13 +7452,13 @@ const TabTogglePropsLit = {
         reflect: true
     },
 };
-class TabToggle extends s {
+class TabToggle extends s$1 {
     constructor(tab) {
         super();
         this.to = tab;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       flex-grow: 1;
@@ -7364,7 +7562,7 @@ class TabToggle extends s {
 }
 customElements.define('visualscript-tab-toggle', TabToggle);
 
-class Control extends s {
+class Control extends s$1 {
     constructor(props = {}) {
         super();
         this.label = 'Control';
@@ -7433,7 +7631,7 @@ class Control extends s {
         // this.getElement()
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       width: 100%;
@@ -7556,7 +7754,7 @@ class Control extends s {
 }
 customElements.define('visualscript-control', Control);
 
-const tabStyle = r$2 `
+const tabStyle = r$4 `
 
 :host {
   width: 100%;
@@ -7593,7 +7791,7 @@ const TabPropsLit = {
         reflect: true
     }
 };
-class Tab extends s {
+class Tab extends s$1 {
     constructor(props = {}) {
         var _a;
         super();
@@ -7676,7 +7874,7 @@ class App extends Tab {
         this.parent = this.parentNode; // Grab original parent
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
     :host {
       color-scheme: light dark;
       max-width: 100vw;
@@ -7706,10 +7904,10 @@ class App extends Tab {
 customElements.define('visualscript-app', App);
 
 const TabBarPropsLit = {};
-class TabBar extends s {
+class TabBar extends s$1 {
     // tabs: TabBarProps['tabs']
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       background: whitesmoke;
@@ -7772,7 +7970,7 @@ class TabBar extends s {
 }
 customElements.define('visualscript-tab-bar', TabBar);
 
-class Main extends s {
+class Main extends s$1 {
     constructor(props = { target: {}, header: 'Object' }) {
         super();
         this.tabs = new Map();
@@ -7798,7 +7996,7 @@ class Main extends s {
         };
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       width: 100%;
@@ -7839,7 +8037,7 @@ class Main extends s {
 }
 customElements.define('visualscript-main', Main);
 
-class Gallery extends s {
+class Gallery extends s$1 {
     constructor(props = {}) {
         super();
         this.things = [];
@@ -7873,7 +8071,7 @@ class Gallery extends s {
             this.search = props.search;
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       width: 100%;
@@ -7930,7 +8128,7 @@ class Gallery extends s {
 customElements.define('visualscript-gallery', Gallery);
 
 const collapseThreshold = 600;
-class Sidebar extends s {
+class Sidebar extends s$1 {
     constructor(props = {}) {
         super();
         this.content = '';
@@ -7939,7 +8137,7 @@ class Sidebar extends s {
         this.classList.add('default');
     }
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     
     :host {
@@ -8103,9 +8301,9 @@ class Sidebar extends s {
 }
 customElements.define('visualscript-sidebar', Sidebar);
 
-class SidebarHeader extends s {
+class SidebarHeader extends s$1 {
     static get styles() {
-        return r$2 `
+        return r$4 `
 
     :host {
       width: 100%;

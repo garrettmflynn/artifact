@@ -14,16 +14,19 @@ export default async (editor) => {
     const montage = Array.from({length: plotDefaults.channels.n}, e => true)
   
     // Get Basic Info from the Editor
-    let entryName, fileObject
+    let entryName, fileBody
     if (editor.header.includes('.edf')){
       entryName = editor.header
-      fileObject = editor.target
+      fileBody = editor.target
     } else {
       entryName = dataset.fallback.name
-      fileObject = dataset.fallback.file
+      fileBody = dataset.fallback.file
     }
 
-  
+    // Get Channel Metadata
+    const sps = await fileBody.samplingRate // ASSUMPTION: Ground-truth sampling rate is in EDF file
+    console.log('File', entryName, fileBody)
+
     // Plot Existing HED Events
     const dataEvents = await dataset.bids.getEvents(entryName)
 
@@ -33,19 +36,21 @@ export default async (editor) => {
   
         // TODO: Only plot artifacts for now. Make this general for existing events!
         if (e.annotation_type && e.annotation_type != 'n/a'){
+          console.log('Existing HED Event', e)
 
           // Grab important information
           const eventInfo = {
-            onset:e.onset,
+            onset: e.onset,
             duration: e.duration,
-            annotation_type: e.annotation_type // Redundant...
+            annotation_type: e.annotation_type, // Redundant...
+            sps
           }
   
           const info = annotation.plot(eventInfo, 'range')
           toPlot.shapes.push(...info.shapes ?? [])
           eventInfo.range = info.shapes[0]
           annotation.control(eventInfo, {editor: editor})
-        }
+        } else console.warn('Existing event that is not plotted', e)
     })
   
     editor.timeseries.config = {
@@ -84,7 +89,7 @@ export default async (editor) => {
       //   // showticklabels: false,
       //   // fixedrange: true,
       //   title: {
-      //     text: `Voltage (${fileObject.channels[0].dimensions})`,
+      //     text: `Voltage (${fileBody.channels[0].dimensions})`,
       //     font: {
       //       size: 12,
       //       color: '#7f7f7f'
@@ -97,7 +102,7 @@ export default async (editor) => {
     const overlap = 0.0 // TODO: Make the overlap work. This currently doesn't because the plots have a background...
   
   
-    const channelSubset = fileObject.channels.slice(0,plotDefaults.channels.n)
+    const channelSubset = fileBody.channels.slice(0,plotDefaults.channels.n)
 
     const n = channelSubset.length
     const maxPointsPerChannel = Math.floor(plotDefaults.channels.points.max / n) // No limit right now
@@ -175,7 +180,7 @@ export default async (editor) => {
       const y = (data.length < channelSlice) ? data : data.slice(0, channelSlice)
 
       return {
-        name: o.label, //this.header,
+        name: await o.label, //this.header,
         visible: show ? true : 'legendonly',
         line: {
           color: 'black',
@@ -207,24 +212,30 @@ export default async (editor) => {
   
         // let annotations = editor.timeseries.div.layout.annotations || []
         let shapes = editor.timeseries.div.layout.shapes || []
-  
-        let entry = entries[lastEntry ?? point.x]
+
+
+
+        const onset = point.x / sps
+
+        let entry = entries[lastEntry ?? onset]
         if (!entry) {
   
-          entry = entries[point.x] = {}
+          entry = entries[onset] = {sps} // Always include sampling rate
   
           const shortTag = xml.tag.element.value
           const freeText = xml.text.element.value
+
           let fullTag = xml.map[shortTag] ?? ''
           if (!fullTag) console.warn('Full tag not found', shortTag)
-  
+
           if (fullTag && fullTag.includes('#')) {
             if (freeText) fullTag = fullTag.replace('#', freeText)
             else fullTag = fullTag.replace('/#', '') // Remove free text area
           }
           entry.fullTag = fullTag
+          
           entry.annotation_type = shortTag.replace('#', freeText) // make these
-          lastEntry = entry.onset = point.x
+          lastEntry = entry.onset = onset
           // annotation[point.x].y = point.y
   
           entry = annotation.control(entry, {
@@ -245,11 +256,13 @@ export default async (editor) => {
             tag: entry.fullTag,
             code: entry.annotation_type
           }
+
   
           const eventInfo = {
-            onset: Math.min(point.x, entry.onset),
-            duration: Math.abs(point.x - entry.onset),
-            annotation_type: hedInfo.code // Redundant...
+            onset: Math.min(onset, entry.onset),
+            duration: Math.abs(onset - entry.onset),
+            annotation_type: hedInfo.code, // Redundant...
+            sps: entry.sps
           }
   
           const toPlot = annotation.plot(eventInfo, 'range') 

@@ -36,7 +36,7 @@ export const loadHEDXML = (o) => {
   const options = new Set()
   o = o.HED.schema[0]
 
-  const filter = ['/EEG-artifact']
+  const filter = ['/EEG-artifact'] // ASSUMPTION: This is the top-level tag for SCORE artifacts
   const shortName = true
 
   const drillNodes = (o, base = '') => {

@@ -2,6 +2,8 @@ import * as components from '../components/index.js'
 import download from './download.js'
 import * as plot from './plot/index.js'
 import * as dataset from './dataset.js'
+import * as freerange from 'freerange'
+
 
 const controls = {
     loader: document.body.querySelector('visualscript-loader'),
@@ -13,7 +15,7 @@ const controls = {
 // Basic Object Editor with Iterative File Support and EDF Plotting
 const editor = new components.ObjectEditor({ header: 'Dataset', plot: [(key, o) => key.includes('.edf')] })
 editor.preprocess = async (o) => {
-  if (o instanceof files.RangeFile) return o.body // Get the body of the file
+  if (o instanceof freerange.RangeFile) return o.body // Get the body of the file
   else return o
 }
 editor.onPlot = plot.update
@@ -36,3 +38,6 @@ document.getElementById('dataset').onClick = () => dataset.mount(controls)
 document.getElementById('download').onClick = () => {
     download(dataset.bids, controls)
 }
+
+
+// dataset.mountCache(controls)

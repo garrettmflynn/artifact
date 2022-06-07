@@ -6,7 +6,7 @@ export default async (dataset, options = {}) => {
         options.loader.progress = 0 // Reset loader
 
         options.loader.text = 'Validating Annotated Dataset'
-        console.log('Chagelog', dataset.manager.changelog)
+        console.log('Changelog', dataset.manager.changelog)
 
         const info = await dataset.check()
         validation.display(info)
@@ -24,13 +24,10 @@ export default async (dataset, options = {}) => {
             if (filtered.length != info.errors.length) console.warn('Saving changes to disk despite residual HED errors...')
 
             // Override HED errors
-            console.log('Starting to save!')
-
             options.loader.text = 'Saving Changes to Disk'
-
-            await dataset.save(true, (ratio) => options.loader.progress = ratio)
-
-            console.log('Done saving!')
+            await dataset.save(true, (dir, ratio) => {
+                options.loader.progress = ratio
+            })
         }
 
         options.overlay.open = false

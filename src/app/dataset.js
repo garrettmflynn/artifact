@@ -15,20 +15,49 @@ window.onbeforeunload = function(){
   }
 };
 
+const progressCallback = (options, ratio) => options.loader.progress = ratio
+
+const createBIDS = (options) => {
+ return new standard.BIDSDataset({
+    ignoreWarnings: false,
+    ignoreNiftiHeaders: false,
+    ignoreSubjectConsistency: false,
+    // debug: true
+  })
+}
+
+
+export const mountCache = async (options={}) => {
+
+  bids = createBIDS()
+
+  const files = await bids.mountCache((ratio) => progressCallback(options, ratio))
+  if (!files) {
+    bids = undefined
+    return undefined
+  }
+  else return mount(options, bids)
+}
+
 export const mount = async (options={}) => {
 
-    bids = new standard.BIDSDataset({
-      ignoreWarnings: false,
-      ignoreNiftiHeaders: false,
-      ignoreSubjectConsistency: false,
-      // debug: true
-    })
 
-  
-    options.overlay.open = true
+    // Generate BIDS Dataset and Mount Files
+    const bidsExisted = !!bids
+    if (!bidsExisted) {
+      bids = createBIDS()
+      options.overlay.open = true
+      options.loader.text = 'Mounting Dataset'
+    }
 
-    options.loader.text = 'Mounting Dataset'
-    const files = await bids.mount((ratio) => options.loader.progress = ratio)
+    // Keep Cached files
+    const files = (bidsExisted) ? bids.files : await bids.mount((ratio) => progressCallback(options, ratio))
+
+    // Assume Files are Already Mounted
+    if (!files) {
+      options.overlay.open = false
+      bids = null
+    } else {
 
     const fileList = files.list.map(o => o.file)
     options.loader.text = 'Validating Dataset'
@@ -42,7 +71,8 @@ export const mount = async (options={}) => {
   
     // Register Actual Directories
     if (Object.values(bids.files.system).length) {
-      const editor = options.editors[1]
+      const editor = options.editors[0]
+      editor.header = bids.manager.directoryName
       if (editor) editor.set(bids.files.system)
   
       // Plot Default Data
@@ -60,5 +90,6 @@ export const mount = async (options={}) => {
   
       validation.display(info)
   
+    }
     }
   }

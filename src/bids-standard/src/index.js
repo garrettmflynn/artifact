@@ -28,7 +28,9 @@ class BIDSDataset {
       else this.options.config = `${this.name}/.bids-validator-config.json`
     }
 
-    get = async (name, directory, type, extension) => {
+    get = async (name, directory, type, extension, options={}) => {
+
+      const create = options.create ?? true
 
       const fileSplit = name.split('_')
       const fileCoreName = fileSplit.slice(0, fileSplit.length - 1).join('_') // Remove extension and modality
@@ -37,23 +39,32 @@ class BIDSDataset {
       const foundFileName = Object.keys(directory.ref).find(str => str.includes(fileCoreName) && (type ? str.includes(`_${type}.${extension}`) : str.includes(`.${extension}`)))
 
 
-      // Create File If Not Found
       if (!foundFileName){
-        const fileSpoof = {name: expectedFileName}
-        if (extension === 'json') fileSpoof.data = {}
-        else if (extension === 'tsv') fileSpoof.data = []
-        else defaultObj = fileSpoof.data = ''
 
-        const path = (directory.path) ? `${directory.path}/${fileSpoof.name}` : fileSpoof.name
-        const file = directory.ref[expectedFileName] = await fileManager.loadFile(fileSpoof, {directory: directory.name, path})
+        // Create File If Not Found
+        if (create) {
+          const fileSpoof = {name: expectedFileName}
+          if (extension === 'json') fileSpoof.data = {}
+          else if (extension === 'tsv') fileSpoof.data = []
+          else defaultObj = fileSpoof.data = ''
 
-        return await file.body // Get file body
-      } else return await directory.ref[foundFileName].body // Get file body
+          const path = (directory.path) ? `${directory.path}/${fileSpoof.name}` : fileSpoof.name
+          const file = directory.ref[expectedFileName] = await fileManager.loadFile(fileSpoof, {directory: directory.name, path})
+
+          return await file.body
+        } 
+        
+        // Or Return Undefined
+        else return undefined
+      } 
+
+      // Return Existing File Body
+      else return await directory.ref[foundFileName].body 
     }
 
-    getEvents = async (name) => {
+    getEvents = async (name, options) => {
       const directory = await this.getDirectory(name)
-      return await this.get(name, directory, 'events', 'tsv')
+      return await this.get(name, directory, 'events', 'tsv', options)
     }
 
 
@@ -64,7 +75,7 @@ class BIDSDataset {
       let drill = (o, path="") => {
         return new Promise(async (resolve, reject) => {
           if (checks > 50) {
-            console.error('TOO MANY CHECKS!')
+            this.onError('TOO MANY CHECKS!')
             reject('No file with this name can be found.') // Likely an invalid file name 
           }
           for (let key in o) {
@@ -92,39 +103,68 @@ class BIDSDataset {
       fileName.split('_').map(str => str.split('-')).forEach(([key, value]) => {
         if (!value) {
           const split = key.split('.')
-          shortcutInfo.type = split[0]
+          shortcutInfo.modality = split[0]
           shortcutInfo.extension = split[1]
         } else shortcutInfo[key] = value
       })
 
       let o = this.files.system
-      const keys = ['sub', 'ses', 'type']
+      const hasFolders = [
+        'sub', 
+        'ses',
+        'modality'
+      ]
+
+      const keys = [
+        'sub', 
+        'ses', 
+        'task', 
+        'recording', // Only in pet modality?
+        'acq', 
+        'run', 
+        'proc', 
+        'modality' // Proxy for modality
+      ]
+
       let path = ''
 
       // Drill or Check System Subset
-      // TODO: Make sure this never stalls—or at least throw an error!
+      let partialFileName = '' // Omit ses (TODO: Might not be bids-compliant, but needed for Jorge's dataset and aligned with the BIDS Validator...)
       const promises = keys.map(async str => {
-        const tempO = (str === 'type') ? o?.[shortcutInfo[str]] : o?.[str]?.[shortcutInfo[str]]
-        if (!tempO) return false
+        const hasFolder = hasFolders.includes(str)
+        const tempO = (str === 'modality') ? o?.[shortcutInfo['modality']] : o?.[str]?.[shortcutInfo[str]]
+        if (!tempO && hasFolder) return false
         else {
 
-          const generalPathAddition = `${str}-${shortcutInfo[str]}`
-          if (str === 'type') path = (path) ? path + '/' + shortcutInfo[str] : shortcutInfo[str]
-          else path = (path) ? path + '/' + generalPathAddition : generalPathAddition
+          const info = shortcutInfo[str]
+          const generalPathAddition = `${str}-${info}`
           
-          return o = tempO
+          if (str === 'modality') {
+            if (hasFolder) path = (path) ? path + '/' + info : info
+            if (info) partialFileName += (partialFileName) ? `_${info}` : info
+          } else {
+            if (hasFolder) path = (path) ? path + '/' + generalPathAddition : generalPathAddition
+            if (str != 'ses' && info) partialFileName += (partialFileName) ? `_${generalPathAddition}` : generalPathAddition
+          }
+
+          if (hasFolder) o = tempO
+
+          return true
         }
       })
 
+      partialFileName = `${partialFileName}.${shortcutInfo.extension}`
+
       await Promise.all(promises)
 
-      const shortcut = o[fileName]
+      const shortcut = o[fileName] ?? o[partialFileName] // Allow Partial Match
+
       if (shortcut) {
         return {
           ref: o,
           path
         }
-      } else console.warn(`No shortcut found for ${fileName}. Checking all directories...`)
+      } else this.onError(`No shortcut found for ${fileName} or ${partialFileName}. Checking all directories...`)
 
       // Check All Files
       const directory = await drill(this.files.system)
@@ -161,9 +201,10 @@ class BIDSDataset {
           `${task ? `task-${task}` : ''}_${fileInfo.type}.${fileInfo.extension}`, 
           {ref: this.files.system, path: '', name: ''}, 
           fileInfo.type, 
-          'json'
+          'json',
+          options
         )
-      } else return await this.get(name, ogDir, fileInfo.type, 'json')
+      } else return await this.get(name, ogDir, fileInfo.type, 'json', options)
     }
 
     validate = (files, options={}) => {
@@ -189,16 +230,24 @@ class BIDSDataset {
         })
     }
 
-    mount = async (callback) => {
+    mountCache = async (callback) => {
+      const files = await fileManager.mount(null, callback).catch(this.onError)
+      if (!files) return undefined
+      else return this.mount(null, files)
+    }
+
+    mount = async (callback, files) => {
       this._setConfig()
-      const files = await fileManager.mount(null, callback)
+
+      if (!files) files = await fileManager.mount(null, callback).catch(this.onError)
+      if (!files) return undefined
+
       files.format = 'bids'
       if (checkTopLevel(files.system, 'edf')) files.format = 'edf' // replace bids with edf
       if (checkTopLevel(files.system, 'nwb')) files.format = 'nwb' // replace bids with nwb
   
       this.name = fileManager.directoryName // directory name
       this.files = await convert(files, `${files.format}2bids`, this.options)
-
       return this.files
     }
 
@@ -243,7 +292,7 @@ class BIDSDataset {
     save = async (override=false, callback) => {
       const info = await this.check() // Validate Files
       if (info.errors.length === 0 || override) {
-        info.files = await fileManager.save(callback)
+        info.files = await fileManager.save(callback).catch(this.onError)
       } else alert('Invalid BIDS dataset not saved. Try again with override=true')
       return info
     }
@@ -264,32 +313,54 @@ class BIDSDataset {
       // } else if (typeof description.HEDVersion === 'string') description.HEDVersion = {base: description.HEDVersion}
       // if (!description.HEDVersion.libraries) description.HEDVersion.libraries = {sc: 'score_0.0.1'}
 
-      // Get Event .tsv File
+      // --------------- Handle Event File ---------------
       const tsvEventFile = await this.getEvents(fileName)
       const eventTemplate = deepClone(tsvEventFile[0]) ?? templates.objects['events.json'] // Add structured event
-      eventInfo[hed.header] = hed.code
-  
-      // Make sure all entries have the same keys!
-      tsvEventFile.forEach(res => res[hed.header] = (!res[hed.header]) ? 'n/a' : res[hed.header])
-      tsvEventFile.push(Object.assign(eventTemplate, eventInfo))
+      eventInfo[hed.header] = hed.code // Add code to header
 
-      const globalSidecar = await this.getSidecar(fileName, {global: true, type: 'events'})
+      // remove extraneous headers from eventInfo
+      const reducedEventInfo = {}
+      Object.keys(eventInfo).forEach(str => {
+        if (str in eventTemplate) reducedEventInfo[str] = eventInfo[str]
+      })
+  
+      // make sure all entries have the same keys!
+      tsvEventFile.forEach(res => res[hed.header] = (!res[hed.header]) ? 'n/a' : res[hed.header])
+      tsvEventFile.push(Object.assign(eventTemplate, reducedEventInfo))
+
+      // --------------- Handle Event Sidecars ---------------
+      let globalSidecar = await this.getSidecar(fileName, {global: true, type: 'events', create: false}) // Default to no global sidecar
       const subjectSidecar = await this.getSidecar(fileName, {type: 'events'})
       
-      // Subject Sidecar
+      if (!globalSidecar) globalSidecar = globalSidecar // No Inheritance
+      // ASSUMPTION: No need for a global sidecar unless currently specified
+
+      // -------- Subject Sidecar --------
       if (!subjectSidecar[hed.header]) subjectSidecar[hed.header] = templates.objects['events.json']
-      if (!subjectSidecar[hed.header].Levels[hed.code]) subjectSidecar[hed.header].Levels[hed.code] = ''
+
+      // Levels (optional)
+      if (subjectSidecar[hed.header].Levels){
+        if (!subjectSidecar[hed.header].Levels[hed.code]) subjectSidecar[hed.header].Levels[hed.code] = ''
+      }
+
+      // HED (required)
+      if (!subjectSidecar[hed.header].HED) subjectSidecar[hed.header].HED = {}
       if (!subjectSidecar[hed.header].HED[hed.code]) subjectSidecar[hed.header].HED[hed.code] = hed.tag // String
   
-      // Global Sidecar
-      if (!globalSidecar[hed.header]) globalSidecar[hed.header] = templates.objects['events.json']
-      globalSidecar[hed.header].HED = subjectSidecar[hed.header].HED // Link these directly // TODO: Make this work for more than one subjectSidecar!
-      globalSidecar[hed.header].Levels = subjectSidecar[hed.header].Levels // Link these directly // TODO: Make this work for more than one subjectSidecar!
+      // -------- Global Sidecar (optional) --------
+      if (globalSidecar){
+        if (!globalSidecar[hed.header]) globalSidecar[hed.header] = templates.objects['events.json']
+        globalSidecar[hed.header].HED = subjectSidecar[hed.header].HED // Link these directly // TODO: Make this work for more than one subjectSidecar!
+        globalSidecar[hed.header].Levels = subjectSidecar[hed.header].Levels // Link these directly // TODO: Make this work for more than one subjectSidecar!
+      }
   }
 
   deleteHED = async (offset) => {
-    console.error('CANNOT REMOVE TAG YET', offset)
+    this.onError(`CANNOT REMOVE TAG YET (${offset})`)
   }
+
+
+  onError = (e) => console.error(`[BIDSDataset]:`, e)
 
 }
 

@@ -50,7 +50,10 @@ export default async (files, options) => {
 
     // Get Subject Folder
     let newParent = moveFiles('sub', files.system)
-    newParent = moveFiles('ses', newParent)
+    if (newParent != files.system){
+        // Get Session Folder
+        for (let key in newParent) moveFiles('ses', newParent[key])
+    }
 
     // Add Required Top-Level Files
     await Promise.allSettled(required.map(async name => {
@@ -68,40 +71,33 @@ export default async (files, options) => {
         }
     }))
     
-    // Rename directory names in alignment with files
-    // Overwrite directory with filename
-    const toDelete = []
-    for (let subjectName in files.system.sub) {
-        const sessions = Object.assign({}, files.system.sub[subjectName].ses ?? {})
-        for (let sessionName in sessions){
-            const sessionBase = sessions[sessionName]
-            const info = {subjectName, sessionName, base: files.system}
-            const agnosticToDelete =  renameFileEntries(sessionBase, info) // Grab modality-agnostic files
-            toDelete.push(agnosticToDelete)
-            Object.values(sessionBase).forEach(modalityBase => {
-                const specificToDelete = renameFileEntries(modalityBase, info) // Grab modality-specific files
-                toDelete.push(specificToDelete)
-            })
-        }
-    }
+    // // ------------------------- Rename Files -------------------------
+    // // Overwrite directory with filename
+    // const toDelete = []
+    // for (let subjectName in files.system.sub) {
+    //     const sessions = Object.assign({}, files.system.sub[subjectName].ses ?? {})
+    //     for (let sessionName in sessions){
+    //         const sessionBase = sessions[sessionName]
+    //         const info = {subjectName, sessionName, base: files.system}
+    //         const agnosticToDelete =  renameFileEntries(sessionBase, info) // Grab modality-agnostic files
+    //         toDelete.push(agnosticToDelete)
+    //         Object.values(sessionBase).forEach(modalityBase => {
+    //             const specificToDelete = renameFileEntries(modalityBase, info) // Grab modality-specific files
+    //             toDelete.push(specificToDelete)
+    //         })
+    //     }
+    // }
 
-    // Delete Extraneous Subject / Session Names
-    toDelete.forEach(o => {
-
-        // Delete Sessions
-        o.sessions.forEach(([sub, ses]) => {
-            delete files.system.sub[sub].ses[ses]
-        })
-
-        // Delete Subjects
-        o.subjects.forEach(name => {
-            delete files.system.sub[name]
-        })
-    })
+    // // Delete Extraneous Subject / Session Names
+    // toDelete.forEach(o => {
+    //     o.sessions.forEach(([sub, ses]) => delete files.system.sub[sub].ses[ses])
+    //     o.subjects.forEach(name => delete files.system.sub[name])
+    // })
 
     // Populate empty participants.tsv file
     const participants = await files.system['participants.tsv'].get()
     if (participants.length === 0){
+        console.log('Adding participants.tsv file')
         Object.keys(files.system.sub).forEach(key => {
             const participantTemplate = JSON.parse(JSON.stringify(templates.objects['participants.tsv']))
             participantTemplate.participant_id =  `sub-${key}`

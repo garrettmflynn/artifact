@@ -14,7 +14,7 @@ export default (info, options={}) => {
     const button = document.createElement('visualscript-button')
     button.size = 'small'
     bold.innerHTML = info.annotation_type
-    onset.innerHTML = info.onset
+    onset.innerHTML = `${info.onset}s`
     button.innerHTML = 'Delete'
     button.classList.add('disabled')
     button.onClick = () => {
