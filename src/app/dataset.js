@@ -7,6 +7,14 @@ export let fallback = {
     name: null
 };
 
+// Prompt the User when Leaving with Unsaved Changes
+window.onbeforeunload = function(){
+  console.log(bids.manager.changelog)
+  if (bids.manager.changelog.length > 0){
+    return 'Unsaved changes will be deleted. Are you sure you want to leave?';
+  }
+};
+
 export const mount = async (options={}) => {
 
     bids = new standard.BIDSDataset({

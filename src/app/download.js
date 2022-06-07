@@ -24,10 +24,13 @@ export default async (dataset, options = {}) => {
             if (filtered.length != info.errors.length) console.warn('Saving changes to disk despite residual HED errors...')
 
             // Override HED errors
-            await dataset.save(true, (ratio) => {
-                options.loader.text = 'Saving Changes to Disk'
-                options.loader.progress = ratio
-            })
+            console.log('Starting to save!')
+
+            options.loader.text = 'Saving Changes to Disk'
+
+            await dataset.save(true, (ratio) => options.loader.progress = ratio)
+
+            console.log('Done saving!')
         }
 
         options.overlay.open = false

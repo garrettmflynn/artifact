@@ -33,12 +33,19 @@ export default async (editor) => {
   
         // TODO: Only plot artifacts for now. Make this general for existing events!
         if (e.annotation_type && e.annotation_type != 'n/a'){
+
+          // Grab important information
+          const eventInfo = {
+            onset:e.onset,
+            duration: e.duration,
+            annotation_type: e.annotation_type // Redundant...
+          }
   
-        const info = annotation.plot(e, 'range')
-        toPlot.shapes.push(...info.shapes ?? [])
-        e.range = info.shapes[0]
-        annotation.control(e, {editor: editor})
-      }
+          const info = annotation.plot(eventInfo, 'range')
+          toPlot.shapes.push(...info.shapes ?? [])
+          eventInfo.range = info.shapes[0]
+          annotation.control(eventInfo, {editor: editor})
+        }
     })
   
     editor.timeseries.config = {
