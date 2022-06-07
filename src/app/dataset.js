@@ -18,12 +18,23 @@ window.onbeforeunload = function(){
 const progressCallback = (options, ratio) => options.loader.progress = ratio
 
 const createBIDS = (options) => {
- return new standard.BIDSDataset({
+ const bids = new standard.BIDSDataset({
     ignoreWarnings: false,
     ignoreNiftiHeaders: false,
     ignoreSubjectConsistency: false,
     // debug: true
   })
+
+  const ignoreHEDErrors = (e) =>  {
+    const case1 = e.key != 'HED_ERROR'
+    const case2 = e.reason != 'The validation on this HED string returned an error.' 
+    return case1 && case2
+  }
+
+  bids.addIgnore(ignoreHEDErrors)
+
+
+  return bids
 }
 
 
@@ -70,13 +81,13 @@ export const mount = async (options={}) => {
     // overlayDiv.innerHTML = 'Dataset loaded!'
   
     // Register Actual Directories
-    if (Object.values(bids.files.system).length) {
+    if (Object.values(bids.manager.files.system).length) {
       const editor = options.editors[0]
       editor.header = bids.manager.directoryName
-      if (editor) editor.set(bids.files.system)
+      if (editor) editor.set(bids.manager.files.system)
   
       // Plot Default Data
-      const allEDFFiles = bids.files.types.edf
+      const allEDFFiles = bids.manager.files.types.edf
       if (allEDFFiles){
         setTimeout(async () => {
              const editor = options.editors[1]

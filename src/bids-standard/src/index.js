@@ -4,6 +4,7 @@ import validate from 'bids-validator'
 import convert from './convert.js';
 import * as templates from './templates.js'
 import fileManager from './files.js'
+import KeyGroup from './KeyGroup.js';
 
 const deepClone = (o) => JSON.parse(JSON.stringify(o))
 
@@ -16,11 +17,33 @@ const checkTopLevel = (filesystem, extension) => {
 class BIDSDataset {
 
     constructor(options={}) {
-        this.files = {}
-        this.manager = fileManager // Track changes to the filesystem
+        this.groups = {
 
+          // The set of scans whose filenames share all BIDS filename key-value pairs, except for subject and session
+          key: {},
+
+          // TODO: A collection of sessions across participants that contain the exact same set of Key and Parameter Groups
+          // acquisition: {}
+        }
+
+        // ------------- Setup freerange File Manager -------------
+        this.manager = fileManager // Track changes to the filesystem
+        
+        const keyGroups = this.groups.key
+        // assign each file to a key group
+        this.manager.addGroup((file) => {
+            const keyGroupName = this.getKeyGroupName(file)
+            if (keyGroupName){
+              if (!keyGroups[keyGroupName]) keyGroups[keyGroupName] = new KeyGroup(keyGroupName)
+              keyGroups[keyGroupName].add(file)
+            }
+        })
+
+
+        // ------------- Specify Additional Attributes -------------
         this.options = { verbose: true }
         Object.assign(this.options, options)
+        this.ignoreConditions = []
     }
 
     _setConfig = (options={}) => {
@@ -108,7 +131,7 @@ class BIDSDataset {
         } else shortcutInfo[key] = value
       })
 
-      let o = this.files.system
+      let o = this.manager.files.system
       const hasFolders = [
         'sub', 
         'ses',
@@ -167,7 +190,7 @@ class BIDSDataset {
       } else this.onError(`No shortcut found for ${fileName}. Checking all directories...`)
 
       // Check All Files
-      const directory = await drill(this.files.system)
+      const directory = await drill(this.manager.files.system)
       return directory
 
     }
@@ -199,7 +222,7 @@ class BIDSDataset {
       if (options.global) {
         return await this.get(
           `${task ? `task-${task}` : ''}_${fileInfo.type}.${fileInfo.extension}`, 
-          {ref: this.files.system, path: '', name: ''}, 
+          {ref: this.manager.files.system, path: '', name: ''}, 
           fileInfo.type, 
           'json',
           options
@@ -210,6 +233,7 @@ class BIDSDataset {
     validate = (files, options={}) => {
       
         if (!this.options.config) this._setConfig(options)
+
         return new Promise(resolve => {
         validate.BIDS(
             files,
@@ -247,8 +271,13 @@ class BIDSDataset {
       if (checkTopLevel(files.system, 'nwb')) files.format = 'nwb' // replace bids with nwb
   
       this.name = fileManager.directoryName // directory name
-      this.files = await convert(files, `${files.format}2bids`, this.options)
-      return this.files
+      this.manager.files = await convert(files, `${files.format}2bids`, this.options)
+
+      // TODO: Assign Acquisition Groups
+      // ...
+
+
+      return this.manager.files
     }
 
     // load = async (files, callback) => {
@@ -256,8 +285,8 @@ class BIDSDataset {
     //       this.name = files[0].webkitRelativePath?.split('/')?.[0] // directory name
     //       this._setConfig()
     //       const dataStructure = await load(files, this.options, callback)
-    //       this.files = await convert(dataStructure, `${dataStructure.format}2bids`, this.options)
-    //       return this.files
+    //       this.manager.files = await convert(dataStructure, `${dataStructure.format}2bids`, this.options)
+    //       return this.manager.files
     //     }
     // }
     
@@ -286,7 +315,19 @@ class BIDSDataset {
 
     check = async (options={}) => {
       await fileManager.sync() // Sync before validation
-      return await this.validate(this.files.list.map(o => o.file), options)
+
+      // Get Validation Info
+      let validationInfo = await this.validate(this.manager.files.list.map(o => o.file), options)
+      
+      // Ignore User-Specified Conditions
+      validationInfo.errors = validationInfo.errors.filter((e) => this.ignoreConditions.reduce((a,b) => {
+        const res = !b(e)
+        if (!res) console.warn('Ignoring Error', e)
+        return a*res
+      }, true))
+
+      // Return Updated Validation Info
+      return validationInfo
     }
 
     save = async (override=false, callback) => {
@@ -307,7 +348,7 @@ class BIDSDataset {
       if (!hed.label) hed.label = hed.code
 
       // TODO: Update Description
-      // const description = await this.files.system['dataset_description.json'].get()
+      // const description = await this.manager.files.system['dataset_description.json'].get()
       // if (!description.HEDVersion) {
       //   description.HEDVersion = { base: '8.0.0' }
       // } else if (typeof description.HEDVersion === 'string') description.HEDVersion = {base: description.HEDVersion}
@@ -359,9 +400,54 @@ class BIDSDataset {
     this.onError(`CANNOT REMOVE TAG YET (${offset})`)
   }
 
-
   onError = (e) => console.error(`[BIDSDataset]:`, e)
+  addIgnore = (condition) => this.ignoreConditions.push(condition)
+  addGroup = (condition) => this.groupConditions.push(condition)
+  filter = (condition) =>this.manager.files.list.filter(condition)
 
+    // -------------------- Generic Helper Function Backlog --------------------
+  // Move active dataset files to a new location of the filesystem
+  copy = (relDir) => {}
+
+  // Get File Subsets
+  subjects = (base) => {}
+  sessions = (base) => {}
+  tasks = (base) => {}
+  acquisitions = (base) => {}
+  runs = (base) => {}
+
+
+  // -------------------- CuBIDS-Inspired Helper Functions --------------------
+  // Add info from headers into sidecars
+  addInfo = (fileType) => {
+    // e.g. fileType = 'nii'
+
+  }
+
+  // Exemplar Dataset: A BIDS dataset containing one subject from each Acquisition Group
+  // TODO: Copy to a new directory (!!!)
+  getExemplars = () => {
+    return this.groups.acquisition.forEach(arr => arr[0])
+  }
+
+  getKeyGroupName = (file) => {
+
+    const splitPath = file.path.split('/')
+    const dataType = splitPath[splitPath.length - 2] // Get data type from parent directory
+    if (!dataType) return
+
+    const ignore = ['sub','ses']
+    const info = []
+    file.name.split('_').map(str => str.split('-')).filter(arr => !ignore.includes(arr[0])).forEach(([key,value]) => {
+        if (value) info.push({key, value})
+        else {
+          info.push({key: 'datatype', value: dataType}) // TODO: Allow any modality...
+          info.push({key: 'suffix', value: key.split('.')[0]})
+        }
+    })
+
+   return info.map((o) => `${o.key}-${o.value}`).join('_')
+}
 }
 
 
