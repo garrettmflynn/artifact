@@ -12,6 +12,7 @@ export const map = {} // Map of short to long HED tags
 export const tag = document.getElementById('tag')
 export const text = document.getElementById('freetext')
 const loader = document.getElementById('xml')
+const name = document.getElementById('xmlName')
 
 // ---------------- Setup Controls ----------------
 const toggleFreeFormInput = (target) => {
@@ -34,6 +35,9 @@ loader.onChange = async (ev) => {
 // ---------------- Load XML File ----------------
 export const loadHEDXML = (o) => {
   const options = new Set()
+  
+  tag.label = `Select a ${o.HED['$'].library} (${o.HED['$'].version}) Tag`
+
   o = o.HED.schema[0]
 
   const filter = ['/EEG-artifact'] // ASSUMPTION: This is the top-level tag for SCORE artifacts
