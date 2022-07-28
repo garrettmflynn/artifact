@@ -67,7 +67,7 @@ export default async (files, options) => {
             else if (ext === 'tsv') fileSpoof.data = []
             else fileSpoof.data = ''
 
-             await fileManager.loadFile(fileSpoof) // Add to root
+             await fileManager.load(fileSpoof) // Add to root
         }
     }))
     
@@ -95,10 +95,10 @@ export default async (files, options) => {
     // })
 
     // Populate empty participants.tsv file
-    const participants = await files.system['participants.tsv'].get()
+    const participants = await files.system['participants.tsv']?.body ?? []
     if (participants.length === 0){
         console.log('Adding participants.tsv file')
-        Object.keys(files.system.sub).forEach(key => {
+        Object.keys(files.system.sub ?? {}).forEach(key => {
             const participantTemplate = JSON.parse(JSON.stringify(templates.objects['participants.tsv']))
             participantTemplate.participant_id =  `sub-${key}`
             participants.push(participantTemplate)

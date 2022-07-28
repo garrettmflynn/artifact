@@ -72,8 +72,15 @@ export const mount = async (options={}) => {
 
     const fileList = files.list.map(o => o.file)
     options.loader.text = 'Validating Dataset'
-    const info = await bids.validate(fileList)  
-  
+    const info = await bids.validate(fileList) 
+    
+    
+    const isBIDSDataset = info.errors.reduce((a,b) => a*!b.key==="QUICK_VALIDATION_FAILED", true)
+    console.log('isBIDSDataset', isBIDSDataset)
+    if (!isBIDSDataset) {
+      console.error('SHOULD ASK THE USER TO CONVERT THIS TO A VALID BIDS DATASET!')
+    }
+
     options.loader.text = 'Plotting Dataset Files'
   
     console.log(bids)

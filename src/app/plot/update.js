@@ -15,6 +15,7 @@ export default async (editor) => {
   
     // Get Basic Info from the Editor
     let entryName, fileBody
+
     if (editor.header.includes('.edf')){
       entryName = editor.header
       fileBody = editor.target
@@ -25,33 +26,35 @@ export default async (editor) => {
 
     // Get Channel Metadata
     const sps = await fileBody.samplingRate // ASSUMPTION: Ground-truth sampling rate is in EDF file
-    console.log('File', entryName, fileBody)
 
     // Plot Existing HED Events
-    const dataEvents = await dataset.bids.getEvents(entryName)
+    const dataEvents = await dataset.bids.getEvents(entryName, {create: false})
 
     const toPlot = {annotations: [], shapes: []}
   
-    dataEvents.forEach(e => {
-  
-        // TODO: Only plot artifacts for now. Make this general for existing events!
-        if (e.annotation_type && e.annotation_type != 'n/a'){
-          console.log('Existing HED Event', e)
+    if (!dataEvents) console.warn(`No events.tsv file found for ${entryName}!`)
+    else {
+      dataEvents.forEach(e => {
+    
+          // TODO: Only plot artifacts for now. Make this general for existing events!
+          if (e.annotation_type && e.annotation_type != 'n/a'){
+            console.log('Existing HED Event', e)
 
-          // Grab important information
-          const eventInfo = {
-            onset: e.onset,
-            duration: e.duration,
-            annotation_type: e.annotation_type, // Redundant...
-            sps
-          }
-  
-          const info = annotation.plot(eventInfo, 'range')
-          toPlot.shapes.push(...info.shapes ?? [])
-          eventInfo.range = info.shapes[0]
-          annotation.control(eventInfo, {editor: editor})
-        } else console.warn('Existing event that is not plotted', e)
-    })
+            // Grab important information
+            const eventInfo = {
+              onset: e.onset,
+              duration: e.duration,
+              annotation_type: e.annotation_type, // Redundant...
+              sps
+            }
+    
+            const info = annotation.plot(eventInfo, 'range')
+            toPlot.shapes.push(...info.shapes ?? [])
+            eventInfo.range = info.shapes[0]
+            annotation.control(eventInfo, {editor: editor})
+          } else console.warn('Existing event that is not plotted', e)
+      })
+    }
   
     editor.timeseries.config = {
       modeBarButtonsToRemove: ['zoomIn2d','zoomOut2d', 'autoScale2d']
@@ -175,7 +178,7 @@ export default async (editor) => {
       const show = !!montage?.[i]
 
       const data = await o.data
-      
+
       const channelSlice =  Math.min(plotDefaults.channels.points.preferred, maxPointsPerChannel)
       const y = (data.length < channelSlice) ? data : data.slice(0, channelSlice)
 

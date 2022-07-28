@@ -69,7 +69,7 @@ export default async (fileList, options, callback) => {
             }
         })
         
-        await files.loadFile(file, {path}).catch(e => console.error(e)) // Load file into the system
+        await files.load(file, {path}).catch(e => console.error(e)) // Load file into the system
 
        if (callback instanceof Function) callback(bidsFiles.n/fileList.length, fileList.length)
        return true // Done!

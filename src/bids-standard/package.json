@@ -34,7 +34,7 @@
   "dependencies": {
     "bids-validator": "^1.9.3",
     "buffer": "^6.0.3",
-    "freerange": "^0.0.17",
+    "freerange": "^0.0.20",
     "freerange-edf": "^0.0.2",
     "freerange-nii": "^0.0.1",
     "freerange-tsv": "^0.0.3",

@@ -6,7 +6,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import minifyHTML from 'rollup-plugin-minify-html-literals';
 // import summary from 'rollup-plugin-summary';
 import typescript from 'rollup-plugin-typescript2';
-import pkg from './package.json.js.js';
+import pkg from './package.json';
 import {terser} from "rollup-plugin-terser";
 import css from "rollup-plugin-import-css";
 import node_resolve from "@rollup/plugin-node-resolve";

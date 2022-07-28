@@ -4,6 +4,7 @@ import validate from 'bids-validator'
 import convert from './convert.js';
 import * as templates from './templates/general.js'
 import fileManager from './files.js'
+import {RangeFile} from 'freerange'
 import KeyGroup from './KeyGroup.js';
 
 const deepClone = (o) => JSON.parse(JSON.stringify(o))
@@ -72,7 +73,7 @@ class BIDSDataset {
           else defaultObj = fileSpoof.data = ''
 
           const path = (directory.path) ? `${directory.path}/${fileSpoof.name}` : fileSpoof.name
-          const file = directory.ref[expectedFileName] = await fileManager.loadFile(fileSpoof, {directory: directory.name, path})
+          const file = directory.ref[expectedFileName] = await fileManager.load(fileSpoof, {directory: directory.name, path})
 
           return await file.body
         } 
@@ -96,6 +97,7 @@ class BIDSDataset {
 
       let checks = 0
       let drill = (o, path="") => {
+
         return new Promise(async (resolve, reject) => {
           if (checks > 50) {
             this.onError('TOO MANY CHECKS!')
@@ -103,14 +105,20 @@ class BIDSDataset {
           }
           for (let key in o) {
 
+            const potentialFile = o[key]
+
             // File Found!
-            if (key === fileName) resolve({
-              ref: o,
-              path
-            })
+            if (potentialFile instanceof RangeFile) {
+              if (potentialFile.name === fileName) {
+                  resolve({
+                  ref: o,
+                  path
+                })
+              }
+            } 
 
             // Drill Directories
-            else if (key.split('.').length === 1) {
+            else {
               if (typeof o[key] === 'object'){
                 checks++
                 let newPath = (path) ? path + '/' + key : key
@@ -267,11 +275,12 @@ class BIDSDataset {
       if (!files) return undefined
 
       files.format = 'bids'
+      // TODO: EDF2BIDS is broken...
       if (checkTopLevel(files.system, 'edf')) files.format = 'edf' // replace bids with edf
       if (checkTopLevel(files.system, 'nwb')) files.format = 'nwb' // replace bids with nwb
   
       this.name = fileManager.directoryName // directory name
-      this.manager.files = await convert(files, `${files.format}2bids`, this.options)
+      this.manager.files = await convert(files, `${'bids'}2bids`, this.options)
 
       // TODO: Assign Acquisition Groups
       // ...
@@ -348,7 +357,7 @@ class BIDSDataset {
       if (!hed.label) hed.label = hed.code
 
       // TODO: Update Description
-      // const description = await this.manager.files.system['dataset_description.json'].get()
+      // const description = await this.manager.files.system['dataset_description.json'].body
       // if (!description.HEDVersion) {
       //   description.HEDVersion = { base: '8.0.0' }
       // } else if (typeof description.HEDVersion === 'string') description.HEDVersion = {base: description.HEDVersion}

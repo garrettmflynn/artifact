@@ -26,6 +26,7 @@ controls.editors.push(editor)
 const editor2 = new components.ObjectEditor({ header: `First EDF File (${plot.defaults.channels.n} Channels)` })
 editor2.onPlot = (editor) => {
     document.getElementById('artifacts').innerHTML = ''
+    console.log(plot, editor)
     plot.update(editor)
 }
 document.getElementById('annotation-app').appendChild(editor2)
